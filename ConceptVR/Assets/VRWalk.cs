@@ -7,7 +7,7 @@ public class VRWalk : MonoBehaviour {
     Transform head;
 	// Use this for initialization
 	void Start () {
-        vrCage = GameObject.Find("[SteamVR]");
+        vrCage = GameObject.Find("[CameraRig]");
         head = GameObject.Find("[CameraRig]").transform.Find("Camera (head)");
 	}
 	
