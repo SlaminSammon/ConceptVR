@@ -17,7 +17,7 @@ public class SketchTool : Tool {
 	
 	// Update is called once per frame
 	void Update () {
-		if (triggerInput)
+		if (triggerInput && !currentLine.loop)
         {
             currentPositions.Add(transform.position);
             currentLine.positionCount = currentPositions.Count;
@@ -33,6 +33,9 @@ public class SketchTool : Tool {
 
     public override void TriggerUp()
     {
+        Debug.Log("Up");
+        SmoothCurrent();
+        SmoothCurrent();
         if (Vector3.Distance(currentPositions[0], currentPositions[currentPositions.Count - 1]) < circleSnap)
         {
             Vector3 avgPos = new Vector3(0f, 0f, 0f);
@@ -45,8 +48,8 @@ public class SketchTool : Tool {
                 avgPos += v;
                 Vector3 segment = v - prevPos;
 
-                avgNormal = Vector3.Cross(prevSegment.normalized, segment.normalized).normalized;
-                Debug.Log(Vector3.Cross(prevSegment.normalized, segment.normalized).normalized);
+                avgNormal += Vector3.Cross(prevSegment.normalized, segment.normalized).normalized;
+                //Debug.Log(Vector3.Cross(prevSegment.normalized, segment.normalized).normalized);
 
                 prevSegment = segment;
                 prevPos = v;
@@ -74,5 +77,16 @@ public class SketchTool : Tool {
             currentLine.positionCount = currentPositions.Count;
             currentLine.SetPositions(currentPositions.ToArray());
         }
+    }
+
+    void SmoothCurrent()
+    {
+        List<Vector3> newPositions = new List<Vector3>(currentPositions.Count);
+        newPositions.Add(currentPositions[0]);
+        for (int i = 1; i < currentPositions.Count-1; ++i)
+        {
+            newPositions.Add(currentPositions[i - 1] + currentPositions[i + 1]);
+        }
+        newPositions.Add(currentPositions[currentPositions.Count-1]);
     }
 }
