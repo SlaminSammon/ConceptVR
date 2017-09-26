@@ -8,10 +8,11 @@
 	}
 	SubShader
 	{
-		Tags { "Queue" = "Transparent" "RenderType"="Transparent" "IgnoreProjector" = "True" }
+		Tags { "Queue" = "Transparent" "RenderType" = "Transparent" "IgnoreProjector" = "True"}
 		Blend One One
 		AlphaTest Greater 0
 		LOD 100
+		ZWrite Off
 
 		Pass
 		{

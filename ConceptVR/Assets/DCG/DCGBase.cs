@@ -27,12 +27,14 @@ public class DCGBase : MonoBehaviour {
     {
         foreach(Point p in points)
         {
-            Graphics.DrawMeshNow(pointMesh, p.position, Quaternion.identity);
+            Graphics.DrawMesh(pointMesh, Matrix4x4.TRS(p.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)), pointMat, 1);
+            //Graphics.DrawMeshNow(pointMesh, p.position, Quaternion.identity);
         }
 
         foreach(Solid s in solids)
         {
-            Graphics.DrawMeshNow(s.mesh, transform.position, transform.rotation);
+            Graphics.DrawMesh(pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(1f, 1f, 1f)), pointMat, 1);
+            //Graphics.DrawMeshNow(s.mesh, transform.position, transform.rotation);
         }
     }
 }

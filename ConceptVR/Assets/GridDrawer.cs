@@ -5,6 +5,7 @@ using UnityEngine;
 public class GridDrawer : MonoBehaviour {
     public Material glowMat;
     Vector3 center;
+    GameObject target;
 
 	// Use this for initialization
 	void Start () {
@@ -13,7 +14,8 @@ public class GridDrawer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        SetCenter(transform.position);
+        if (target != null)
+            SetCenter(target.transform.position);
 	}
 
     public void SetCenter(Vector3 pos)
