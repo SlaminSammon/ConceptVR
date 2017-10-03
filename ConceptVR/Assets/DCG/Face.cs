@@ -9,17 +9,39 @@ public class Face {
     
     public Face(List<Edge> edges)
     {
-
+        this.edges = edges;
+        DCGBase.faces.Add(this);
+        updateMesh();
     }
 
     public void updateMesh()
     {
         mesh = new Mesh();
         List<Vector3> verts = new List<Vector3>();
+        verts.Add(new Vector3());
+
         List<int> tris = new List<int>();
-        for (int i = 0; i < edges.Count; ++i)
+        Vector3 center = new Vector3();
+        Vector3 lpos = edges[edges.Count-1].points[edges[edges.Count-1].points.Count-1].position; //Gomenasai
+        foreach (Edge e in edges)
         {
-            //for (int j = 0; )
+            foreach (Point p in e.points)
+            {
+                if (p.position != lpos)
+                {
+                    verts.Add(p.position);
+                    center += p.position;
+                    tris.Add(0);
+                    tris.Add(verts.Count - 1);
+                    tris.Add(verts.Count - 2);
+                }
+                lpos = p.position;
+            }
         }
+
+        verts[0] = center / (verts.Count - 1);
+        tris[2] = verts.Count-1;
+        mesh.SetVertices(verts);
+        mesh.SetTriangles(tris, 0);
     }
 }
