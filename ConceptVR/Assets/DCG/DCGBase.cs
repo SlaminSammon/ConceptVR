@@ -14,6 +14,8 @@ public class DCGBase : MonoBehaviour {
     public static List<Face> faces = new List<Face>();
     public static List<Solid> solids = new List<Solid>();
 
+    private static int moveID = 0;
+
 	// Use this for initialization
 	void Start () {
         Transform starter = transform.Find("Starter");
@@ -27,7 +29,7 @@ public class DCGBase : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        points[1].setPosition(points[1].position + new Vector3(0f, 0f, Mathf.Cos(Time.time) * Time.deltaTime / 10f));
 	}
 
     private void OnRenderObject()
@@ -68,5 +70,10 @@ public class DCGBase : MonoBehaviour {
             //Graphics.DrawMeshNow(pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(1f, 1f, 1f)), pointMat, 1);
             Graphics.DrawMeshNow(s.mesh, transform.position, transform.rotation);
         }
+    }
+
+    public static int nextMoveID()
+    {
+        return moveID++;
     }
 }

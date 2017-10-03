@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Face {
-    List<Edge> edges;   //The edges of this face
-    List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
-    public Mesh mesh;  
+    public List<Edge> edges;   //The edges of this face
+    public List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
+    public Mesh mesh;
+    public int lastMoveID;
     
     public Face(List<Edge> edges)
     {
+        solids = new List<Solid>();
         this.edges = edges;
+        foreach (Edge e in edges)
+            e.faces.Add(this);
         DCGBase.faces.Add(this);
         updateMesh();
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Edge {
     public List<Point> points;
     public List<Face> faces;
+    public int lastMoveID;
 
     bool isLoop;
     bool smooth;
@@ -12,6 +13,9 @@ public class Edge {
     public Edge(List<Point> points, bool isLoop)
     {
         this.points = points;
+        this.faces = new List<Face>();
+        foreach (Point p in points)
+            p.edges.Add(this);
         DCGBase.edges.Add(this);
     }
 
@@ -20,6 +24,9 @@ public class Edge {
         this.points = new List<Point>();
         this.points.Add(p1);
         this.points.Add(p2);
+        this.faces = new List<Face>();
+        foreach (Point p in points)
+            p.edges.Add(this);
         DCGBase.edges.Add(this);
     }
 }
