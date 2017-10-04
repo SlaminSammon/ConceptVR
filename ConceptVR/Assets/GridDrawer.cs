@@ -5,7 +5,7 @@ using UnityEngine;
 public class GridDrawer : MonoBehaviour {
     public Material glowMat;
     Vector3 center;
-    GameObject target;
+    public GameObject target;
 
 	// Use this for initialization
 	void Start () {

@@ -13,6 +13,7 @@
 		AlphaTest Greater 0
 		LOD 100
 		ZWrite Off
+		Cull Off
 
 		Pass
 		{

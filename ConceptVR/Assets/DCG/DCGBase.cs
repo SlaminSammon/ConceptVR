@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DCGBase : MonoBehaviour {
     public Mesh pointMesh;
+    public Mesh edgeMesh;
     public Material pointMat;
     public Material edgeMat;
     public Material faceMat;
@@ -21,7 +22,7 @@ public class DCGBase : MonoBehaviour {
         Transform starter = transform.Find("Starter");
         Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
         
-        new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale));
+        new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
         Debug.Log(points.Count);
 
         starter.gameObject.SetActive(false);
@@ -29,7 +30,7 @@ public class DCGBase : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        points[1].setPosition(points[1].position + new Vector3(0f, 0f, Mathf.Cos(Time.time) * Time.deltaTime / 10f));
+        
 	}
 
     private void OnRenderObject()
@@ -42,20 +43,11 @@ public class DCGBase : MonoBehaviour {
         }
 
         edgeMat.SetPass(0);
-        Mesh m = new Mesh();
-        Vector3[] verts = new Vector3 [4];
-        m.SetVertices(new List<Vector3>(verts));
-        m.SetTriangles(new int[] { 0, 1, 2, 1, 2, 3 }, 0);
 
         foreach (Edge e in edges)
         {
-            Vector3 left = Vector3.Cross(e.points[0].position - Camera.main.transform.position, e.points[0].position - e.points[e.points.Count - 1].position).normalized * .002f;
-            verts[0] = e.points[0].position + left;
-            verts[1] = e.points[0].position - left;
-            verts[2] = e.points[e.points.Count - 1].position + left;
-            verts[3] = e.points[e.points.Count - 1].position - left;
-            m.SetVertices(new List<Vector3>(verts));
-            Graphics.DrawMeshNow(m, Vector3.zero, Quaternion.identity);
+            Vector3 edgeVec = e.points[e.points.Count - 1].position - e.points[0].position;
+            Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[1].position - edgeVec/2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude/2, .005f)));
         }
 
         faceMat.SetPass(0);

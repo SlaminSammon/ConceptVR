@@ -8,34 +8,36 @@ public class Solid {
     public int lastMoveID;
 
 
-    public Solid(Mesh m, Matrix4x4 t)
+    public Solid(Mesh m, Matrix4x4 t, Vector3 translate)
     {
         mesh = new Mesh();
         List<Vector3> verts = new List<Vector3>();
         List<int> tris = new List<int>();
         ArrayList points = new ArrayList();
-        ArrayList allPoints = new ArrayList();
+        List<int> pointMap = new List<int>();
         faces = new List<Face>();
 
         foreach (Vector3 v in m.vertices)
         {
-            Point match = null;
-            foreach (Point p in points)
+            int match = -1;
+            Vector3 tv = (Vector3)(t * v) + translate;
+            for (int i = 0; i < points.Count; ++i)
             {
-                if (Vector3.Distance(p.position, t * v) <= 0.01f)
+                Point p = (Point)points[i];
+                if (Vector3.Distance(p.position, tv) <= .0001f)
                 {
-                    match = p;
+                    match = i;
                     break;
                 }
             }
-            if (match == null)
+            if (match == -1)
             {
-                verts.Add(t * v);
-                points.Add(new Point(t * v));
-                allPoints.Add(new Point(t * v));
+                verts.Add(tv);
+                points.Add(new Point(tv));
+                pointMap.Add(points.Count-1);
             } else
             {
-                allPoints.Add(match);
+                pointMap.Add(match);
             }
         }
 
@@ -45,9 +47,9 @@ public class Solid {
             tris.Add(m.triangles[tri+1]);
             tris.Add(m.triangles[tri+2]);
 
-            Point p1 = (Point)allPoints[m.triangles[tri]];
-            Point p2 = (Point)allPoints[m.triangles[tri+1]];
-            Point p3 = (Point)allPoints[m.triangles[tri+2]];
+            Point p1 = (Point)points[pointMap[m.triangles[tri]]];
+            Point p2 = (Point)points[pointMap[m.triangles[tri+1]]];
+            Point p3 = (Point)points[pointMap[m.triangles[tri+2]]];
 
             List<Edge> edges = new List<Edge>();
             edges.Add(new Edge(p1, p2));
