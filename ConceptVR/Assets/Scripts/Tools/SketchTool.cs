@@ -35,126 +35,9 @@ public class SketchTool : Tool {
     public override void TriggerUp()
     {
         Debug.Log("Up");
-        SmoothCurrent();
-        SmoothCurrent();
+        SimplifyCurrent();
         //Generate the circle
-        if (Vector3.Distance(currentPositions[0], currentPositions[currentPositions.Count - 1]) < circleSnap)
-        {
-            Vector3 avgPos = new Vector3(0f, 0f, 0f);
-            Vector3 avgNormal = new Vector3(0f, 0f, 0f);
-            Vector3 prevSegment = currentPositions[currentPositions.Count-1] - currentPositions[0];
-            Vector3 prevPos = currentPositions[currentPositions.Count-1];
-            for(int i = 0; i < currentPositions.Count; ++i)
-            {
-                Vector3 v = currentPositions[i];
-                avgPos += v;
-                Vector3 segment = v - prevPos;
-
-                avgNormal += Vector3.Cross(prevSegment.normalized, segment.normalized).normalized;
-                //Debug.Log(Vector3.Cross(prevSegment.normalized, segment.normalized).normalized);
-
-                prevSegment = segment;
-                prevPos = v;
-            }
-            avgPos /= currentPositions.Count;
-            avgNormal.Normalize();
-
-            float avgRadius = 0f;
-            foreach (Vector3 v in currentPositions)
-                avgRadius += Vector3.Distance(v, avgPos);
-            avgRadius /= currentPositions.Count;
-            
-            Vector3[] circlePoints = new Vector3[60];
-            for (int i = 0; i < 60; ++i)
-            {
-                circlePoints[i] = avgPos + Quaternion.AngleAxis(i * 6f, avgNormal) * (Vector3.Cross(Vector3.up, avgNormal) * avgRadius);
-            }
-
-            currentLine.positionCount = 60;
-            currentLine.loop = true;
-            currentLine.SetPositions(circlePoints);
-            currentLine.GetComponent<Renderer>().enabled = false;
-
-            //Get verticies of generated circle
-            List<Vector3> verts = new List<Vector3>(circlePoints);
-            verts.Add(avgPos);
-            List<Vector3> normals = Enumerable.Repeat(Vector3.up, 61).ToList();
-
-            //Generate triangles of the face
-            List<int> triangles = new List<int>();
-            triangles = addTrianglesForCircle(triangles);
-
-            //Generate the face of the circle that we just drew
-            GameObject circle = new GameObject();
-            circle.AddComponent<MeshFilter>();
-            circle.AddComponent<MeshRenderer>();
-            circle.GetComponent<MeshFilter>().mesh = new Mesh();
-            Mesh mesh = circle.GetComponent<MeshFilter>().mesh;
-            mesh.vertices = verts.ToArray();
-            mesh.normals = normals.ToArray();
-            mesh.triangles = triangles.ToArray();
-            circle.GetComponent<MeshRenderer>().material = currentLine.material;
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-
-            //currently attempting to make a duplicate circle
-            GameObject secondCircle = new GameObject();
-            secondCircle.AddComponent<MeshFilter>();
-            secondCircle.AddComponent<MeshRenderer>();
-            secondCircle.GetComponent<MeshRenderer>().material = circle.GetComponent<MeshRenderer>().material;
-            Mesh secondMesh = secondCircle.GetComponent<MeshFilter>().mesh;
-            secondMesh.vertices = addMeshNormalstoVerts(mesh.vertices, mesh.normals[60]);
-            secondMesh.normals = mesh.normals;
-            secondMesh.triangles = addTrianglesForCircle(new List<int>()).ToArray();
-            secondMesh.RecalculateNormals();
-            secondMesh.RecalculateBounds();
-            //^hey that works
-
-            //now to generate the cylinder
-            GameObject cyl = new GameObject();
-            cyl.AddComponent<MeshFilter>();
-            cyl.AddComponent<MeshRenderer>();
-            cyl.GetComponent<MeshRenderer>().material = circle.GetComponent<MeshRenderer>().material;
-            cyl.GetComponent<MeshFilter>().mesh = new Mesh();
-            Mesh cylMesh = cyl.GetComponent<MeshFilter>().mesh;
-            List<Vector3> sidesVerts = new List<Vector3>(mesh.vertices);
-            sidesVerts.AddRange(secondMesh.vertices.ToList<Vector3>());
-            //Get rid of the center point verticies of the faces
-            sidesVerts.RemoveAt(60);
-            sidesVerts.RemoveAt(120);
-            Debug.Log(sidesVerts.Count);
-            List<Vector3> sidesNormals = Enumerable.Repeat(Vector3.up, 120).ToList();
-            Debug.Log("Cyl Verts Size: " + sidesVerts.Count.ToString());
-            Debug.Log("Cyl Norm Size: " + sidesNormals.Count.ToString());
-            cylMesh.vertices = sidesVerts.ToArray();
-            cylMesh.normals = sidesNormals.ToArray();
-            cylMesh.triangles = addTrianglesForCylinder(new List<int>()).ToArray();
-            cylMesh.RecalculateNormals();
-            cylMesh.RecalculateBounds();
-            MeshFilter[] filters = { circle.GetComponent<MeshFilter>(), secondCircle.GetComponent<MeshFilter>(), cyl.GetComponent<MeshFilter>() };
-            CombineInstance[] combine = new CombineInstance[filters.Length];
-            for(int i=0; i<filters.Length; ++i)
-            {
-                combine[i].mesh = filters[i].sharedMesh;
-                combine[i].transform = filters[i].transform.localToWorldMatrix;
-                filters[i].gameObject.SetActive(false);
-            }
-            generatedObj = new GameObject();
-            generatedObj.AddComponent<MeshFilter>();
-            generatedObj.AddComponent<MeshRenderer>();
-            generatedObj.GetComponent<MeshRenderer>().material = circle.GetComponent<MeshRenderer>().material;
-            generatedObj.transform.GetComponent<MeshFilter>().mesh = new Mesh();
-            generatedObj.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-            generatedObj.SetActive(true);
-
-
-
-        }
-        else
-        {
-            currentLine.positionCount = currentPositions.Count;
-            currentLine.SetPositions(currentPositions.ToArray());
-        }
+       
     }
 
     void SmoothCurrent()
@@ -168,6 +51,55 @@ public class SketchTool : Tool {
         newPositions.Add(currentPositions[currentPositions.Count-1]);
         currentPositions = newPositions;
     }
+
+    const float pLimit = .5f;    //Minimum sharpness prominence to be included as a vertex
+    void SimplifyCurrent()
+    {
+        Vector3[] pos = currentPositions.ToArray();
+        int count = currentPositions.Count;
+        float[] sharpness = new float[count];
+        
+        for (int i = 0; i < count; ++i)
+        {
+            Vector3 p = pos[(i - 1) % count];
+            Vector3 n = pos[(i + 1) % count];
+            Vector3 v = pos[i];
+            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / Vector3.Distance(p, n);
+        }
+
+        int[] parents = new int[count];
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     Vector3[] addMeshNormalstoVerts(Vector3[] verts, Vector3 norms)
     {
         for (int i = 0; i < verts.Length; ++i)
@@ -176,6 +108,8 @@ public class SketchTool : Tool {
         }
         return verts;
     }
+
+
     List<int> addTrianglesForCircle(List<int> triangles)
     {
         int last = 59;
@@ -263,5 +197,126 @@ public class SketchTool : Tool {
         }
         Debug.Log(Mathf.Max(triangles.ToArray()));
         return triangles;
+    }
+
+    void makeCircle()
+    {
+        if (Vector3.Distance(currentPositions[0], currentPositions[currentPositions.Count - 1]) < circleSnap)
+        {
+            Vector3 avgPos = new Vector3(0f, 0f, 0f);
+            Vector3 avgNormal = new Vector3(0f, 0f, 0f);
+            Vector3 prevSegment = currentPositions[currentPositions.Count - 1] - currentPositions[0];
+            Vector3 prevPos = currentPositions[currentPositions.Count - 1];
+            for (int i = 0; i < currentPositions.Count; ++i)
+            {
+                Vector3 v = currentPositions[i];
+                avgPos += v;
+                Vector3 segment = v - prevPos;
+
+                avgNormal += Vector3.Cross(prevSegment.normalized, segment.normalized).normalized;
+                //Debug.Log(Vector3.Cross(prevSegment.normalized, segment.normalized).normalized);
+
+                prevSegment = segment;
+                prevPos = v;
+            }
+            avgPos /= currentPositions.Count;
+            avgNormal.Normalize();
+
+            float avgRadius = 0f;
+            foreach (Vector3 v in currentPositions)
+                avgRadius += Vector3.Distance(v, avgPos);
+            avgRadius /= currentPositions.Count;
+
+            Vector3[] circlePoints = new Vector3[60];
+            for (int i = 0; i < 60; ++i)
+            {
+                circlePoints[i] = avgPos + Quaternion.AngleAxis(i * 6f, avgNormal) * (Vector3.Cross(Vector3.up, avgNormal) * avgRadius);
+            }
+
+            currentLine.positionCount = 60;
+            currentLine.loop = true;
+            currentLine.SetPositions(circlePoints);
+            currentLine.GetComponent<Renderer>().enabled = false;
+
+            //Get verticies of generated circle
+            List<Vector3> verts = new List<Vector3>(circlePoints);
+            verts.Add(avgPos);
+            List<Vector3> normals = Enumerable.Repeat(Vector3.up, 61).ToList();
+
+            //Generate triangles of the face
+            List<int> triangles = new List<int>();
+            triangles = addTrianglesForCircle(triangles);
+
+            //Generate the face of the circle that we just drew
+            GameObject circle = new GameObject();
+            circle.AddComponent<MeshFilter>();
+            circle.AddComponent<MeshRenderer>();
+            circle.GetComponent<MeshFilter>().mesh = new Mesh();
+            Mesh mesh = circle.GetComponent<MeshFilter>().mesh;
+            mesh.vertices = verts.ToArray();
+            mesh.normals = normals.ToArray();
+            mesh.triangles = triangles.ToArray();
+            circle.GetComponent<MeshRenderer>().material = currentLine.material;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            //currently attempting to make a duplicate circle
+            GameObject secondCircle = new GameObject();
+            secondCircle.AddComponent<MeshFilter>();
+            secondCircle.AddComponent<MeshRenderer>();
+            secondCircle.GetComponent<MeshRenderer>().material = circle.GetComponent<MeshRenderer>().material;
+            Mesh secondMesh = secondCircle.GetComponent<MeshFilter>().mesh;
+            secondMesh.vertices = addMeshNormalstoVerts(mesh.vertices, mesh.normals[60]);
+            secondMesh.normals = mesh.normals;
+            secondMesh.triangles = addTrianglesForCircle(new List<int>()).ToArray();
+            secondMesh.RecalculateNormals();
+            secondMesh.RecalculateBounds();
+            //^hey that works
+
+            //now to generate the cylinder
+            GameObject cyl = new GameObject();
+            cyl.AddComponent<MeshFilter>();
+            cyl.AddComponent<MeshRenderer>();
+            cyl.GetComponent<MeshRenderer>().material = circle.GetComponent<MeshRenderer>().material;
+            cyl.GetComponent<MeshFilter>().mesh = new Mesh();
+            Mesh cylMesh = cyl.GetComponent<MeshFilter>().mesh;
+            List<Vector3> sidesVerts = new List<Vector3>(mesh.vertices);
+            sidesVerts.AddRange(secondMesh.vertices.ToList<Vector3>());
+            //Get rid of the center point verticies of the faces
+            sidesVerts.RemoveAt(60);
+            sidesVerts.RemoveAt(120);
+            Debug.Log(sidesVerts.Count);
+            List<Vector3> sidesNormals = Enumerable.Repeat(Vector3.up, 120).ToList();
+            Debug.Log("Cyl Verts Size: " + sidesVerts.Count.ToString());
+            Debug.Log("Cyl Norm Size: " + sidesNormals.Count.ToString());
+            cylMesh.vertices = sidesVerts.ToArray();
+            cylMesh.normals = sidesNormals.ToArray();
+            cylMesh.triangles = addTrianglesForCylinder(new List<int>()).ToArray();
+            cylMesh.RecalculateNormals();
+            cylMesh.RecalculateBounds();
+            MeshFilter[] filters = { circle.GetComponent<MeshFilter>(), secondCircle.GetComponent<MeshFilter>(), cyl.GetComponent<MeshFilter>() };
+            CombineInstance[] combine = new CombineInstance[filters.Length];
+            for (int i = 0; i < filters.Length; ++i)
+            {
+                combine[i].mesh = filters[i].sharedMesh;
+                combine[i].transform = filters[i].transform.localToWorldMatrix;
+                filters[i].gameObject.SetActive(false);
+            }
+            generatedObj = new GameObject();
+            generatedObj.AddComponent<MeshFilter>();
+            generatedObj.AddComponent<MeshRenderer>();
+            generatedObj.GetComponent<MeshRenderer>().material = circle.GetComponent<MeshRenderer>().material;
+            generatedObj.transform.GetComponent<MeshFilter>().mesh = new Mesh();
+            generatedObj.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+            generatedObj.SetActive(true);
+
+
+
+        }
+        else
+        {
+            currentLine.positionCount = currentPositions.Count;
+            currentLine.SetPositions(currentPositions.ToArray());
+        }
     }
 }
