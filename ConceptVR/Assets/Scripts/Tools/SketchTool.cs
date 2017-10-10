@@ -58,6 +58,7 @@ public class SketchTool : Tool {
         Vector3[] pos = currentPositions.ToArray();
         int count = currentPositions.Count;
         float[] sharpness = new float[count];
+        int min = 0;
         
         for (int i = 0; i < count; ++i)
         {
@@ -65,12 +66,95 @@ public class SketchTool : Tool {
             Vector3 n = pos[(i + 1) % count];
             Vector3 v = pos[i];
             sharpness[i] = Vector3.AngleBetween(v - p, n - v) / Vector3.Distance(p, n);
+            if (sharpness[i] < sharpness[min])
+                min = i;
         }
 
-        int[] parents = new int[count];
+        List<TopoPoint> tPoints = new List<TopoPoint>();
+        for (int i = 0; i < count; ++i)
+        {
+            int p = (i + min - 1) % count;
+            int n = (i + min + 1) % count;
+            int v = (i + min) % count;
+            if (sharpness[v] < sharpness[p] == sharpness[v] < sharpness[n])
+            {
+                TopoPoint t = new TopoPoint();
+                t.pos = pos[v];
+                t.height = sharpness[v];
+                t.prominence = 0;
+            }
+        }
 
+        tPoints[0].parent = tPoints[0];
+        TopoPoint[] tArr = tPoints.ToArray();
+        TopoTree(tArr, 0, 0);
+
+        currentPositions = new List<Vector3>();
+        foreach(TopoPoint t in tArr)
+            if (t.prominence > pLimit)
+                currentPositions.Add(t.pos);
     }
 
+    class TopoPoint
+    {
+        public Vector3 pos;
+        public float height;
+        public TopoPoint parent;
+        public TopoPoint lChild;
+        public TopoPoint hChild;
+        public float prominence;
+    };
+
+    void TopoTree(TopoPoint[] p, int i, float b)
+    {
+        if (i % 2 == 1)
+            p[i].prominence = p[i].height - b;
+        else
+        {
+            int maxL = -1;
+            int minL = -1;
+            int j = (i - 1) % p.Length;
+            while (p[j].parent == null)
+            {
+                if (minL == -1 || p[minL].height < p[j].height)
+                    minL = j;
+                if (maxL == -1 || p[maxL].height > p[j].height)
+                    maxL = j;
+                j = (j - 1) % p.Length;
+            }
+
+            int maxR = -1;
+            int minR = -1;
+            j = (i + 1) % p.Length;
+            while (p[j].parent == null)
+            {
+                if (minR == -1 || p[minR].height < p[j].height)
+                    minR = j;
+                if (maxR == -1 || p[maxR].height > p[j].height)
+                    maxR = j;
+                j = (j + 1) % p.Length;
+            }
+
+            if (p[maxL].height > p[maxR].height)
+            {
+                p[i].hChild = p[minL];
+                p[i].lChild = p[minR];
+                p[minL].parent = p[i];
+                p[minR].parent = p[i];
+                TopoTree(p, minL, b);
+                TopoTree(p, minR, p[i].height);
+            }
+            else
+            {
+                p[i].hChild = p[minR];
+                p[i].lChild = p[minL];
+                p[minR].parent = p[i];
+                p[minL].parent = p[i];
+                TopoTree(p, minR, b);
+                TopoTree(p, minL, p[i].height);
+            }
+        }
+    }
 
 
 
