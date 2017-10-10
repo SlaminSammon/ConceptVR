@@ -36,8 +36,12 @@ public class SketchTool : Tool {
     {
         Debug.Log("Up");
         SimplifyCurrent();
+
+        currentLine.positionCount = currentPositions.Count;
+        currentLine.SetPositions(currentPositions.ToArray());
+        currentLine.loop = true;
         //Generate the circle
-       
+
     }
 
     void SmoothCurrent()
@@ -52,7 +56,7 @@ public class SketchTool : Tool {
         currentPositions = newPositions;
     }
 
-    const float pLimit = .5f;    //Minimum sharpness prominence to be included as a vertex
+    const float pLimit = 0.3f;    //Minimum sharpness prominence to be included as a vertex
     void SimplifyCurrent()
     {
         Vector3[] pos = currentPositions.ToArray();
@@ -62,10 +66,10 @@ public class SketchTool : Tool {
         
         for (int i = 0; i < count; ++i)
         {
-            Vector3 p = pos[(i - 1) % count];
+            Vector3 p = pos[(i + count - 1) % count];
             Vector3 n = pos[(i + 1) % count];
             Vector3 v = pos[i];
-            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / Vector3.Distance(p, n);
+            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / (1 + Vector3.Distance(p, n));
             if (sharpness[i] < sharpness[min])
                 min = i;
         }
@@ -73,7 +77,7 @@ public class SketchTool : Tool {
         List<TopoPoint> tPoints = new List<TopoPoint>();
         for (int i = 0; i < count; ++i)
         {
-            int p = (i + min - 1) % count;
+            int p = (i + min + count - 1) % count;
             int n = (i + min + 1) % count;
             int v = (i + min) % count;
             if (sharpness[v] < sharpness[p] == sharpness[v] < sharpness[n])
@@ -82,6 +86,7 @@ public class SketchTool : Tool {
                 t.pos = pos[v];
                 t.height = sharpness[v];
                 t.prominence = 0;
+                tPoints.Add(t);
             }
         }
 
@@ -91,8 +96,12 @@ public class SketchTool : Tool {
 
         currentPositions = new List<Vector3>();
         foreach(TopoPoint t in tArr)
-            if (t.prominence > pLimit)
+            if (t.prominence >= pLimit)
+            {
                 currentPositions.Add(t.pos);
+                Debug.Log(t.height + "  " + t.prominence);
+            }
+                
     }
 
     class TopoPoint
@@ -108,19 +117,22 @@ public class SketchTool : Tool {
     void TopoTree(TopoPoint[] p, int i, float b)
     {
         if (i % 2 == 1)
+        {
+            //Debug.Log(p[i].height + "  " + p[i].parent.height + "  " + b);
             p[i].prominence = p[i].height - b;
+        }
         else
         {
             int maxL = -1;
             int minL = -1;
-            int j = (i - 1) % p.Length;
+            int j = (i + p.Length - 1) % p.Length;
             while (p[j].parent == null)
             {
-                if (minL == -1 || p[minL].height < p[j].height)
+                if (minL == -1 || p[minL].height > p[j].height)
                     minL = j;
-                if (maxL == -1 || p[maxL].height > p[j].height)
+                if (maxL == -1 || p[maxL].height < p[j].height)
                     maxL = j;
-                j = (j - 1) % p.Length;
+                j = (j + p.Length - 1) % p.Length;
             }
 
             int maxR = -1;
@@ -128,14 +140,20 @@ public class SketchTool : Tool {
             j = (i + 1) % p.Length;
             while (p[j].parent == null)
             {
-                if (minR == -1 || p[minR].height < p[j].height)
+                if (minR == -1 || p[minR].height > p[j].height)
                     minR = j;
-                if (maxR == -1 || p[maxR].height > p[j].height)
+                if (maxR == -1 || p[maxR].height < p[j].height)
                     maxR = j;
                 j = (j + 1) % p.Length;
             }
-
-            if (p[maxL].height > p[maxR].height)
+            
+            if (i == 0)
+            {
+                p[i].hChild = p[minL];
+                p[minL].parent = p[i];
+                TopoTree(p, minL, b);
+            }
+            else if (p[maxL].height > p[maxR].height)
             {
                 p[i].hChild = p[minL];
                 p[i].lChild = p[minR];
