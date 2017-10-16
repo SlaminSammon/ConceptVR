@@ -10,11 +10,12 @@ public class SketchTool : Tool {
     List<Vector3> currentPositions;
     GameObject generatedObj;
     const float circleSnap = 0.00f;
+    DCGBase dcgBase; 
 
 	// Use this for initialization
 	void Start () {
-		
-	}
+        dcgBase = GameObject.Find("DCG").GetComponent<DCGBase>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -56,7 +57,7 @@ public class SketchTool : Tool {
         currentPositions = newPositions;
     }
 
-    const float pLimit = 0.3f;    //Minimum sharpness prominence to be included as a vertex
+    const float pLimit = 0.5f;    //Minimum sharpness prominence to be included as a vertex --Lewi-- Updated this to .5f. We were getting a ton of verticies.
     void SimplifyCurrent()
     {
         Vector3[] pos = currentPositions.ToArray();
@@ -101,7 +102,9 @@ public class SketchTool : Tool {
                 currentPositions.Add(t.pos);
                 Debug.Log(t.height + "  " + t.prominence);
             }
-                
+        Debug.LogError(currentPositions.Count.ToString());
+  
+          
     }
 
     class TopoPoint
@@ -173,6 +176,17 @@ public class SketchTool : Tool {
             }
         }
     }
+
+    public List<Point> vec3toPoints(List<Vector3> vectors)
+    {
+        List<Point> points = new List<Point>();
+        foreach(Vector3 v in vectors)
+        {
+            points.Add(new Point(v));
+        }
+        return points;
+    }
+
 
 
 

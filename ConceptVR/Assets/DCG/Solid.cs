@@ -65,6 +65,7 @@ public class Solid {
         DCGBase.solids.Add(this);
     }
 
+
     public void updateMesh()
     {
 

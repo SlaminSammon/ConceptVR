@@ -68,4 +68,11 @@ public class DCGBase : MonoBehaviour {
     {
         return moveID++;
     }
+    /* This function will take the list of points that we are generating when we draw
+     * a line and create the entire hiearchy, from these n points.
+     * We will need to generate 2n points to create the mesh as a whole.*/
+    public void generateMesh(List<Point> points)
+    {
+        
+    }
 }
