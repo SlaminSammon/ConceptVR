@@ -7,11 +7,12 @@ public class Edge {
     public List<Face> faces;
     public int lastMoveID;
 
-    bool isLoop;
+    public bool isLoop;
     bool smooth;
 
     public Edge(List<Point> points, bool isLoop)
     {
+        this.isLoop = isLoop;
         this.points = points;
         this.faces = new List<Face>();
         foreach (Point p in points)

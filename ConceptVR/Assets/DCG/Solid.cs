@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Solid {
     public List<Face> faces;
@@ -61,13 +62,24 @@ public class Solid {
 
         mesh.SetVertices(verts);
         mesh.SetTriangles(tris.ToArray(), 0);
-
         DCGBase.solids.Add(this);
     }
-
-
-    public void updateMesh()
+    public List<Point> getPoints()
     {
-
+        List<Point> points = new List<Point>();
+        foreach(Face f in faces)
+        {
+            points.AddRange(f.getPoints());
+        }
+        return points.Distinct().ToList();
+    }
+    public List<Edge> getEdges()
+    {
+        List<Edge> edges = new List<Edge>();
+        foreach(Face f in faces)
+        {
+            edges.AddRange(f.edges);
+        }
+        return edges.Distinct().ToList();
     }
 }

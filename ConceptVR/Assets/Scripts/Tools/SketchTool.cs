@@ -37,6 +37,9 @@ public class SketchTool : Tool {
     {
         Debug.Log("Up");
         SimplifyCurrent();
+        GlomCurrent(.005f);
+
+        BuildCurrent();
 
         currentLine.positionCount = currentPositions.Count;
         currentLine.SetPositions(currentPositions.ToArray());
@@ -45,19 +48,49 @@ public class SketchTool : Tool {
 
     }
 
+    void BuildCurrent()
+    {
+        List<Vector3> normals = Enumerable.Repeat(Vector3.up, currentPositions.Count()).ToList();
+        List<Point> points = vec3toPoints(currentPositions);
+        List<Edge> edges = pointsToEdges(points);
+        new Face(edges);
+        Debug.LogError(currentPositions.Count.ToString());
+    }
+
+    void GlomCurrent(float limit)
+    {
+        List<Vector3> newPositions = new List<Vector3>();
+        newPositions.Add(currentPositions[0]);
+        Vector3 prev = currentPositions[0];
+        foreach(Vector3 v in currentPositions)
+        {
+            if ((v-prev).sqrMagnitude < limit*limit)
+            {
+                newPositions[newPositions.Count - 1] = ((v + prev) / 2);
+            } else
+            {
+                newPositions.Add(v);
+                prev = v;
+            }
+        }
+
+        currentPositions = newPositions;
+    }
+
     void SmoothCurrent()
     {
         List<Vector3> newPositions = new List<Vector3>(currentPositions.Count);
         newPositions.Add(currentPositions[0]);
-        for (int i = 1; i < currentPositions.Count-1; ++i)
+        for (int i = 1; i < currentPositions.Count - 1; ++i)
         {
-            newPositions.Add((currentPositions[i - 1] + currentPositions[i + 1])/2);
+            newPositions.Add((currentPositions[i - 1] + currentPositions[i + 1]) / 2);
         }
-        newPositions.Add(currentPositions[currentPositions.Count-1]);
+        newPositions.Add(currentPositions[currentPositions.Count - 1]);
         currentPositions = newPositions;
     }
 
-    const float pLimit = 0.5f;    //Minimum sharpness prominence to be included as a vertex --Lewi-- Updated this to .5f. We were getting a ton of verticies.
+
+    const float pLimit = 0.37f;    //Minimum sharpness prominence to be included as a vertex --Lewi-- Updated this to .5f. We were getting a ton of verticies.
     void SimplifyCurrent()
     {
         Vector3[] pos = currentPositions.ToArray();
@@ -70,7 +103,7 @@ public class SketchTool : Tool {
             Vector3 p = pos[(i + count - 1) % count];
             Vector3 n = pos[(i + 1) % count];
             Vector3 v = pos[i];
-            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / (1 + Vector3.Distance(p, n));
+            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / (1 + (p-n).sqrMagnitude);
             if (sharpness[i] < sharpness[min])
                 min = i;
         }
@@ -102,7 +135,6 @@ public class SketchTool : Tool {
                 currentPositions.Add(t.pos);
                 Debug.Log(t.height + "  " + t.prominence);
             }
-        Debug.LogError(currentPositions.Count.ToString());
   
           
     }
@@ -185,6 +217,18 @@ public class SketchTool : Tool {
             points.Add(new Point(v));
         }
         return points;
+    }
+    public List<Edge> pointsToEdges(List<Point> points)
+    {
+        List<Edge> edges = new List<Edge>();
+        Point prev = points[points.Count - 1];
+        foreach (Point p in points)
+        {
+            edges.Add(new Edge(prev, p));
+            prev = p;
+        }
+        edges.Add(new Edge(points, true));
+        return edges;
     }
 
 

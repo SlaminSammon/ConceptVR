@@ -46,8 +46,17 @@ public class DCGBase : MonoBehaviour {
 
         foreach (Edge e in edges)
         {
-            Vector3 edgeVec = e.points[e.points.Count - 1].position - e.points[0].position;
-            Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[1].position - edgeVec/2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude/2, .005f)));
+            Vector3 edgeVec;
+            for (int i = 0; i < e.points.Count-1; ++i)
+            {
+                edgeVec = e.points[i].position - e.points[i+1].position;
+                Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+            }
+            if (e.isLoop)
+            {
+                edgeVec = e.points[e.points.Count - 1].position - e.points[0].position;
+                Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+            }
         }
 
         faceMat.SetPass(0);
@@ -68,11 +77,5 @@ public class DCGBase : MonoBehaviour {
     {
         return moveID++;
     }
-    /* This function will take the list of points that we are generating when we draw
-     * a line and create the entire hiearchy, from these n points.
-     * We will need to generate 2n points to create the mesh as a whole.*/
-    public void generateMesh(List<Point> points)
-    {
-        
-    }
+    
 }

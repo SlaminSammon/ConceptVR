@@ -127,14 +127,13 @@ public class LaserPointer : MonoBehaviour
             dist = hit.distance;
         }
 
-        if (controller != null && controller.triggerPressed)
+        /*if (controller != null && controller.triggerPressed)
         {
             pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
         }
         else
-        {
+        {*/
             pointer.transform.localScale = new Vector3(thickness, thickness, dist);
-        }
         pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
     }
 }

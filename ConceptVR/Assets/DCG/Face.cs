@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Face {
     public List<Edge> edges;   //The edges of this face
@@ -47,5 +48,31 @@ public class Face {
         tris[2] = verts.Count-1;
         mesh.SetVertices(verts);
         mesh.SetTriangles(tris, 0);
+    }
+    public List<Point> getPoints()
+    {
+        List<Point> points = new List<Point>();
+        foreach(Edge e in edges)
+        {
+            points.AddRange(e.points);
+        }
+        return points.Distinct().ToList();
+    }
+
+    public Vector3 getNormal()
+    {
+        List<Point> points = getPoints();
+        Vector3 prevPos = points[points.Count - 1].position;
+        Vector3 prev = prevPos - points[points.Count - 2].position;
+        Vector3 norm = new Vector3(0,0,0);
+        foreach (Point p in points)
+        {
+            Vector3 next = p.position - prevPos;
+            norm += Vector3.Cross(prev, next);
+            prev = next;
+            prevPos = p.position;
+        }
+
+        return norm.normalized;
     }
 }
