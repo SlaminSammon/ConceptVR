@@ -16,5 +16,6 @@ public class steamController : Controller {
 	// Update is called once per frame
 	void Update () {
         currentTool.triggerInput = trackedController.triggerPressed;
+        currentTool.setPos(trackedController.transform.position);
     }
 }
