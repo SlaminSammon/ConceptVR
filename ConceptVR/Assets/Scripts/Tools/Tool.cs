@@ -4,16 +4,15 @@ using UnityEngine;
 
 public abstract class Tool : MonoBehaviour {
     public bool triggerInput;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Vector3 controllerPosition;
+    public void setPos(Vector3 pos)
+    {
+        controllerPosition = pos;
+    }
+    public Vector3 getPos()
+    {
+        return controllerPosition;
+    }
 
     public abstract void TriggerDown();
     public abstract void TriggerUp();
