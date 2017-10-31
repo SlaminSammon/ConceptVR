@@ -23,7 +23,6 @@ public class DCGBase : MonoBehaviour {
         Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
         
         new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
-        Debug.Log(points.Count);
 
         starter.gameObject.SetActive(false);
     }

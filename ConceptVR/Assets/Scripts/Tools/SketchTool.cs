@@ -54,7 +54,6 @@ public class SketchTool : Tool {
         List<Point> points = vec3toPoints(currentPositions);
         List<Edge> edges = pointsToEdges(points);
         new Face(edges);
-        Debug.LogError(currentPositions.Count.ToString());
     }
 
     void GlomCurrent(float limit)
@@ -133,7 +132,6 @@ public class SketchTool : Tool {
             if (t.prominence >= pLimit)
             {
                 currentPositions.Add(t.pos);
-                Debug.Log(t.height + "  " + t.prominence);
             }
   
           
