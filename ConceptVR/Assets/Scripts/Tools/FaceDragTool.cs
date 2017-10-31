@@ -46,8 +46,8 @@ public class FaceDragTool : Tool {
                 Vector3 grabProjY = Vector3.Project(grabProj3, yvec);
                 Vector2 grab = new Vector2((grabProj3-grabProjY).magnitude, grabProjY.magnitude);
 
-                Vector3 grabRel = transform.position - f.
-                float dist2 = (transform.position - Vector3.Project()).sqrMagnitude;
+                //Vector3 grabRel = transform.position - f.
+                float dist2 = 0;//(transform.position - Vector3.Project()).sqrMagnitude;
 
                 if (dist2 > nDist2)
                     continue;
