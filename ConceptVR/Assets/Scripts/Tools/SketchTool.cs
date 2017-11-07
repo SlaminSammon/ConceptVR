@@ -88,7 +88,7 @@ public class SketchTool : Tool {
     }
 
 
-    const float pLimit = 0.37f;    //Minimum sharpness prominence to be included as a vertex --Lewi-- Updated this to .5f. We were getting a ton of verticies.
+    const float pLimit = .002f;    //Minimum sharpness prominence to be included as a vertex --Lewi-- Updated this to .5f. We were getting a ton of verticies.
     void SimplifyCurrent()
     {
         //Debug.Log(currentPositions.Count.ToString());
@@ -96,13 +96,18 @@ public class SketchTool : Tool {
         int count = currentPositions.Count;
         float[] sharpness = new float[count];
         int min = 0;
-        
+        float speed = 0;
+
+        for (int i = 0; i < count; ++i)
+            speed += Vector3.Distance(pos[(i + count - 1) % count], pos[i]);
+        speed /= count;
+
         for (int i = 0; i < count; ++i)
         {
             Vector3 p = pos[(i + count - 1) % count];
             Vector3 n = pos[(i + 1) % count];
             Vector3 v = pos[i];
-            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / (1 + (p-n).sqrMagnitude);
+            sharpness[i] = Vector3.AngleBetween(v - p, n - v) / (1 + (p-n).sqrMagnitude) * speed;
             if (sharpness[i] < sharpness[min])
                 min = i;
         }
@@ -225,7 +230,7 @@ public class SketchTool : Tool {
             edges.Add(new Edge(prev, p));
             prev = p;
         }
-        edges.Add(new Edge(points, true));
+        //edges.Add(new Edge(points, true));    //BLAME
         return edges;
     }
 

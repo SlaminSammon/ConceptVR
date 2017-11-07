@@ -49,6 +49,7 @@ public class Face {
         mesh.SetVertices(verts);
         mesh.SetTriangles(tris, 0);
     }
+    
     public List<Point> getPoints()
     {
         List<Point> points = new List<Point>();

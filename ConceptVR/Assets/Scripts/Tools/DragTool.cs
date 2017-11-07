@@ -5,9 +5,10 @@ using UnityEngine;
 public class DragTool : Tool
 {
     enum GrabType { Point, Edge, Face };
-
-
+    
+    public Material selectMat;
     public float grabDistance = .1f;
+
     Face nearestFace;
     Edge nearestEdge;
     Point nearestPoint;
@@ -42,7 +43,7 @@ public class DragTool : Tool
     {
         if (nearestFace != null)
         {
-            dcgObject.faceMat.SetPass(0);
+            selectMat.SetPass(0);
 
             Graphics.DrawMeshNow(nearestFace.mesh, Vector3.zero + nearestFace.getNormal() * .005f, Quaternion.identity);
             Graphics.DrawMeshNow(nearestFace.mesh, Vector3.zero - nearestFace.getNormal() * .005f, Quaternion.identity);
@@ -50,7 +51,7 @@ public class DragTool : Tool
         }
         else if (nearestEdge != null)
         {
-            dcgObject.edgeMat.SetPass(0);
+            selectMat.SetPass(0);
 
 
             Vector3 edgeVec = new Vector3();
@@ -68,7 +69,7 @@ public class DragTool : Tool
         }
         else if (nearestPoint != null)
         {
-            dcgObject.pointMat.SetPass(0);
+            selectMat.SetPass(0);
             Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(nearestPoint.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
             Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
         }
@@ -245,10 +246,57 @@ public class DragTool : Tool
             List<Point> corners = new List<Point>();
             List<Point> eCorners = new List<Point>();
 
+            List<Point> ePoints = new List<Point>();
+            List<Edge> eEdges = new List<Edge>();
+            List<Face> eFaces = new List<Face>();
+            
+            eFaces.Add(nearestFace);
+
             foreach (Edge e in nearestFace.edges)
             {
-
+                corners.Add(e.points[0]);
+                eCorners.Add(new Point(e.points[0].position));
             }
+
+            int i = 0;
+            foreach (Edge e in nearestFace.edges)
+            { 
+                List<Point> edgePoints = new List<Point>();
+                int j = 0;
+                foreach (Point p in e.points)
+                {
+                    if (j < e.points.Count - 1)
+                        ePoints.Add(p);
+
+
+                    if (j == 0)
+                        edgePoints.Add(eCorners[i]);
+                    else if (j == e.points.Count-1)
+                        edgePoints.Add(eCorners[(i + 1) % eCorners.Count]);
+                    else
+                        edgePoints.Add(new Point(p.position));
+                    ++j;
+                }
+
+                edgePoints.Reverse();
+                Edge eEdge = new Edge(edgePoints, e.isLoop);
+                eEdges.Add(eEdge);
+
+                List<Edge> faceEdges = new List<Edge>();
+                faceEdges.Add(eEdge);
+                faceEdges.Add(new Edge(eEdge.points[eEdge.points.Count - 1], e.points[0]));
+                faceEdges.Add(e);
+                faceEdges.Add(new Edge(e.points[e.points.Count - 1], eEdge.points[0]));
+                eFaces.Add(new Face(faceEdges));
+                ++i;
+            }
+
+            eEdges.Reverse();
+            Face gFace = new Face(eEdges);
+            eFaces.Add(gFace);
+
+            nearestFace = gFace;
+            grabbedPoints = ePoints;
 
             TriggerDown();
         }

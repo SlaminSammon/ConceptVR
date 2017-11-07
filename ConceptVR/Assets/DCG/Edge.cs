@@ -18,6 +18,7 @@ public class Edge {
         foreach (Point p in points)
             p.edges.Add(this);
         DCGBase.edges.Add(this);
+        Debug.Log(points.Count);
     }
 
     public Edge(Point p1, Point p2)
