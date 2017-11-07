@@ -46,7 +46,7 @@ public class DragTool : Tool
 
             Graphics.DrawMeshNow(nearestFace.mesh, Vector3.zero + nearestFace.getNormal() * .005f, Quaternion.identity);
             Graphics.DrawMeshNow(nearestFace.mesh, Vector3.zero - nearestFace.getNormal() * .005f, Quaternion.identity);
-            Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
+            Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
         }
         else if (nearestEdge != null)
         {
@@ -64,13 +64,13 @@ public class DragTool : Tool
                 edgeVec = nearestEdge.points[nearestEdge.points.Count - 1].position - nearestEdge.points[0].position;
                 Graphics.DrawMeshNow(dcgObject.edgeMesh, Matrix4x4.TRS(nearestEdge.points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.01f, edgeVec.magnitude / 2, .01f)));
             }
-            Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
+            Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
         }
         else if (nearestPoint != null)
         {
             dcgObject.pointMat.SetPass(0);
             Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(nearestPoint.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
-            Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
+            Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
         }
     }
 
@@ -97,7 +97,7 @@ public class DragTool : Tool
         }
 
         
-        conGrabPos = transform.position;
+        conGrabPos = controllerPosition;
         grabOrientation = transform.rotation;
         pointGrabPos = new List<Vector3>();
         foreach (Point p in grabbedPoints)
@@ -127,11 +127,11 @@ public class DragTool : Tool
             List<Vector2> pp = new List<Vector2>();     //projected points
             Vector3 zvec = f.getNormal();
             Vector3 yvec = fp[1].position - fp[0].position;
-            Vector3 grabProj3 = Vector3.ProjectOnPlane(transform.position, zvec);
+            Vector3 grabProj3 = Vector3.ProjectOnPlane(controllerPosition, zvec);
             Vector3 grabProjY = Vector3.Project(grabProj3, yvec);
             Vector2 grab = new Vector2((grabProj3 - grabProjY).magnitude, grabProjY.magnitude);
 
-            Vector3 grabRel = transform.position - fp[0].position;
+            Vector3 grabRel = controllerPosition - fp[0].position;
             float dist2 = (grabRel - Vector3.ProjectOnPlane(grabRel, zvec)).sqrMagnitude;
 
             if (dist2 > nDist2)
@@ -174,10 +174,10 @@ public class DragTool : Tool
             for (int i = 0; i < (e.isLoop ? e.points.Count : e.points.Count - 1); ++i)
             {
                 Vector3 ediff = (e.points[i].position - e.points[(i + 1) % e.points.Count].position);
-                Vector3 hdiff = (transform.position - e.points[i].position);
+                Vector3 hdiff = (controllerPosition - e.points[i].position);
                 Vector3 proj = Vector3.Project(hdiff, ediff);
                 float dist2 = (hdiff - proj).sqrMagnitude;
-                if (dist2 < nDist2 && hdiff.sqrMagnitude < ediff.sqrMagnitude && (transform.position - e.points[(i + 1) % e.points.Count].position).sqrMagnitude < ediff.sqrMagnitude)
+                if (dist2 < nDist2 && hdiff.sqrMagnitude < ediff.sqrMagnitude && (controllerPosition - e.points[(i + 1) % e.points.Count].position).sqrMagnitude < ediff.sqrMagnitude)
                 {
                     nearestEdge = e;
                     nDist2 = dist2;
@@ -192,7 +192,7 @@ public class DragTool : Tool
         nearestPoint = null;
         foreach (Point p in DCGBase.points)
         {
-            float dist2 = (transform.position - p.position).sqrMagnitude;
+            float dist2 = (controllerPosition - p.position).sqrMagnitude;
             if (dist2 < nDist2)
             {
                 nearestPoint = p;
@@ -206,9 +206,9 @@ public class DragTool : Tool
         Quaternion orientation = transform.rotation * Quaternion.Inverse(grabOrientation);
 
         for (int i = 0; i < grabbedPoints.Count; ++i) {
-            grabbedPoints[i].position = transform.position + orientation * pointGrabPos[i];
+            grabbedPoints[i].position = controllerPosition + orientation * pointGrabPos[i];
         }
-        grabbedPoints[0].setPosition(transform.position + orientation * pointGrabPos[0]);
+        grabbedPoints[0].setPosition(controllerPosition + orientation * pointGrabPos[0]);
     }
 
     void extrude()
@@ -219,6 +219,7 @@ public class DragTool : Tool
             new Edge(ep, grabbedPoints[0]);
             grabbedPoints = new List<Point>();
             grabbedPoints.Add(ep);
+            TriggerDown();
         } else if (grabType == GrabType.Edge)
         {
             List<Point> ep = new List<Point>();
@@ -231,24 +232,25 @@ public class DragTool : Tool
 
             List<Edge> ee = new List<Edge>();
             ee.Add(new Edge(ep, nearestEdge.isLoop));
+            ee.Add(new Edge(ep[ep.Count - 1], grabbedPoints[0]));
             ee.Add(nearestEdge);
+            ee.Add(new Edge(grabbedPoints[ep.Count - 1], ep[0]));
 
             Face ef = new Face(ee);
             grabbedPoints = ep;
             nearestEdge = ee[0];
+            TriggerDown();
         } else if (grabType == GrabType.Face)
         {
-            List<Point> ep = new List<Point>();
+            List<Point> corners = new List<Point>();
+            List<Point> eCorners = new List<Point>();
 
             foreach (Edge e in nearestFace.edges)
             {
-                List<Point> eep = new List<Point>();
-                foreach (Point p in e.points)
-                    eep.Add(new Point(p.position));
-                eep.Reverse();
+
             }
 
-
+            TriggerDown();
         }
     }
 }
