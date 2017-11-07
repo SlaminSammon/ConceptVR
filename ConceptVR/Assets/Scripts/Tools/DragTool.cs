@@ -112,6 +112,11 @@ public class DragTool : Tool
         return;
     }
 
+    public override void GripDown()
+    {
+        extrude();
+    }
+
     void updateFace()
     {
         float nDist2 = grabDistance * grabDistance;

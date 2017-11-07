@@ -10,6 +10,7 @@ public class steamController : Controller {
         trackedController = GetComponent<SteamVR_TrackedController>();
         trackedController.TriggerClicked += this.TriggerDown;
         trackedController.TriggerUnclicked += this.TriggerUp;
+        trackedController.Gripped += this.GripDown;
         currentTool = tools[0];
     }
 	

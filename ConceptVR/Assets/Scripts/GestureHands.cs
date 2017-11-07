@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Leap;
 
 public class GestureHands : MonoBehaviour {
-    Leap.Controller controller;
+    /*Leap.Controller controller;
 
 	// Use this for initialization
 	void Start () {
@@ -16,5 +15,5 @@ public class GestureHands : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-	}
+	}*/
 }

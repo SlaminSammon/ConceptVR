@@ -30,4 +30,12 @@ public abstract class Controller : MonoBehaviour {
     {
 
     }
+    protected void GripDown(object sender, ClickedEventArgs e)
+    {
+        currentTool.GripDown();
+    }
+    protected void offGrip(object sender, ClickedEventArgs e)
+    {
+       
+    }
 }

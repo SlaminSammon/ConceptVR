@@ -14,6 +14,7 @@ public abstract class Tool : MonoBehaviour {
         return controllerPosition;
     }
 
-    public abstract void TriggerDown();
-    public abstract void TriggerUp();
+    public virtual void TriggerDown() { }
+    public virtual void TriggerUp() { }
+    public virtual void GripDown() { }
 }

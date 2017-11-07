@@ -62,4 +62,8 @@ public class VertDragTool : Tool {
             Graphics.DrawMeshNow(dcgObject.pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)));
         }
     }
+    public override void onGrip()
+    {
+        return;
+    }
 }

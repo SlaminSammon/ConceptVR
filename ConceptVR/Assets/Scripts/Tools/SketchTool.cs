@@ -15,12 +15,10 @@ public class SketchTool : Tool {
 	// Use this for initialization
 	void Start () {
         dcgBase = GameObject.Find("DCG").GetComponent<DCGBase>();
-        Debug.Log("Start");
     }
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("Update");
         if (triggerInput && !currentLine.loop)
         {
             currentPositions.Add(controllerPosition);
@@ -31,14 +29,12 @@ public class SketchTool : Tool {
 
     public override void TriggerDown()
     {
-        Debug.Log("Down");
         currentPositions = new List<Vector3>();
         currentLine = Instantiate(linePrefab).GetComponent<LineRenderer>();
     }
 
     public override void TriggerUp()
     {
-        Debug.Log("Up");
         SimplifyCurrent();
         GlomCurrent(.005f);
 
@@ -95,7 +91,7 @@ public class SketchTool : Tool {
     const float pLimit = 0.37f;    //Minimum sharpness prominence to be included as a vertex --Lewi-- Updated this to .5f. We were getting a ton of verticies.
     void SimplifyCurrent()
     {
-        Debug.Log(currentPositions.Count.ToString());
+        //Debug.Log(currentPositions.Count.ToString());
         Vector3[] pos = currentPositions.ToArray();
         int count = currentPositions.Count;
         float[] sharpness = new float[count];

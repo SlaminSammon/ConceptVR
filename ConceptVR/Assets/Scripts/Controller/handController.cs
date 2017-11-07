@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Leap.Unity;
+using Leap;
 public struct GestureEventArgs
 {
 
@@ -9,6 +11,7 @@ public delegate void GestureEventHandler();
 
 public class handController: Controller {
     public Leap.Controller trackedController;
+    private LeapServiceProvider leapProvider;
     public bool pinchHeld = false;
     public bool grabHeld = false;
 
@@ -18,7 +21,9 @@ public class handController: Controller {
     public event GestureEventHandler grabGone;
     // Use this for initialization
     void Start () {
-        trackedController = new Leap.Controller();
+        leapProvider = FindObjectOfType<LeapServiceProvider>();
+        if (leapProvider == null)
+            Debug.LogError("No Leap Provider found!");
         pinchMade += TriggerDown;
         pinchGone += TriggerUp;
         currentTool = tools[0];
@@ -39,17 +44,15 @@ public class handController: Controller {
         //Check to see if a pinch is being held. 
         if (checkPinch())
         {
-            Debug.Log("Pinch is Held");
+            //Debug.Log("Pinch is Held");
             OnPinchHeld();
             currentTool.triggerInput = true;
-            if (!pinchHeld) pinchHeld = true;
         }
-        else pinchHeld = false;
-        if(pinchHeld) 
+        else
         {
+            //Debug.Log("Pinch is Gone");
             OnPinchGone();
             currentTool.triggerInput = false;
-            pinchHeld = false;
         }
 
     }
@@ -64,11 +67,12 @@ public class handController: Controller {
     }
     public bool checkPinch()
     {
-        Leap.Frame frame = trackedController.Frame();
+
+        Leap.Frame frame = leapProvider.CurrentFrame;
         Leap.Hand rhand;
         if(frame.Hands.Count > 0)
         {
-            Debug.Log("Catds");
+            //Debug.Log("Catds");
             rhand = frame.Hands[0];
             if (rhand.IsRight)
             {
@@ -76,7 +80,7 @@ public class handController: Controller {
                 {
                     if (f.Type == Leap.Finger.FingerType.TYPE_INDEX)
                     {
-                        currentTool.setPos(new Vector3(f.TipPosition.x, f.TipPosition.y, f.TipPosition.z));
+                        currentTool.setPos(f.TipPosition.ToVector3());
                         //Debug.Log(currentTool.getPos().ToString());
                     }
                 }
@@ -91,7 +95,7 @@ public class handController: Controller {
                 {
                     if (f.Type == Leap.Finger.FingerType.TYPE_INDEX)
                     {
-                        currentTool.setPos(new Vector3(f.TipPosition.x, f.TipPosition.y, f.TipPosition.z));
+                        currentTool.setPos(f.TipPosition.ToVector3());
                     }
                 }
                 if (rhand.PinchStrength >= 1f) return true;
