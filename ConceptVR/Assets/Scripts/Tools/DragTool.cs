@@ -222,15 +222,28 @@ public class DragTool : Tool
                 ep.Add(new Point(p.position));
             }
 
+            ep.Reverse();
+
             List<Edge> ee = new List<Edge>();
             ee.Add(new Edge(ep, nearestEdge.isLoop));
-            ee.Add(new Edge(grabbedPoints[0], ep[0]));
             ee.Add(nearestEdge);
-            ee.Add(new Edge(grabbedPoints[grabbedPoints.Count-1], ep[ep.Count-1]));
 
             Face ef = new Face(ee);
             grabbedPoints = ep;
             nearestEdge = ee[0];
+        } else if (grabType == GrabType.Face)
+        {
+            List<Point> ep = new List<Point>();
+
+            foreach (Edge e in nearestFace.edges)
+            {
+                List<Point> eep = new List<Point>();
+                foreach (Point p in e.points)
+                    eep.Add(new Point(p.position));
+                eep.Reverse();
+            }
+
+
         }
     }
 }
