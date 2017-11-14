@@ -1,6 +1,17 @@
 ﻿//======= Copyright (c) Valve Corporation, All rights reserved. ===============
 using UnityEngine;
 using System.Collections;
+/*
+public struct PointerEventArgs
+{
+    public uint controllerIndex;
+    public uint flags;
+    public float distance;
+    public Transform target;
+}
+
+public delegate void PointerEventHandler(object sender, PointerEventArgs e);
+*/
 
 public class SteamVR_LaserPointer : MonoBehaviour
 {

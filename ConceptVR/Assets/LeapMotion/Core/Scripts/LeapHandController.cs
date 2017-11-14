@@ -16,6 +16,8 @@ namespace Leap.Unity {
   /**
    * LeapHandController uses a Factory to create and update HandRepresentations based on Frame's received from a Provider  */
   public class LeapHandController : MonoBehaviour {
+
+        public Leap.Unity.RigidHand rigidHand;
     protected LeapProvider provider;
     protected HandPool pool;
 

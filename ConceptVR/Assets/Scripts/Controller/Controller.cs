@@ -36,6 +36,6 @@ public abstract class Controller : MonoBehaviour {
     }
     protected void offGrip(object sender, ClickedEventArgs e)
     {
-       
+        return;
     }
 }
