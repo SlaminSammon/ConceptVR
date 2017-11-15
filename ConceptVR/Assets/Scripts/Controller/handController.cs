@@ -12,6 +12,7 @@ public class handController: Controller {
         leapControl.pinchMade += TriggerDown;
         leapControl.pinchGone += TriggerUp;
         leapControl.grabMade += GripDown;
+        leapControl.grabGone += GripUp;
         currentTool = tools[0];
     }
 
@@ -30,6 +31,10 @@ public class handController: Controller {
     protected void TriggerUp()
     {
         currentTool.TriggerUp();
+    }
+    protected void GripUp()
+    {
+        return;
     }
     protected void GripDown()
     {
