@@ -45,16 +45,23 @@ public class DCGBase : MonoBehaviour {
 
         foreach (Edge e in edges)
         {
-            Vector3 edgeVec;
-            for (int i = 0; i < e.points.Count-1; ++i)
+            if (e.smooth)
             {
-                edgeVec = e.points[i].position - e.points[i+1].position;
-                Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+                Graphics.DrawMeshNow(e.mesh, Vector3.zero, Quaternion.identity, 0);
             }
-            if (e.isLoop)
+            else
             {
-                edgeVec = e.points[e.points.Count - 1].position - e.points[0].position;
-                Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+                Vector3 edgeVec;
+                for (int i = 0; i < e.points.Count - 1; ++i)
+                {
+                    edgeVec = e.points[i].position - e.points[i + 1].position;
+                    Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+                }
+                if (e.isLoop)
+                {
+                    edgeVec = e.points[e.points.Count - 1].position - e.points[0].position;
+                    Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+                }
             }
         }
 

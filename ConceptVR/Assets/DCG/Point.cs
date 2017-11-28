@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Point {
+public class Point : DCGElement {
     public List<Edge> edges;
     public Vector3 position;
-    public int lastMoveID;
 
     public Point(Vector3 position)
     {

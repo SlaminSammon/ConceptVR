@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //This class represents a change to the DCG Geometry.  This exists for the purpose of undos.
-public class DCGUpdate : MonoBehaviour {
+public class DCGUpdate {
+    
+}
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+public class DCGChange {
+
 }

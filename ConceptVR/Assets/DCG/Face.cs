@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Face {
+public class Face : DCGElement {
     public List<Edge> edges;   //The edges of this face
     public List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
     public Mesh mesh;
-    public int lastMoveID;
     
     public Face(List<Edge> edges)
     {

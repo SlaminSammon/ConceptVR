@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Solid {
+public class Solid : DCGElement {
     public List<Face> faces;
     public Mesh mesh;
-    public int lastMoveID;
 
 
     public Solid(Mesh m, Matrix4x4 t, Vector3 translate)
