@@ -8,6 +8,14 @@ public class Face : DCGElement {
     public List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
     public Mesh mesh;
     
+    public Face()
+    {
+        solids = new List<Solid>();
+        edges = new List<Edge>();
+
+        DCGBase.faces.Add(this);
+    }
+
     public Face(List<Edge> edges)
     {
         solids = new List<Solid>();

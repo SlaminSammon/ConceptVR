@@ -72,7 +72,7 @@ public class Edge : DCGElement {
 
     static int curveRes = 50;
     static int roundRes = 10;
-    static float roundRad = .5f;
+    static float roundRad = .005f;
     public void updateMesh()
     {
         smoothPoints = this.smoothVerts(curveRes);
@@ -99,12 +99,12 @@ public class Edge : DCGElement {
         {
             int tb = i * 6;
             tris[tb++] = i;
-            tris[tb++] = i + (i % roundRes + 1) % roundRes;
             tris[tb++] = i + roundRes;
+            tris[tb++] = i + 1;
 
             tris[tb++] = i + roundRes;
-            tris[tb++] = i + (i % roundRes + 1) % roundRes;
-            tris[tb++] = i + roundRes + (i % roundRes + 1) % roundRes;
+            tris[tb++] = i + roundRes + 1;
+            tris[tb++] = i + 1;
         }
 
         mesh = new Mesh();
@@ -112,4 +112,5 @@ public class Edge : DCGElement {
         mesh.SetTriangles(tris, 0);
         mesh.SetNormals(normals);
     }
+    
 }

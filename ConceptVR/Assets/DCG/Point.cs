@@ -21,6 +21,8 @@ public class Point : DCGElement {
         foreach (Edge e in edges) if (e.lastMoveID != moveID)
         {
             e.lastMoveID = moveID;
+            if (e.smooth)
+                e.updateMesh();
             foreach (Face f in e.faces) if (f.lastMoveID != moveID)
             {
                 f.lastMoveID = moveID;
