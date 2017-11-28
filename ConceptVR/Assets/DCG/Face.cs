@@ -26,6 +26,17 @@ public class Face : DCGElement {
         updateMesh();
     }
 
+    public override void Render()
+    {
+        Debug.Log("Buhbye");
+        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+    }
+
+    public override void Update()
+    {
+        updateMesh();
+    }
+
     public void updateMesh()
     {
         mesh = new Mesh();

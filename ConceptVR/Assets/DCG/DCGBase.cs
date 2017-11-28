@@ -19,12 +19,12 @@ public class DCGBase : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Transform starter = transform.Find("Starter");
+        /*Transform starter = transform.Find("Starter");
         Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
         
         new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
 
-        starter.gameObject.SetActive(false);
+        starter.gameObject.SetActive(false);*/
     }
 	
 	// Update is called once per frame
@@ -64,19 +64,15 @@ public class DCGBase : MonoBehaviour {
                 }
             }
         }
-
+        
+        
         faceMat.SetPass(0);
-        foreach(Face f in faces)
-        {
-            Graphics.DrawMeshNow(f.mesh, Vector3.zero, Quaternion.identity);
-        }
-
+        foreach (Face f in faces)
+            f.Render();
+        
         solidMat.SetPass(0);
         foreach (Solid s in solids)
-        {
-            //Graphics.DrawMeshNow(pointMesh, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(1f, 1f, 1f)), pointMat, 1);
-            Graphics.DrawMeshNow(s.mesh, transform.position, transform.rotation);
-        }
+            s.Render();
     }
 
     public static int nextMoveID()

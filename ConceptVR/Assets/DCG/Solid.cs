@@ -7,6 +7,11 @@ public class Solid : DCGElement {
     public List<Face> faces;
     public Mesh mesh;
 
+    public Solid()
+    {
+        faces = new List<Face>();
+        DCGBase.solids.Add(this);
+    }
 
     public Solid(Mesh m, Matrix4x4 t, Vector3 translate)
     {
@@ -63,6 +68,17 @@ public class Solid : DCGElement {
         mesh.SetTriangles(tris.ToArray(), 0);
         DCGBase.solids.Add(this);
     }
+
+    public override void Render()
+    {
+        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+    }
+
+    public override void Update()
+    {
+        //TODO
+    }
+
     public List<Point> getPoints()
     {
         List<Point> points = new List<Point>();
