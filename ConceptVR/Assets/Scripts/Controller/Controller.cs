@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,5 +38,34 @@ public abstract class Controller : MonoBehaviour {
     protected void GripUp(object sender, ClickedEventArgs e)
     {
         return;
+    }
+    public void changeTool(string toolName)
+    {
+        switch(toolName)
+        {
+            case "DragTool":
+                currentTool = getToolByType(typeof(DragTool));
+                break;
+            case "SketchTool":
+                currentTool = getToolByType(typeof(SketchTool));
+                break;
+            case "BezierTool":
+                currentTool = getToolByType(typeof(BezierTool));
+                break;
+            /*case "ExtrudeTool":
+                currentTool = getToolByType(typeof(ExtrudeTool));
+                break;*/
+            default:
+                break;
+        }
+    }
+    public Tool getToolByType(Type type)
+    {
+        foreach (Tool t in tools)
+        {
+            if (t.GetType() == type)
+                return t;
+        }
+        return currentTool;
     }
 }

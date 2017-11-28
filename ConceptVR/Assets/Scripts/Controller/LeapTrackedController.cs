@@ -34,14 +34,14 @@ public class LeapTrackedController : MonoBehaviour
     {
         //Check to see if a pinch is being held.
         bool pinch = checkPinch();
-        bool grab = false; ;
+        bool grab = false; 
         if (!pinch) grab = checkGrab();
-        if (pinch && !pinchHeld)
+        if (pinch && !pinchHeld && !grab)
         {
             pinchHeld = true;
             OnPinchHeld();
         }
-        else if (!pinch && pinchHeld)
+        else if (!pinch && pinchHeld && !grab)
         {
             pinchHeld = false;
             OnPinchGone();
@@ -101,7 +101,7 @@ public class LeapTrackedController : MonoBehaviour
             hand = Hands.Left;
         if (hand == null)
             return false;
-        position = util.getMiddlePos(hand);
+        position = util.getIndexPos(hand);
         return util.IsGrabbing(hand);
         
     }
