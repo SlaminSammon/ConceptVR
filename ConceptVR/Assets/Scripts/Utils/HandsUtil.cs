@@ -51,7 +51,7 @@ public class HandsUtil {
     }
     public bool IsFlatHand(Leap.Hand hand)
     {
-        return hand.GrabAngle < .3f;
+        return hand.GrabAngle <= 1f;
     }
     public bool IsGrabbingAngle(Leap.Hand hand)
     {
