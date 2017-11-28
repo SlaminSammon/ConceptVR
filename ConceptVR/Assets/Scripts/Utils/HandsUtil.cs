@@ -29,9 +29,9 @@ public class HandsUtil {
     //Check pinch and grab pose
     public bool IsPinching(Leap.Hand hand)
     {
-        return hand.PinchStrength > .9f;
+        //return hand.PinchStrength > .9f;
         //first and foremost we need the index to be pinched, if it it is we have a true
-        /*bool pinch = checkPinchOfFinger(hand, "index");
+        bool pinch = checkPinchOfFinger(hand, "index");
         //if we are in pinch with index check to see if other fingers are not.
         if (pinch)
         {
@@ -43,7 +43,7 @@ public class HandsUtil {
                     return false;
             }
         }
-        return pinch;*/
+        return pinch;
     }
     public bool IsGrabbing(Leap.Hand hand)
     {
