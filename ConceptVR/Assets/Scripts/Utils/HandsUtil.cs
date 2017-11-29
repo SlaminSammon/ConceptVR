@@ -154,7 +154,14 @@ public class HandsUtil {
             return false;
         return true;
     }
-
-
+    public Leap.Hand getHandByHandedness(string handedness)
+    {
+        if (handedness == "Right")
+            return Hands.Right;
+        else if (handedness == "Left")
+            return Hands.Left;
+        else
+            return null;
+    }
 
 }

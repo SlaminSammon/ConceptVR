@@ -27,6 +27,7 @@ public struct FingerInformation
 }
 public struct HandInformation
 {
+    public int velocityChange;
     public Vector3 palmVelocity;
     public Vector3 palmPosition;
     public Vector3 direction;
@@ -43,6 +44,7 @@ public class LeapTrackedController : MonoBehaviour
     private LeapServiceProvider leapProvider;
     public bool pinchHeld = false;
     public bool grabHeld = false;
+    public int velocity = 1; //To be checked against a seperate frame. 0 means decreased velocity. 1 means stagnent. 2 means increased.
     public Vector3 position;
     public string handedness;
     public int toolIndex = 0;
@@ -50,6 +52,7 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler pinchGone;
     public event GestureEventHandler grabMade;
     public event GestureEventHandler grabGone;
+    public Queue<FrameInformation> recentFrames;
 
     // Use this for initialization
     void Start()
@@ -80,6 +83,11 @@ public class LeapTrackedController : MonoBehaviour
         {
             OnPinchHeld();
         }
+        if (recentFrames.Count == 100)
+        {
+            recentFrames.Dequeue();
+        }
+        recentFrames.Enqueue(fetchFrameInformation());
     }
 
     public void OnPinchHeld()
@@ -144,7 +152,7 @@ public class LeapTrackedController : MonoBehaviour
         position = util.getThumbPos(hand);
         return util.checkThumbsUp(hand);
     }
-    FrameInformation fetchFrameInformation(Leap.Hand hand)
+    FrameInformation fetchFrameInformation()
     {
         FrameInformation frameInfo;
         frameInfo.grabHeld = grabHeld;
@@ -187,7 +195,19 @@ public class LeapTrackedController : MonoBehaviour
         handInfo.palmPosition = hand.palmPosition.toVector3();
         handInfo.palmVelocity = hand.palmvVelocity.toVector3();
         handInfo.rotation = hand.Rotation.ToQuaternion();
+        handInfo.velocityChange = velocityChange();
         return frameInfo;
 
+    }
+    public int velocityChange()
+    {
+        FrameInformation[] frames = recentFrames.ToArray();
+        FrameInformation recentFrame = frames[frames.Length - 1];
+        hand = util.getHandByHandedness(handedness);
+        if (recentFrame.hand.palmVelocity > hand.palmVelocity)
+            return 2;
+        else if (recentFrame.hand.palmVelocity < hand.palmVelocity)
+            return 0;
+        return 1;
     }
 }
