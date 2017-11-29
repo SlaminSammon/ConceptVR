@@ -124,5 +124,17 @@ public class HandsUtil {
             return true;
         return false;
     }
-
+    /*bool checkThumbsUp(Leap.Hand hand)
+    {
+        foreach(Leap.Finger f in hand.Fingers)
+        {
+            if (f.Type == Leap.Finger.FingerType.TYPE_THUMB)
+                if(f.IsExtended &&)
+        }
+    }
+    bool checkDirectionUp(Leap.Finger finger)
+    {
+        Vector3 direction = finger.Direction.toVector3();
+        return (direction.x > .95f && direction.y > .95f && direction.z > .95f);
+    }*/
 }

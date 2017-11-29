@@ -6,6 +6,34 @@ public struct GestureEventArgs
 {
 
 }
+public struct FrameInformation
+{
+    bool grabHeld;
+    bool pinchHeld;
+    HandInformation hand;
+    FingerInformation thumb;
+    FingerInformation index;
+    FingerInformation middle;
+    FingerInformation ring;
+    FingerInformation pinky;
+}
+public struct FingerInformation
+{
+    bool isExtrude;
+    Vector3 direction;
+    Vector3 tipPosition;
+    Vector3 tipVelocity;
+}
+public struct HandInformation
+{
+    Vector3 palmVelocity;
+    Vector3 palmPosition;
+    Vector3 direction;
+    float pitch;
+    float yaw;
+    float roll;
+    Quaternion rotation;
+}
 public delegate void GestureEventHandler();
 public class LeapTrackedController : MonoBehaviour
 {
@@ -51,31 +79,6 @@ public class LeapTrackedController : MonoBehaviour
         {
             OnPinchHeld();
         }
-        //Check to see if a pinch is being held.
-        /*bool pinch = checkPinch();
-        bool grab = false; 
-        if (!pinch) grab = checkGrab();
-        if (pinch && !pinchHeld && !grab)
-        {
-            pinchHeld = true;
-            OnPinchHeld();
-        }
-        else if (!pinch && pinchHeld && !grab)
-        {
-            pinchHeld = false;
-            OnPinchGone();
-        }
-        //Check to see if grab is held
-        if (grab && !grabHeld)
-        {
-            grabHeld = true;
-            OnGrabHeld();
-        }
-        else if (!grab && grabHeld)
-        {
-            grabHeld = false;
-            OnGrabGone();
-        }*/
     }
 
     public void OnPinchHeld()
@@ -127,5 +130,18 @@ public class LeapTrackedController : MonoBehaviour
         position = util.getIndexPos(hand);
         return util.IsGrabbing(hand);
         
+    }
+    //in progress
+    public bool checkThumbsUp()
+    {
+        if (handedness == "Right")
+            hand = Hands.Right;
+        else
+            hand = Hands.Left;
+        if (hand == null)
+            return false;
+        position = util.getThumbPos(hand);
+        return true;
+        //return util.IsThumbsUp();
     }
 }
