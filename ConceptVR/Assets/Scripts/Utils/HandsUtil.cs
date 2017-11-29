@@ -47,8 +47,8 @@ public class HandsUtil {
     }
     public bool IsGrabbing(Leap.Hand hand)
     {
-        //return hand.GrabStrength > .9f;
-        foreach(Leap.Finger hand.fingers)
+        return hand.GrabStrength > .9f;
+        //foreach(Leap.Finger hand.fingers)
     }
     public bool IsFlatHand(Leap.Hand hand)
     {
