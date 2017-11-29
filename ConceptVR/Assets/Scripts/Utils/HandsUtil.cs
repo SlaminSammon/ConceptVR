@@ -118,23 +118,43 @@ public class HandsUtil {
         Vector3 metacarpal = getMetacarpalPosition(finger);
         float mpAngle = 180 - Vector3.Angle(proximal-metacarpal, intermediate-proximal);
         float pdAngle = 180 - Vector3.Angle(intermediate-proximal, distal-intermediate);
-        //Debug.Log(mpAngle.ToString());
-        //Debug.Log(pdAngle.ToString());
         if (mpAngle < 120f && pdAngle < 120f)
             return true;
         return false;
     }
-    /*bool checkThumbsUp(Leap.Hand hand)
+    public bool checkThumbsUp(Leap.Hand hand)
     {
         foreach(Leap.Finger f in hand.Fingers)
         {
             if (f.Type == Leap.Finger.FingerType.TYPE_THUMB)
-                if(f.IsExtended &&)
+            {
+                if (f.IsExtended && checkDirectionUp(f))
+                    continue;
+                else return false;
+            }
+            else
+            {
+                if (f.IsExtended && checkDirectionUp(f))
+                    return false;
+                else continue;
+            }
         }
+        return true;
     }
     bool checkDirectionUp(Leap.Finger finger)
     {
         Vector3 direction = finger.Direction.toVector3();
         return (direction.x > .95f && direction.y > .95f && direction.z > .95f);
-    }*/
+    }
+    public bool checkFingerGun(Leap.Hand hand)
+    {
+        if (!checkThumbsUp(hand))
+            return false;
+        if (!Hands.GetIndex(hand).IsExtended)
+            return false;
+        return true;
+    }
+
+
+
 }
