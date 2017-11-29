@@ -13,6 +13,7 @@ public class handController: Controller {
         leapControl.pinchGone += TriggerUp;
         leapControl.grabMade += GripDown;
         leapControl.grabGone += GripUp;
+        leapControl.tapMade += Tap;
         currentTool = tools[0];
     }
 
@@ -39,6 +40,11 @@ public class handController: Controller {
     protected void GripDown()
     {
         currentTool.GripDown();
+    }
+
+    protected void Tap(Vector3 position)
+    {
+        currentTool.Tap(position);
     }
    
 }

@@ -20,7 +20,7 @@ public struct FrameInformation
 }
 public struct FingerInformation
 {
-    public bool isExtrude;
+    public bool isExtended;
     public Vector3 direction;
     public Vector3 tipPosition;
     public Vector3 tipVelocity;
@@ -36,6 +36,7 @@ public struct HandInformation
     public Quaternion rotation;
 }
 public delegate void GestureEventHandler();
+public delegate void GesturePositionEventHandler(Vector3 position);
 public class LeapTrackedController : MonoBehaviour
 {
     private Leap.Hand hand;
@@ -50,17 +51,33 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler pinchGone;
     public event GestureEventHandler grabMade;
     public event GestureEventHandler grabGone;
+    public event GesturePositionEventHandler tapMade;
+    public int heldFrames = 100;
+    public Queue<FrameInformation> frameQueue;
+    public FrameInformation currentFrame;
 
     // Use this for initialization
     void Start()
     {
         util = new HandsUtil();
-
+        frameQueue = new Queue<FrameInformation>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (handedness == "Right")
+            hand = Hands.Right;
+        else
+            hand = Hands.Left;
+        if (hand != null)
+        {
+            currentFrame = fetchFrameInformation(hand);
+            frameQueue.Enqueue(fetchFrameInformation(hand));
+            if (frameQueue.Count > heldFrames)
+                frameQueue.Dequeue();
+        }
+
         bool grab = checkGrab();
         bool pinch = false;
         if (!grab)
@@ -80,6 +97,10 @@ public class LeapTrackedController : MonoBehaviour
         {
             OnPinchHeld();
         }
+        
+        if (checkTap())
+            tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
+
     }
 
     public void OnPinchHeld()
@@ -106,6 +127,11 @@ public class LeapTrackedController : MonoBehaviour
         if (grabGone != null)
             grabGone();
     }
+
+
+
+
+
     public bool checkPinch()
     {
         //Determine which hand.
@@ -144,33 +170,47 @@ public class LeapTrackedController : MonoBehaviour
         position = util.getThumbPos(hand);
         return util.checkThumbsUp(hand);
     }
+
+    public bool checkTap()
+    {
+        if (handedness == "Right")
+            hand = Hands.Right;
+        else
+            hand = Hands.Left;
+        if (hand == null)
+            return false;
+        position = util.getIndexPos(hand);
+        bool ret = util.checkTap(frameQueue);
+        return ret;
+    }
+
     FrameInformation fetchFrameInformation(Leap.Hand hand)
     {
-        FrameInformation frameInfo;
+        FrameInformation frameInfo = new FrameInformation();
         frameInfo.grabHeld = grabHeld;
         frameInfo.pinchHeld = pinchHeld;
         foreach(Leap.Finger f in hand.Fingers)
         {
             FingerInformation fingerInfo;
-            fingerInfo.isExtrude = f.IsExtrude;
-            fingerInfo.direction = f.Direction.toVector3();
-            fingerInfo.tipPosition = f.TipPosition.toVector3();
-            fingerInfo.tipVelocity = f.TipVelocity.toVector3();
-            switch (f.type)
+            fingerInfo.isExtended = f.IsExtended;
+            fingerInfo.direction = f.Direction.ToVector3();
+            fingerInfo.tipPosition = f.TipPosition.ToVector3();
+            fingerInfo.tipVelocity = f.TipVelocity.ToVector3();
+            switch (f.Type)
             {
-                case FingerType.TYPE_INDEX:
+                case Leap.Finger.FingerType.TYPE_INDEX:
                     frameInfo.index = fingerInfo;
                     break;
-                case FingerType.TYPE_MIDDLE:
+                case Leap.Finger.FingerType.TYPE_MIDDLE:
                     frameInfo.middle = fingerInfo;
                     break;
-                case FingerType.TYPE_RING:
+                case Leap.Finger.FingerType.TYPE_RING:
                     frameInfo.ring = fingerInfo;
                     break;
-                case FingerType.TYPE_PINKY:
+                case Leap.Finger.FingerType.TYPE_PINKY:
                     frameInfo.pinky = fingerInfo;
                     break;
-                case FingerType.TYPE_THUMB:
+                case Leap.Finger.FingerType.TYPE_THUMB:
                     frameInfo.thumb = fingerInfo;
                     break;
             }
@@ -180,13 +220,14 @@ public class LeapTrackedController : MonoBehaviour
         else
             hand = Hands.Left;
         HandInformation handInfo;
-        handInfo.direction = hand.Direction.toVector3();
-        handInfo.pitch = hand.Direction.pitch;
-        handInfo.roll = hand.Direction.roll;
-        handInfo.yaw = hand.Direction.yaw;
-        handInfo.palmPosition = hand.palmPosition.toVector3();
-        handInfo.palmVelocity = hand.palmvVelocity.toVector3();
+        handInfo.direction = hand.Direction.ToVector3();
+        handInfo.pitch = hand.Direction.Pitch;
+        handInfo.roll = hand.Direction.Roll;
+        handInfo.yaw = hand.Direction.Yaw;
+        handInfo.palmPosition = hand.PalmPosition.ToVector3();
+        handInfo.palmVelocity = hand.PalmVelocity.ToVector3();
         handInfo.rotation = hand.Rotation.ToQuaternion();
+
         return frameInfo;
 
     }

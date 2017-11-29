@@ -143,7 +143,7 @@ public class HandsUtil {
     }
     bool checkDirectionUp(Leap.Finger finger)
     {
-        Vector3 direction = finger.Direction.toVector3();
+        Vector3 direction = finger.Direction.ToVector3();
         return (direction.x > .95f && direction.y > .95f && direction.z > .95f);
     }
     public bool checkFingerGun(Leap.Hand hand)
@@ -155,6 +155,29 @@ public class HandsUtil {
         return true;
     }
 
+    public bool checkTap(Queue<FrameInformation> frameQueue)
+    {
+        int count = frameQueue.Count;
+        if (count < 11)
+            return false;
 
-
+        FrameInformation[] fArr = frameQueue.ToArray();
+        float[] sharpness = new float[count];
+        for (int i = 1; i < count-1; ++i)
+        {
+            Vector3 p = fArr[i - 1].index.tipPosition;
+            Vector3 n = fArr[i + 1].index.tipPosition;
+            Vector3 v = fArr[i].index.tipPosition;
+            Vector3 jerk = (fArr[i + 1].index.tipVelocity - fArr[i].index.tipVelocity) - (fArr[i].index.tipVelocity - fArr[i-1].index.tipVelocity);
+            sharpness[i] = Vector3.Angle(v - p, n - v) * jerk.sqrMagnitude;
+        }
+        
+        if (sharpness[count - 2] > 100f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2])
+        {
+            Debug.Log(sharpness[frameQueue.Count - 10]);
+            return true;
+        }
+            
+        return false;
+    }
 }

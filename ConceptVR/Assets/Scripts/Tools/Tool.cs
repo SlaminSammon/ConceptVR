@@ -17,4 +17,6 @@ public abstract class Tool : MonoBehaviour {
     public virtual void TriggerDown() { }
     public virtual void TriggerUp() { }
     public virtual void GripDown() { }
+    public virtual void GripUp() { }
+    public virtual void Tap(Vector3 position) { }
 }
