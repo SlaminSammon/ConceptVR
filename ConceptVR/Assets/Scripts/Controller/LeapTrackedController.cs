@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
 using Leap;
-public struct GestureEventArgs
-{
 
-}
 public struct FrameInformation
 {
     public bool grabHeld;
@@ -47,10 +44,15 @@ public class LeapTrackedController : MonoBehaviour
     public Vector3 position;
     public string handedness;
     public int toolIndex = 0;
+    public int swipeCount = 0;
+    public static float cooldown = 1.25f;
+    public float swipeCooldownTime;
+    public float tapCooldownTime;
     public event GestureEventHandler pinchMade;
     public event GestureEventHandler pinchGone;
     public event GestureEventHandler grabMade;
     public event GestureEventHandler grabGone;
+    public event GestureEventHandler swipeMade;
     public event GesturePositionEventHandler tapMade;
     public int heldFrames = 100;
     public Queue<FrameInformation> frameQueue;
@@ -61,6 +63,8 @@ public class LeapTrackedController : MonoBehaviour
     {
         util = new HandsUtil();
         frameQueue = new Queue<FrameInformation>();
+        tapCooldownTime = Time.time;
+        swipeCooldownTime = Time.time;
     }
 
     // Update is called once per frame
@@ -97,9 +101,45 @@ public class LeapTrackedController : MonoBehaviour
         {
             OnPinchHeld();
         }
-        
+
         if (checkTap())
-            tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
+        {
+            if (Time.time > tapCooldownTime)
+            {
+                tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
+                tapCooldownTime = Time.time + cooldown;
+            }
+        }
+        if (checkSwipe())
+        {
+
+            Debug.Log("Swipe Recognized!!" + swipeCount);
+            if ((handedness == "Right" && swipeCount < 6) || (handedness == "Left" && swipeCount < 2))
+                swipeCount++;
+            if((swipeCount == 6 && handedness == "Right") || (handedness == "Left" && swipeCount == 2))
+            {
+                if (Time.time > swipeCooldownTime)
+                {
+                    Debug.Log("Swipe Gesture!!" + swipeCount);
+                    swipeCooldownTime = Time.time + cooldown;
+                }
+                else
+                    Debug.Log("Cooldown!!");
+                swipeCount = 0;
+            }
+
+        }
+        else
+        {
+            swipeCount = 0;
+        }
+        if (checkThumbsUp())
+        {
+            Debug.Log("Thumbs Up!!");
+        }
+        else
+            Debug.Log("Thumbs Down :(");
+
 
     }
 
@@ -182,6 +222,17 @@ public class LeapTrackedController : MonoBehaviour
         position = util.getIndexPos(hand);
         bool ret = util.checkTap(frameQueue);
         return ret;
+    }
+    public bool checkSwipe()
+    {
+        if (handedness == "Right")
+            hand = Hands.Right;
+        else
+            hand = Hands.Left;
+        if (hand == null)
+            return false;
+        position = util.getIndexPos(hand);
+        return util.isSwiping(hand, frameQueue);
     }
 
     FrameInformation fetchFrameInformation(Leap.Hand hand)

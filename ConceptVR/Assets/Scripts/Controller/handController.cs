@@ -39,7 +39,8 @@ public class handController: Controller {
     }
     protected void GripDown()
     {
-        currentTool.GripDown();
+        //currentTool.GripDown();
+        return;
     }
 
     protected void Tap(Vector3 position)
