@@ -29,9 +29,9 @@ public class HandsUtil {
     //Check pinch and grab pose
     public bool IsPinching(Leap.Hand hand)
     {
-        //return hand.PinchStrength > .9f;
+        return hand.PinchStrength > .9f;
         //first and foremost we need the index to be pinched, if it it is we have a true
-        bool pinch = checkPinchOfFinger(hand, "index");
+        /*bool pinch = checkPinchOfFinger(hand, "index");
         //if we are in pinch with index check to see if other fingers are not.
         if (pinch)
         {
@@ -43,11 +43,12 @@ public class HandsUtil {
                     return false;
             }
         }
-        return pinch;
+        return pinch;*/
     }
     public bool IsGrabbing(Leap.Hand hand)
     {
-        return Hands.GetFistStrength(hand) > .9f;
+        //return hand.GrabStrength > .9f;
+        foreach(Leap.Finger hand.fingers)
     }
     public bool IsFlatHand(Leap.Hand hand)
     {
@@ -86,4 +87,33 @@ public class HandsUtil {
     {
         return Vector3.Distance(finger.TipPosition.ToVector3(),thumb.TipPosition.ToVector3());
     }
+    public Vector3 getMetacarpalPosition(Leap.Finger finger)
+    {
+        return finger.Bone(Leap.Bone.BoneType.TYPE_METACARPAL).Center.ToVector3();
+    }
+    public Vector3 getProximalPosition(Leap.Finger finger)
+    {
+        return finger.Bone(Leap.Bone.BoneType.TYPE_PROXIMAL).Center.ToVector3();
+    }
+    public Vector3 getIntermediatePosition(Leap.Finger finger)
+    {
+        return finger.Bone(Leap.Bone.BoneType.TYPE_INTERMEDIATE).Center.ToVector3();
+    }
+    public Vector3 getDistalPosition(Leap.Finger finger)
+    {
+        return finger.Bone(Leap.Bone.BoneType.TYPE_DISTAL).Center.ToVector3();
+    }
+    public bool checkFingerGrip(Leap.Finger finger)
+    {
+        Vector3 distal = getDistalPosition(finger);
+        Vector3 proximal = getProximalPosition(finger);
+        Vector3 intermediate = getIntermediatePosition(finger);
+        Vector3 metacarpal = getMetacarpalPosition(finger);
+        float mpAngle = Vector3.Angle(proximal-metacarpal, intermediate-proximal);
+        float pdAngle = Vector3.Angle(intermediate-proximal, distal-intermediate);
+        if (mpAngle < 25f && pdAngle < 25f)
+            return true;
+        return false;
+    }
+
 }
