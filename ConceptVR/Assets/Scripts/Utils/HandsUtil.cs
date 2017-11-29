@@ -154,7 +154,6 @@ public class HandsUtil {
             return false;
         return true;
     }
-
     public bool checkTap(Queue<FrameInformation> frameQueue)
     {
         int count = frameQueue.Count;
@@ -218,6 +217,14 @@ public class HandsUtil {
             if (f.IsExtended)
                 count++;
         return count;
+    public Leap.Hand getHandByHandedness(string handedness)
+    {
+        if (handedness == "Right")
+            return Hands.Right;
+        else if (handedness == "Left")
+            return Hands.Left;
+        else
+            return null;
     }
 
 }
