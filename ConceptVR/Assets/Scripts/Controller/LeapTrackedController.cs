@@ -32,8 +32,27 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        bool grab = checkGrab();
+        bool pinch = false;
+        if (!grab)
+        {
+            if(grabHeld)
+                OnGrabGone();
+            Debug.Log("Not Grabbing");
+            pinch = checkPinch();
+        }
+        if(!pinch && pinchHeld) OnPinchGone();
+        if (grab && !grabHeld)
+        {
+            Debug.Log("Grabbing");
+            OnGrabHeld();
+        }
+        else if(pinch && !pinchHeld)
+        {
+            OnPinchHeld();
+        }
         //Check to see if a pinch is being held.
-        bool pinch = checkPinch();
+        /*bool pinch = checkPinch();
         bool grab = false; 
         if (!pinch) grab = checkGrab();
         if (pinch && !pinchHeld && !grab)
@@ -56,26 +75,30 @@ public class LeapTrackedController : MonoBehaviour
         {
             grabHeld = false;
             OnGrabGone();
-        }
+        }*/
     }
 
     public void OnPinchHeld()
     {
+        pinchHeld = true;
         if (pinchMade != null)
             pinchMade();
     }
     public void OnPinchGone()
     {
+        pinchHeld = false;
         if (pinchGone != null)
             pinchGone();
     }
     public void OnGrabHeld()
     {
+        grabHeld = true;
         if (grabMade != null)
             grabMade();
     }
     public void OnGrabGone()
     {
+        grabHeld = false;
         if (grabGone != null)
             grabGone();
     }

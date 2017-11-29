@@ -28,7 +28,7 @@ public class Face : DCGElement {
 
     public override void Render()
     {
-        Debug.Log("Buhbye");
+        //Debug.Log("Buhbye");
         //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
     }
 

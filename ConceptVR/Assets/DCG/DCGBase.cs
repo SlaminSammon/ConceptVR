@@ -126,6 +126,8 @@ public class DCGBase : MonoBehaviour {
         Face nFace = null;
         foreach (Face f in DCGBase.faces)
         {
+            if (f.edges.Count == 0)
+                continue;
             List<Point> fp = f.getPoints();   //face points
             List<Vector2> pp = new List<Vector2>();     //projected points
             Vector3 zvec = f.getNormal();

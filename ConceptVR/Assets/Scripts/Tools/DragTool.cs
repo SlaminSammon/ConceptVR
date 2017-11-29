@@ -101,8 +101,9 @@ public class DragTool : Tool
         conGrabPos = controllerPosition;
         grabOrientation = transform.rotation;
         pointGrabPos = new List<Vector3>();
-        foreach (Point p in grabbedPoints)
-            pointGrabPos.Add(p.position - conGrabPos);
+        if (grabbedPoints != null)
+            foreach (Point p in grabbedPoints)
+                pointGrabPos.Add(p.position - conGrabPos);
 
         return;
     }
@@ -120,86 +121,17 @@ public class DragTool : Tool
 
     void updateFace()
     {
-        float nDist2 = grabDistance * grabDistance;
-        nearestFace = null;
-        foreach (Face f in DCGBase.faces)
-        {
-            List<Point> fp = f.getPoints();   //face points
-            List<Vector2> pp = new List<Vector2>();     //projected points
-            Vector3 zvec = f.getNormal();
-            Vector3 yvec = fp[1].position - fp[0].position;
-            Vector3 grabProj3 = Vector3.ProjectOnPlane(controllerPosition, zvec);
-            Vector3 grabProjY = Vector3.Project(grabProj3, yvec);
-            Vector2 grab = new Vector2((grabProj3 - grabProjY).magnitude, grabProjY.magnitude);
-
-            Vector3 grabRel = controllerPosition - fp[0].position;
-            float dist2 = (grabRel - Vector3.ProjectOnPlane(grabRel, zvec)).sqrMagnitude;
-
-            if (dist2 > nDist2)
-                continue;
-
-            foreach (Point p in fp)
-            {
-                Vector3 proj3 = Vector3.ProjectOnPlane(p.position, zvec);
-                Vector3 projY = Vector3.Project(proj3, yvec);
-                pp.Add(new Vector2((proj3 - projY).magnitude, projY.magnitude));   //TODO
-            }
-
-
-            //Check if the projected poly contains the projected controller
-            float count = 0;
-            Vector2 prev = pp[pp.Count - 1];
-            foreach (Vector2 cur in pp)
-            {
-                if ((prev.y > grab.y != cur.y > grab.y) && (grab.x < Mathf.Lerp(prev.x, cur.x, (grab.y - prev.y) / (cur.y - prev.y))))
-                    count++;
-                prev = cur;
-            }
-
-
-            if (count % 2 == 1)
-            {
-                nDist2 = dist2;//TODO
-                nearestFace = f;
-            }
-        }
-
+        nearestFace = DCGBase.NearestFace(controllerPosition, grabDistance);
     }
 
     void updateEdge()
     {
-        float nDist2 = grabDistance * grabDistance;
-        nearestEdge = null;
-        foreach (Edge e in DCGBase.edges)
-        {
-            for (int i = 0; i < (e.isLoop ? e.points.Count : e.points.Count - 1); ++i)
-            {
-                Vector3 ediff = (e.points[i].position - e.points[(i + 1) % e.points.Count].position);
-                Vector3 hdiff = (controllerPosition - e.points[i].position);
-                Vector3 proj = Vector3.Project(hdiff, ediff);
-                float dist2 = (hdiff - proj).sqrMagnitude;
-                if (dist2 < nDist2 && hdiff.sqrMagnitude < ediff.sqrMagnitude && (controllerPosition - e.points[(i + 1) % e.points.Count].position).sqrMagnitude < ediff.sqrMagnitude)
-                {
-                    nearestEdge = e;
-                    nDist2 = dist2;
-                }
-            }
-        }
+        nearestEdge = DCGBase.NearestEdge(controllerPosition, grabDistance);
     }
 
     void updatePoint()
     {
-        float nDist2 = grabDistance * grabDistance;
-        nearestPoint = null;
-        foreach (Point p in DCGBase.points)
-        {
-            float dist2 = (controllerPosition - p.position).sqrMagnitude;
-            if (dist2 < nDist2)
-            {
-                nearestPoint = p;
-                nDist2 = dist2;
-            }
-        }
+        nearestPoint = DCGBase.NearestPoint(controllerPosition, grabDistance);
     }
 
     void updateGrabbed()

@@ -29,9 +29,9 @@ public class HandsUtil {
     //Check pinch and grab pose
     public bool IsPinching(Leap.Hand hand)
     {
-        return hand.PinchStrength > .9f;
+        //return hand.PinchStrength > .9f;
         //first and foremost we need the index to be pinched, if it it is we have a true
-        /*bool pinch = checkPinchOfFinger(hand, "index");
+        bool pinch = checkPinchOfFinger(hand, "index");
         //if we are in pinch with index check to see if other fingers are not.
         if (pinch)
         {
@@ -43,12 +43,19 @@ public class HandsUtil {
                     return false;
             }
         }
-        return pinch;*/
+        return pinch;
     }
     public bool IsGrabbing(Leap.Hand hand)
     {
-        return hand.GrabStrength > .9f;
-        //foreach(Leap.Finger hand.fingers)
+        //return hand.GrabStrength > .9f;
+        foreach(Leap.Finger f in hand.Fingers)
+        {
+            if (f.Type == Leap.Finger.FingerType.TYPE_THUMB)
+                continue;
+            if (!checkFingerGrip(f))
+                return false;
+        }
+        return true;
     }
     public bool IsFlatHand(Leap.Hand hand)
     {
@@ -109,9 +116,11 @@ public class HandsUtil {
         Vector3 proximal = getProximalPosition(finger);
         Vector3 intermediate = getIntermediatePosition(finger);
         Vector3 metacarpal = getMetacarpalPosition(finger);
-        float mpAngle = Vector3.Angle(proximal-metacarpal, intermediate-proximal);
-        float pdAngle = Vector3.Angle(intermediate-proximal, distal-intermediate);
-        if (mpAngle < 25f && pdAngle < 25f)
+        float mpAngle = 180 - Vector3.Angle(proximal-metacarpal, intermediate-proximal);
+        float pdAngle = 180 - Vector3.Angle(intermediate-proximal, distal-intermediate);
+        //Debug.Log(mpAngle.ToString());
+        //Debug.Log(pdAngle.ToString());
+        if (mpAngle < 120f && pdAngle < 120f)
             return true;
         return false;
     }
