@@ -79,8 +79,8 @@ public class LeapTrackedController : MonoBehaviour
             hand = Hands.Left;
         if (hand != null)
         {
-            currentFrame = fetchFrameInformation(hand);
-            frameQueue.Enqueue(fetchFrameInformation(hand));
+            currentFrame = fetchFrameInformation();
+            frameQueue.Enqueue(fetchFrameInformation());
             if (frameQueue.Count > heldFrames)
                 frameQueue.Dequeue();
         }
@@ -285,19 +285,7 @@ public class LeapTrackedController : MonoBehaviour
         handInfo.palmPosition = hand.PalmPosition.ToVector3();
         handInfo.palmVelocity = hand.PalmVelocity.ToVector3();
         handInfo.rotation = hand.Rotation.ToQuaternion();
-        handInfo.velocityChange = velocityChange();
         return frameInfo;
 
-    }
-    public int velocityChange()
-    {
-        FrameInformation[] frames = recentFrames.ToArray();
-        FrameInformation recentFrame = frames[frames.Length - 1];
-        hand = util.getHandByHandedness(handedness);
-        if (recentFrame.hand.palmVelocity > hand.palmVelocity)
-            return 2;
-        else if (recentFrame.hand.palmVelocity < hand.palmVelocity)
-            return 0;
-        return 1;
     }
 }

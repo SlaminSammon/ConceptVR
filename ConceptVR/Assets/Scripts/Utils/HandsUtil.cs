@@ -217,6 +217,7 @@ public class HandsUtil {
             if (f.IsExtended)
                 count++;
         return count;
+    }
     public Leap.Hand getHandByHandedness(string handedness)
     {
         if (handedness == "Right")
