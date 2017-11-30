@@ -21,7 +21,10 @@ public class handController: Controller {
     // Update is called once per frame
     void Update () {
         //Check to see if a pinch is being held.
-        currentTool.triggerInput = leapControl.pinchHeld;
+        if(!leapControl.pinchHeld && leapControl.pinchInput)
+            currentTool.triggerInput = leapControl.pinchInput;
+        else
+            currentTool.triggerInput = leapControl.pinchHeld;
         currentTool.setPos(leapControl.position);
 
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using Leap.Unity;
 using Leap;
 
@@ -42,6 +43,7 @@ public class LeapTrackedController : MonoBehaviour
     private LeapServiceProvider leapProvider;
     public bool pinchHeld = false;
     bool flippedPinch = false;
+    public bool pinchInput = false;
     bool flippedGrab = false;
     public bool grabHeld = false;
     public int velocity = 1; //To be checked against a seperate frame. 0 means decreased velocity. 1 means stagnent. 2 means increased.
@@ -49,7 +51,7 @@ public class LeapTrackedController : MonoBehaviour
     public string handedness;
     public int toolIndex = 0;
     public int swipeCount = 0;
-    public static float cooldown = 2.25f;
+    public static float cooldown = 1.25f;
     public static float tapCooldown = .5f;
     public float swipeCooldownTime;
     public float tapCooldownTime;
@@ -59,7 +61,7 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler grabGone;
     public event GestureEventHandler swipeMade;
     public event GesturePositionEventHandler tapMade;
-    public int heldFrames = 100;
+    public int heldFrames = 75;
     public Queue<FrameInformation> frameQueue;
     public FrameInformation currentFrame;
 
@@ -68,6 +70,7 @@ public class LeapTrackedController : MonoBehaviour
     {
         util = new HandsUtil();
         frameQueue = new Queue<FrameInformation>();
+        currentFrame = new FrameInformation();
         tapCooldownTime = Time.time;
         swipeCooldownTime = Time.time;
     }
@@ -94,7 +97,7 @@ public class LeapTrackedController : MonoBehaviour
         {
             Debug.Log("Grabbing");
         }
-        if(!pinch && pinchHeld) OnPinchGone();
+        if(!pinch) OnPinchGone();
         if (grab && !grabHeld)
         {
             OnGrabHeld();
@@ -116,18 +119,19 @@ public class LeapTrackedController : MonoBehaviour
         if (checkSwipe())
         {
 
-            //Debug.Log("Swipe Recognized!!" + swipeCount);
-            if ((handedness == "Right" && swipeCount < 6) || (handedness == "Left" && swipeCount < 2))
+            Debug.Log("Swipe Recognized!!" + swipeCount);
+            if (swipeCount <4)
                 swipeCount++;
-            if((swipeCount == 6 && handedness == "Right") || (handedness == "Left" && swipeCount == 2))
+            if(swipeCount == 4)
             {
                 if (Time.time > swipeCooldownTime)
                 {
-                    //Debug.Log("Swipe Gesture!!" + swipeCount);
+                    EditorApplication.Beep();
+                    Debug.Log("Swipe Gesture!!" + swipeCount);
                     swipeCooldownTime = Time.time + cooldown;
                 }
                 else
-                    //Debug.Log("Cooldown!!");
+                    Debug.Log("Cooldown!!");
                 swipeCount = 0;
             }
 
@@ -140,11 +144,14 @@ public class LeapTrackedController : MonoBehaviour
         {
             pinchHeld = false;
             flippedPinch = false;
+            pinchInput = true;
         }
+        else
+            pinchInput = false;
         if (hand != null)
         {
             currentFrame = fetchFrameInformation();
-            frameQueue.Enqueue(fetchFrameInformation());
+            frameQueue.Enqueue(currentFrame);
             if (frameQueue.Count > heldFrames)
                 frameQueue.Dequeue();
         }
@@ -160,7 +167,7 @@ public class LeapTrackedController : MonoBehaviour
     }
     public void OnPinchGone()
     {
-        Debug.Log("No pinch");
+
         pinchHeld = false;
         if (pinchGone != null)
             pinchGone();
@@ -251,7 +258,7 @@ public class LeapTrackedController : MonoBehaviour
         frameInfo.pinchHeld = pinchHeld;
         foreach(Leap.Finger f in hand.Fingers)
         {
-            FingerInformation fingerInfo;
+            FingerInformation fingerInfo = new FingerInformation();
             fingerInfo.isExtended = f.IsExtended;
             fingerInfo.direction = f.Direction.ToVector3();
             fingerInfo.tipPosition = f.TipPosition.ToVector3();
@@ -279,7 +286,7 @@ public class LeapTrackedController : MonoBehaviour
             hand = Hands.Right;
         else
             hand = Hands.Left;
-        HandInformation handInfo;
+        HandInformation handInfo = new HandInformation();
         handInfo.direction = hand.Direction.ToVector3();
         handInfo.pitch = hand.Direction.Pitch;
         handInfo.roll = hand.Direction.Roll;
@@ -287,6 +294,7 @@ public class LeapTrackedController : MonoBehaviour
         handInfo.palmPosition = hand.PalmPosition.ToVector3();
         handInfo.palmVelocity = hand.PalmVelocity.ToVector3();
         handInfo.rotation = hand.Rotation.ToQuaternion();
+        frameInfo.hand = handInfo;
         return frameInfo;
 
     }
@@ -294,7 +302,7 @@ public class LeapTrackedController : MonoBehaviour
     {
         if (frameQueue.Count < 50) return false;
         FrameInformation[] frames = frameQueue.ToArray();
-        for(int i = frames.Length-2; i > frames.Length-13; --i)
+        for(int i = frames.Length-1; i > frames.Length-5; --i)
         {
             if (frames[i].pinchHeld)
                 return true;

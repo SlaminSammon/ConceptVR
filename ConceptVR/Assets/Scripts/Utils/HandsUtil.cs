@@ -186,11 +186,13 @@ public class HandsUtil {
         if (Extended(hand.Fingers) >= 4)
         {
             Vector3 swipeDirection = new Vector3();
-            if(hand.IsRight)
+            swipeDirection = hand.PalmPosition.ToVector3() - frames[frames.Length - 1].hand.palmPosition;
+            Debug.Log("sd" + swipeDirection.x);
+            /*if (hand.IsRight)
                 swipeDirection = frames[frames.Length - 1].hand.palmPosition - hand.PalmPosition.ToVector3();
             else if (hand.IsLeft)
                 swipeDirection = hand.PalmPosition.ToVector3() - frames[frames.Length-1].hand.palmPosition;
-            else return false;
+            else return false;*/
 
             string sDirection = "";
 
@@ -198,10 +200,9 @@ public class HandsUtil {
             float absY = Mathf.Abs(swipeDirection.y);
             float absZ = Mathf.Abs(swipeDirection.z);
             float handRoll = hand.PalmNormal.Roll;
-
+           
             if (absX > absY && absX > absZ)
             {
-                
                 if (swipeDirection.x > 0 && handRoll > 0.5)
                     sDirection = "Right";
                 else if (swipeDirection.x < 0 && handRoll < -0.5)
