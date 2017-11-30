@@ -143,12 +143,6 @@ public class LeapTrackedController : MonoBehaviour
         else
             Debug.Log("Thumbs Down :(");
 
-
-        if (recentFrames.Count == 100)
-        {
-            recentFrames.Dequeue();
-        }
-        recentFrames.Enqueue(fetchFrameInformation());
     }
 
     public void OnPinchHeld()
