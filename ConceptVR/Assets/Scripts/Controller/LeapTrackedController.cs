@@ -59,7 +59,6 @@ public class LeapTrackedController : MonoBehaviour
     public int heldFrames = 100;
     public Queue<FrameInformation> frameQueue;
     public FrameInformation currentFrame;
-    public Queue<FrameInformation> recentFrames;
 
     // Use this for initialization
     void Start()
@@ -93,6 +92,9 @@ public class LeapTrackedController : MonoBehaviour
                 OnGrabGone();
             Debug.Log("Not Grabbing");
             pinch = checkPinch();
+            if (!pinch)
+                pinch = checkRecentPinchData();
+            Debug.Log(pinch);
         }
         if(!pinch && pinchHeld) OnPinchGone();
         if (grab && !grabHeld)
@@ -281,5 +283,18 @@ public class LeapTrackedController : MonoBehaviour
         handInfo.rotation = hand.Rotation.ToQuaternion();
         return frameInfo;
 
+    }
+    public bool checkRecentPinchData()
+    {
+        if (frameQueue.Count < 10) return false;
+        int falseCount = 0;
+        FrameInformation[] frames = frameQueue.ToArray();
+        for(int i = frames.Length-1; i > frames.Length-7; --i)
+        {
+            if (!frames[i].pinchHeld)
+                falseCount++;
+            Debug.Log("pinch" + frames[i].pinchHeld);
+        }
+        return falseCount == 5 ? false : true;
     }
 }
