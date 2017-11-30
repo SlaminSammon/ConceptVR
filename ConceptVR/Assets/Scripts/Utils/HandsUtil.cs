@@ -35,7 +35,7 @@ public class HandsUtil {
         //if we are in pinch with index check to see if other fingers are not.
         if (pinch)
         {
-            string[] fings = { "middle", "ring", "pinky" };
+            string[] fings = { "ring", "pinky" };
             foreach(string f in fings)
             {
                 //If any other finger is in pinch return false
@@ -181,6 +181,7 @@ public class HandsUtil {
     }
     public bool isSwiping(Leap.Hand hand, Queue<FrameInformation> framesQueue)
     {
+        if (framesQueue.Count < 50) return false;
         FrameInformation[] frames = framesQueue.ToArray();
         if (Extended(hand.Fingers) >= 4)
         {

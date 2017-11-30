@@ -9,7 +9,12 @@ public class SelectTool : Tool {
     protected List<Point> sPoints;
 
     protected float selectDistance = .05f;
-    
+    public void Start()
+    {
+        sElements = new List<DCGElement>();
+        sPoints = new List<Point>();
+    }
+
     public void Update()
     {
         selMat.SetFloat("Offset", Time.time);

@@ -6,6 +6,7 @@ using Leap;
 
 public class handController: Controller {
     LeapTrackedController leapControl;
+    public SelectTool selectTool;
     // Use this for initialization
     void Start () {
         leapControl = GetComponent<LeapTrackedController>();
@@ -45,7 +46,7 @@ public class handController: Controller {
 
     protected void Tap(Vector3 position)
     {
-        currentTool.Tap(position);
+        selectTool.Tap(position);
     }
    
 }

@@ -6,9 +6,9 @@ public class MoveTool : SelectTool {
     List<Vector3> startPositions;   //positions of the selected points at start
     Vector3 grabPosition;   //position of the tool at start
     Quaternion grabOrientation; //rotation of the tool at start
-    
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    new void Update () {
         base.Update();
 
         if (triggerInput)
