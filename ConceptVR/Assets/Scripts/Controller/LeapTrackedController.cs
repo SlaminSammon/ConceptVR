@@ -41,6 +41,7 @@ public class LeapTrackedController : MonoBehaviour
     private HandsUtil util;
     private LeapServiceProvider leapProvider;
     public bool pinchHeld = false;
+    bool flippedPinch = false;
     public bool grabHeld = false;
     public int velocity = 1; //To be checked against a seperate frame. 0 means decreased velocity. 1 means stagnent. 2 means increased.
     public Vector3 position;
@@ -93,7 +94,11 @@ public class LeapTrackedController : MonoBehaviour
             Debug.Log("Not Grabbing");
             pinch = checkPinch();
             if (!pinch)
+            {
                 pinch = checkRecentPinchData();
+                if (pinch) flippedPinch = true;
+                else flippedPinch = false;
+            }
             Debug.Log(pinch);
         }
         if(!pinch && pinchHeld) OnPinchGone();
@@ -242,7 +247,8 @@ public class LeapTrackedController : MonoBehaviour
     {
         FrameInformation frameInfo = new FrameInformation();
         frameInfo.grabHeld = grabHeld;
-        frameInfo.pinchHeld = pinchHeld;
+        if (flippedPinch) frameInfo.pinchHeld = !pinchHeld;
+        else frameInfo.pinchHeld = pinchHeld;
         foreach(Leap.Finger f in hand.Fingers)
         {
             FingerInformation fingerInfo;
