@@ -51,7 +51,7 @@ public class HUDManager : MonoBehaviour
 
         active = true;
         isAnalogClock = true;
-        toolSelected = "DoodleTool";
+        toolSelected = "PointTool";
 
         // initialize HUDColor to gray
         HUDColor = new Color(0.345f, 0.3568f, 0.3804f, 1.0f);
