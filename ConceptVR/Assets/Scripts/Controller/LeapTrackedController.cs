@@ -84,7 +84,7 @@ public class LeapTrackedController : MonoBehaviour
         bool pinch = false;
         if (!grab)
         {
-            Debug.Log("Not Grabbing");
+            //Debug.Log("Not Grabbing");
             if (grabHeld)
                 OnGrabGone();
             pinch = checkPinch();

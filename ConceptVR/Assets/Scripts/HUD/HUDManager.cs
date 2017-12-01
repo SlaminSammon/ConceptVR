@@ -61,33 +61,30 @@ public class HUDManager : MonoBehaviour
     void Update()
     {
         frame = leapcontroller.Frame();
+        lHand = Hands.Left;
         // if there are hands visible in the view.
-        if (frame.Hands.Count > 0)
+        if (lHand != null)
         {
-            lHand = frame.Hands[0];
-            // If it is the left hand, make the position of the HUD relative to the local position of the right index(bone3).
-            if (lHand.IsLeft)
+            if (util.IsFlatHand(lHand))
             {
-                if (util.IsFlatHand(lHand))
-                {
-                    HandsUpDisplay.SetActive(true);
+                HandsUpDisplay.SetActive(true);
 
-                    // main frame animation
-                    if (this.frameStack.Peek() == mainFrame && hudActive == false)
-                    {
-                        hudActive = true;
-                        mainFrame.GetComponent<AnimationObjects>().clock.GetComponent<Animator>().Play("analogclock");
-                        mainFrame.GetComponent<AnimationObjects>().settingsButton.GetComponent<Animator>().Play("settingsbutton");
-                        mainFrame.GetComponent<AnimationObjects>().prefabsButton.GetComponent<Animator>().Play("prefabsbutton");
-                        mainFrame.GetComponent<AnimationObjects>().toolsButton.GetComponent<Animator>().Play("toolsbutton");
-                    }
-                }
-                else
+                // main frame animation
+                if (this.frameStack.Peek() == mainFrame && hudActive == false)
                 {
-                    HandsUpDisplay.SetActive(false);
-                    hudActive = false;
+                    hudActive = true;
+                    mainFrame.GetComponent<AnimationObjects>().clock.GetComponent<Animator>().Play("analogclock");
+                    mainFrame.GetComponent<AnimationObjects>().settingsButton.GetComponent<Animator>().Play("settingsbutton");
+                    mainFrame.GetComponent<AnimationObjects>().prefabsButton.GetComponent<Animator>().Play("prefabsbutton");
+                    mainFrame.GetComponent<AnimationObjects>().toolsButton.GetComponent<Animator>().Play("toolsbutton");
                 }
             }
+            else
+            {
+                HandsUpDisplay.SetActive(false);
+                hudActive = false;
+            }
+            
         }
         else
         {
