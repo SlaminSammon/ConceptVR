@@ -50,7 +50,7 @@ public class Face : DCGElement {
         List<Vector3> normals = new List<Vector3>();
         Vector3 avgNormal = getNormal();
         normals.Add(avgNormal);
-        normals.Add(avgNormal);
+        normals.Add(-avgNormal);
         verts.Add(new Vector3());
         verts.Add(new Vector3());
 
@@ -66,7 +66,7 @@ public class Face : DCGElement {
                     verts.Add(p.position);
                     verts.Add(p.position);
                     normals.Add(avgNormal);
-                    normals.Add(avgNormal);
+                    normals.Add(-avgNormal);
                     center += p.position;
                     tris.Add(1); tris.Add(verts.Count - 1); tris.Add(verts.Count - 3);  //TODO: Nuke this line, it's here to get around backface culling by creating a seperate backface
                     tris.Add(verts.Count - 4); tris.Add(verts.Count - 2); tris.Add(0);
@@ -75,8 +75,8 @@ public class Face : DCGElement {
             }
         }
 
-        verts[0] = center / ((verts.Count - 1) / 2f);
-        verts[1] = center / ((verts.Count - 1) / 2f);
+        verts[0] = center / (getPoints().Count);
+        verts[1] = verts[0];
         tris[2] = verts.Count-1;
         mesh.SetVertices(verts);
         mesh.SetNormals(normals);
