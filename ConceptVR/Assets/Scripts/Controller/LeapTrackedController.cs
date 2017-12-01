@@ -128,7 +128,7 @@ public class LeapTrackedController : MonoBehaviour
             {
                 if (Time.time > swipeCooldownTime)
                 {
-                    EditorApplication.Beep();
+                    //EditorApplication.Beep();
                     swipeMade();
                     //Debug.Log("Swipe Gesture!!" + swipeCount);
                     swipeCooldownTime = Time.time + cooldown;
