@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class SwapTool : MonoBehaviour {
     HUDManager HUD;
     Controller controller;
     public string tool;
-
+    public Type toolType;
     float cdTime;
 
     // Use this for initialization
@@ -15,6 +16,8 @@ public class SwapTool : MonoBehaviour {
     {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
         controller = GameObject.Find("LoPoly_Rigged_Hand_Right").GetComponent<handController>();
+        if (controller == null)
+            Debug.Log("Fuck");
         cdTime = HUD.getCooldownTime();
     }
 
@@ -37,12 +40,8 @@ public class SwapTool : MonoBehaviour {
                 if (Time.time > cdTime)
                 {
                     // add swap tool function right here swaptool(tool);
-                    //controller.changeTool(tool);
-<<<<<<< Updated upstream
-
-=======
+                    controller.changeTool(tool);
                     HUD.updateToolButtonColor(tool);
->>>>>>> Stashed changes
                     HUD.setCooldownTime(Time.time + HUD.getCooldown());
 
 

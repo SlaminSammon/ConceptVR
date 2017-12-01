@@ -47,33 +47,40 @@ public abstract class Controller : MonoBehaviour {
     {
         return;
     }
-    /*public void changeTool(string toolName)
+    public void changeTool(string toolName)
     {
+        Debug.Log(toolName);
         switch(toolName)
         {
             case "MoveTool":
                 currentTool = getToolByType(typeof(MoveTool));
                 break;
-            case "SketchTool":
-                currentTool = getToolByType(typeof(SketchTool));
+            case "DoodleTool":
+                currentTool = getToolByType(typeof(DoodleTool));
                 break;
-            case "BezierTool":
-                currentTool = getToolByType(typeof(BezierTool));
+            case "DestroyTool":
+                currentTool = getToolByType(typeof(DestroyTool));
                 break;
-            case "ExtrudeTool":
-                currentTool = getToolByType(typeof(ExtrudeTool));
+            case "PointTool":
+                currentTool = getToolByType(typeof(TapTestTool));
+                break;
+            case "LinkTool":
+                currentTool = getToolByType(typeof(LinkTool));
                 break;
             default:
                 break;
         }
-    }*/
-    public void getToolByType(Type type)
+        Debug.Log(currentTool.GetType());
+    }
+    public Tool getToolByType(Type type)
     {
+        //Debug.Log("Switching");
         foreach (Tool t in tools)
         {
             if (t.GetType() == type)
-                currentTool = t;
+                return  t;
         }
-
+        //Debug.Log("Not Switching");
+        return currentTool;
     }
 }

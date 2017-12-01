@@ -59,7 +59,9 @@ public class HandsUtil {
     }
     public bool IsFlatHand(Leap.Hand hand)
     {
-        return (hand.GrabAngle <= 1f) && ((Vector3.Angle(hand.PalmNormal.ToVector3(),Vector3.up))<10f);
+        float angle = Vector3.Angle(hand.PalmNormal.ToVector3(), Vector3.up);
+        //Debug.Log(angle);
+        return (hand.GrabAngle <= 1f) && (angle>105f && angle <130f);
     }
     public bool IsGrabbingAngle(Leap.Hand hand)
     {

@@ -113,6 +113,7 @@ public class LeapTrackedController : MonoBehaviour
         {
             if (Time.time > tapCooldownTime)
             {
+                Debug.Log(tapMade);
                 tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
                 tapCooldownTime = Time.time + tapCooldown;
             }
