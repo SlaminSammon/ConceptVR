@@ -32,12 +32,12 @@ public class HandsUpDisplay : MonoBehaviour
             if (lHand.IsLeft)
             {
 
-                // TODO: IMPLEMENT FOLLOW HAND
+                // WORKS ON TESTSCENE
+                transform.localPosition = new Vector3(lHand.PalmPosition.x, lHand.PalmPosition.y, -lHand.PalmPosition.z) / 1000f + new Vector3(-0.0f, -1.05f, -1.20f) ;
+                //transform.rotation = Quaternion.FromToRotation(Vector3.up, lHand.PalmNormal.ToVector3);
 
-               // transform.position = new Vector3(lHand.PalmPosition.x, lHand.PalmPosition.y, lHand.PalmPosition.z) / 1000f; //+ new Vector3(0.0f, -0.37f, 0.0f);
-
-                // THIS ONE WORKS WHEN IT IS A CHILD OF LEAP HAND CONTROLLER
-                transform.localPosition = new Vector3(lHand.PalmPosition.x, lHand.PalmPosition.y, -lHand.PalmPosition.z) / 1000f + new Vector3(-0.0f, -1.15f, -1.15f);
+                // THIS ONE WORKS ON THE CLOCK SCENE
+                //transform.localPosition = new Vector3(lHand.PalmPosition.x, lHand.PalmPosition.y, -lHand.PalmPosition.z) / 1000f + new Vector3(-0.0f, -1.15f, -1.15f);
             }
         }
     }

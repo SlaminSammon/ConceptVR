@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class RealTime : MonoBehaviour {
 
-    public TextMesh realTimeText;
+    TextMesh realTimeText;
     public float seconds, minutes;
 	// Use this for initialization
 	void Start () {

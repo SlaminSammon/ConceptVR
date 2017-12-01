@@ -13,6 +13,7 @@ public class SpawnPrefab : MonoBehaviour {
     public GameObject rightIndex;
 
     HUDManager HUDMgr;
+    HandsUtil hUtil;
 
     Leap.Controller leapcontroller;
     Leap.Frame frame;
@@ -23,6 +24,7 @@ public class SpawnPrefab : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        hUtil = new HandsUtil();
         leapcontroller = new Leap.Controller();
         frame = leapcontroller.Frame();
         HUDMgr = GameObject.Find("Managers").GetComponent<HUDManager>();
@@ -50,7 +52,6 @@ public class SpawnPrefab : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision)
     {
-
         if (collision.gameObject.name == "bone3" || collision.gameObject.name == "bone2")
         {
             Leap.Unity.FingerModel finger = collision.gameObject.GetComponentInParent<Leap.Unity.FingerModel>();
@@ -61,15 +62,15 @@ public class SpawnPrefab : MonoBehaviour {
                 {
                     // instantiate new prefab, set local position to be the palm position
                     this.prefab = Instantiate(externalPrefab);
-                    this.prefab.transform.localPosition = new Vector3(rightIndex.transform.position.x, rightIndex.transform.position.y, rightIndex.transform.position.z) + rightIndex.transform.rotation * (new Vector3(0.0f, 0.00f, 0.04f));
+                    //this.prefab.transform.localPosition = hUtil.getIndexPos(lHand);
+                    //Debug.Log(hUtil.getIndexPos(lHand));
+                    this.prefab.transform.localPosition = new Vector3(LeapHandController.transform.position.x, LeapHandController.transform.position.y, LeapHandController.transform.position.z) + new Vector3(0.00f, 0.00f, 0.25f) + LeapHandController.transform.rotation * (new Vector3(0.0f, 0.00f, 0.04f));
+                    //Debug.Log(this.prefab.transform.localPosition);
                     this.prefab.transform.localScale = new Vector3(.02f, .02f, .02f);
                     // set color of spawned prefab to the current hud color
                     this.prefab.gameObject.GetComponent<Renderer>().material.color = HUDMgr.getHUDColor();
                     Mesh mesh = this.prefab.GetComponent<MeshFilter>().mesh;
                     new Solid(mesh, Matrix4x4.TRS(prefab.transform.position, prefab.transform.rotation, prefab.transform.localScale), prefab.transform.position);
-
-
-
                 }
             }
         }

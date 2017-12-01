@@ -32,19 +32,22 @@ public class ChangeHUDColor : MonoBehaviour {
                 if (finger && finger.fingerType.ToString() == "TYPE_INDEX")
                 {
                     Color color;
-                    color.r = Random.Range(0.0f, 1.0f);
-                    color.g = Random.Range(0.0f, 1.0f);
-                    color.b = Random.Range(0.0f, 1.0f);
-                    color.a = 0.5f;
+                    color.r = Random.Range(0.0f, 0.65f);
+                    color.g = color.r;
+                    color.b = color.r;
+                    color.a = 1f;
                     HUD.setHUDColor(color);
                     HUD.setCooldownTime(Time.time + HUD.getCooldown());
                 }
             }
         }
     }
+
+
     private void OnTriggerStay(Collider other)
     {
        // Debug.Log("TRIGGER WITH:" + other.gameObject.name);
 
     }
+
 }

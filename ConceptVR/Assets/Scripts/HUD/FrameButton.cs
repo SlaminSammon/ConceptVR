@@ -36,6 +36,32 @@ public class FrameButton : HUDButton {
                 {
                     HUD.Push(Frame);
                     HUD.setCooldownTime(Time.time + HUD.getCooldown());
+
+                    if(Frame.gameObject.name == "SettingsFrame")
+                    {
+                        this.gameObject.GetComponent<AnimationObjects>().changeColorButton.GetComponent<Animator>().Play("changecolorbutton");
+                        this.gameObject.GetComponent<AnimationObjects>().changeClockButton.GetComponent<Animator>().Play("changeclockbutton");
+
+                    }
+                    if (Frame.gameObject.name == "PrefabsFrame")
+                    {
+                        this.gameObject.GetComponent<AnimationObjects>().sphereModel.GetComponent<Animator>().Play("sphere");
+                        this.gameObject.GetComponent<AnimationObjects>().capsuleModel.GetComponent<Animator>().Play("capsule");
+                        this.gameObject.GetComponent<AnimationObjects>().cubeModel.GetComponent<Animator>().Play("cube");
+                        this.gameObject.GetComponent<AnimationObjects>().cylinderModel.GetComponent<Animator>().Play("cylinder");
+                    }
+                    if (Frame.gameObject.name == "ToolsFrame")
+                    {
+                        HUD.updateToolButtonColor(null);
+                        this.gameObject.GetComponent<AnimationObjects>().moveButton.GetComponent<Animator>().Play("movebutton");
+                        this.gameObject.GetComponent<AnimationObjects>().destroyButton.GetComponent<Animator>().Play("destroybutton");
+                        //this.gameObject.GetComponent<AnimationObjects>().bezierButton.GetComponent<Animator>().Play("bezeirbutton");
+                        this.gameObject.GetComponent<AnimationObjects>().doodleButton.GetComponent<Animator>().Play("doodlebutton");
+                        this.gameObject.GetComponent<AnimationObjects>().pointButton.GetComponent<Animator>().Play("pointbutton");
+                        this.gameObject.GetComponent<AnimationObjects>().linkButton.GetComponent<Animator>().Play("linkbutton");
+
+                    }
+
                 }
             }
         }

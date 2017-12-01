@@ -45,11 +45,14 @@ public class handController: Controller {
     {
         //currentTool.GripDown();
         return;
+<<<<<<< Updated upstream
     }
 
     protected void Tap(Vector3 position)
     {
         currentTool.Tap(position);
+=======
+>>>>>>> Stashed changes
     }
     protected void Swipe()
     {

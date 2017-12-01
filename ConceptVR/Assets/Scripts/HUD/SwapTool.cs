@@ -36,11 +36,16 @@ public class SwapTool : MonoBehaviour {
 
                 if (Time.time > cdTime)
                 {
-                    //HUD.Pop();
                     // add swap tool function right here swaptool(tool);
                     //controller.changeTool(tool);
+<<<<<<< Updated upstream
 
+=======
+                    HUD.updateToolButtonColor(tool);
+>>>>>>> Stashed changes
                     HUD.setCooldownTime(Time.time + HUD.getCooldown());
+
+
                 }
 
             }

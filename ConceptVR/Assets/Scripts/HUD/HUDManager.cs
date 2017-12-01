@@ -5,6 +5,16 @@ using Leap.Unity;
 
 public class HUDManager : MonoBehaviour
 {
+    // active or inactive hud
+    bool hudActive = false;
+    // analog or digital clock
+    bool isAnalogClock = false;
+    public GameObject analogClock;
+    public GameObject digitalClock;
+
+    // current tool selected
+    string toolSelected = "";
+
     Color HUDColor;
     Stack<HUDFrame> frameStack;
     List<HUDView> viewList;
@@ -15,6 +25,7 @@ public class HUDManager : MonoBehaviour
     // cooldownTime stores the next time a cd will be ready
     float cooldown;
     float cooldownTime;
+
 
     public GameObject HandsUpDisplay;
     bool active;
@@ -39,15 +50,16 @@ public class HUDManager : MonoBehaviour
         frameStack.Push(mainFrame);
 
         active = true;
+        isAnalogClock = true;
+        toolSelected = "DoodleTool";
 
-        // initialize HUDColor to blue
-        HUDColor = new Color(0.0f, 0.15f, 1.0f, 0.5f);
+        // initialize HUDColor to gray
+        HUDColor = new Color(0.345f, 0.3568f, 0.3804f, 1.0f);
     }
 
     // Update is called once per frame
     void Update()
     {
-
         frame = leapcontroller.Frame();
         // if there are hands visible in the view.
         if (frame.Hands.Count > 0)
@@ -59,12 +71,28 @@ public class HUDManager : MonoBehaviour
                 if (util.IsFlatHand(lHand))
                 {
                     HandsUpDisplay.SetActive(true);
+
+                    // main frame animation
+                    if (this.frameStack.Peek() == mainFrame && hudActive == false)
+                    {
+                        hudActive = true;
+                        mainFrame.GetComponent<AnimationObjects>().clock.GetComponent<Animator>().Play("analogclock");
+                        mainFrame.GetComponent<AnimationObjects>().settingsButton.GetComponent<Animator>().Play("settingsbutton");
+                        mainFrame.GetComponent<AnimationObjects>().prefabsButton.GetComponent<Animator>().Play("prefabsbutton");
+                        mainFrame.GetComponent<AnimationObjects>().toolsButton.GetComponent<Animator>().Play("toolsbutton");
+                    }
                 }
                 else
                 {
                     HandsUpDisplay.SetActive(false);
+                    hudActive = false;
                 }
             }
+        }
+        else
+        {
+            // if no hands are visible in the view, set the HUD inactive
+            HandsUpDisplay.SetActive(false);
         }
     }
 
@@ -118,21 +146,60 @@ public class HUDManager : MonoBehaviour
             {
                 isButtonObj = true;
                 // make BackButton orange
-                child.gameObject.GetComponent<Renderer>().material.color = new Color(1.0f, 0.65f, 0.0f, 1.0f);
+                child.gameObject.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
             }
             if (child.gameObject.name.Length > 4 && child.gameObject.name.Substring(child.gameObject.name.Length - 4) == "Text") {
                 isTextObj = true;
+                // make text objects white
                 child.gameObject.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             }
             if (child.gameObject.name.Length > 5 && child.gameObject.name.Substring(child.gameObject.name.Length - 5) == "Frame") {
                 isFrameObj = true;
             }
             if (!isFrameObj && !isButtonObj && !isTextObj) {
-                // set the color of the child component to the HUDcolor
-                child.gameObject.GetComponent<Renderer>().material.color = this.HUDColor;
+                // set the color of the child component to the HUDcolor if it is not a tool button
+                if (child.gameObject.name != "DrawButton" && child.gameObject.name != "DragButton" && child.gameObject.name != "BezierButton")
+                    child.gameObject.GetComponent<Renderer>().material.color = this.HUDColor;
             }
         }
     }
+
+    public void updateToolButtonColor(string tool)
+    {
+        if (tool != null)
+        {
+            this.toolSelected = tool;
+        }
+        // set all tool buttons to hud color before updating the selected one to orange.
+        GameObject.Find("DoodleButton").GetComponent<Renderer>().material.color = HUDColor;
+        GameObject.Find("MoveButton").GetComponent<Renderer>().material.color = HUDColor;
+        GameObject.Find("DestroyButton").GetComponent<Renderer>().material.color = HUDColor;
+        GameObject.Find("PointButton").GetComponent<Renderer>().material.color = HUDColor;
+        GameObject.Find("LinkButton").GetComponent<Renderer>().material.color = HUDColor;
+
+        if (this.toolSelected == "DoodleTool")
+        {
+            GameObject.Find("DoodleButton").GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if (this.toolSelected == "MoveTool")
+        {
+            GameObject.Find("MoveButton").GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if (this.toolSelected == "DestroyTool")
+        {
+            GameObject.Find("DestroyButton").GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if (this.toolSelected == "PointTool")
+        {
+            GameObject.Find("PointButton").GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if (this.toolSelected == "LinkTool")
+        {
+            GameObject.Find("LinkButton").GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        }
+
+    }
+
 
     public Color getHUDColor() {
         return HUDColor;
@@ -140,6 +207,7 @@ public class HUDManager : MonoBehaviour
 
     public void setHUDColor(Color color) {
         this.HUDColor = color;
+
         updateColor(this.frameStack.Peek());
     }
 
@@ -165,6 +233,19 @@ public class HUDManager : MonoBehaviour
     {
         return active;
     }
-   
 
+    public void changeClock()
+    {
+        this.isAnalogClock = !this.isAnalogClock;
+        if (this.isAnalogClock)
+        {
+            analogClock.SetActive(true);
+            digitalClock.SetActive(false);
+        }
+        else
+        {
+            analogClock.SetActive(false);
+            digitalClock.SetActive(true);
+        }
+    }
 }
