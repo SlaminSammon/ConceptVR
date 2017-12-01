@@ -20,6 +20,7 @@ public struct FingerInformation
 {
     public bool isExtended;
     public Vector3 direction;
+    public Vector3 padDirection;
     public Vector3 tipPosition;
     public Vector3 tipVelocity;
 }
@@ -52,7 +53,7 @@ public class LeapTrackedController : MonoBehaviour
     public int toolIndex = 0;
     public int swipeCount = 0;
     public static float cooldown = 1.25f;
-    public static float tapCooldown = .5f;
+    public static float tapCooldown = .25f;
     public float swipeCooldownTime;
     public float tapCooldownTime;
     public event GestureEventHandler pinchMade;
@@ -119,7 +120,7 @@ public class LeapTrackedController : MonoBehaviour
         if (checkSwipe())
         {
 
-            Debug.Log("Swipe Recognized!!" + swipeCount);
+            //Debug.Log("Swipe Recognized!!" + swipeCount);
             if (swipeCount <4)
                 swipeCount++;
             if(swipeCount == 4)
@@ -127,7 +128,8 @@ public class LeapTrackedController : MonoBehaviour
                 if (Time.time > swipeCooldownTime)
                 {
                     EditorApplication.Beep();
-                    Debug.Log("Swipe Gesture!!" + swipeCount);
+                    swipeMade();
+                    //Debug.Log("Swipe Gesture!!" + swipeCount);
                     swipeCooldownTime = Time.time + cooldown;
                 }
                 else
@@ -261,6 +263,7 @@ public class LeapTrackedController : MonoBehaviour
             FingerInformation fingerInfo = new FingerInformation();
             fingerInfo.isExtended = f.IsExtended;
             fingerInfo.direction = f.Direction.ToVector3();
+            fingerInfo.padDirection = Vector3.Cross(fingerInfo.direction, Vector3.Cross(fingerInfo.direction, f.bones[1].Direction.ToVector3()));
             fingerInfo.tipPosition = f.TipPosition.ToVector3();
             fingerInfo.tipVelocity = f.TipVelocity.ToVector3();
             switch (f.Type)

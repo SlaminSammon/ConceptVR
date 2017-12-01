@@ -28,13 +28,19 @@ public class Face : DCGElement {
 
     public override void Render()
     {
-        //Debug.Log("Buhbye");
-        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
     }
 
     public override void Update()
     {
         updateMesh();
+    }
+
+    public override void Remove()
+    {
+        foreach (Solid s in solids)
+            s.Remove();
+        DCGBase.faces.Remove(this);
     }
 
     public void updateMesh()
@@ -54,9 +60,8 @@ public class Face : DCGElement {
                 {
                     verts.Add(p.position);
                     center += p.position;
-                    tris.Add(0);
-                    tris.Add(verts.Count - 1);
-                    tris.Add(verts.Count - 2);
+                    tris.Add(0); tris.Add(verts.Count - 1); tris.Add(verts.Count - 2);  //TODO: Nuke this line, it's here to get around backface culling by creating a seperate backface
+                    tris.Add(verts.Count - 2); tris.Add(verts.Count - 1); tris.Add(0);
                 }
                 lpos = p.position;
             }
@@ -66,6 +71,11 @@ public class Face : DCGElement {
         tris[2] = verts.Count-1;
         mesh.SetVertices(verts);
         mesh.SetTriangles(tris, 0);
+        mesh.RecalculateBounds();
+        mesh.RecalculateTangents();
+        mesh.RecalculateNormals();
+
+        
     }
     
     public List<Point> getPoints()

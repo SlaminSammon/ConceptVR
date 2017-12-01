@@ -8,9 +8,9 @@
 	}
 	SubShader
 	{
-		Tags { "Queue" = "Transparent" "RenderType" = "Transparent" "IgnoreProjector" = "True"}
+		Tags{ "Queue" = "AlphaTest" "RenderType" = "TransparentCutout" "IgnoreProjector" = "True" }
 		Blend One One
-		AlphaTest Greater 0
+		AlphaToMask On
 		LOD 100
 		ZWrite Off
 		Cull Off
@@ -59,9 +59,7 @@
 			{
 				fixed4 col = _Color;
 				float dist = distance(_Center, i.worldPos);
-				if (dist < _Radius)
-					col *= pow(1 - (dist / _Radius), 2) * col.a;
-				else
+				if (dist > _Radius)
 					col = 0;
 				
 				// apply fog

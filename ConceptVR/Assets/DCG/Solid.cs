@@ -46,11 +46,11 @@ public class Solid : DCGElement {
             }
         }
 
-        for (int tri = 0; tri < m.triangles.Length; tri += 3)
+        for (int tri = 0; tri < m.triangles.Length - 2; tri += 3)
         {
-            tris.Add(m.triangles[tri]);
-            tris.Add(m.triangles[tri+1]);
-            tris.Add(m.triangles[tri+2]);
+            tris.Add(pointMap[m.triangles[tri]]);
+            tris.Add(pointMap[m.triangles[tri+1]]);
+            tris.Add(pointMap[m.triangles[tri+2]]);
 
             Point p1 = (Point)points[pointMap[m.triangles[tri]]];
             Point p2 = (Point)points[pointMap[m.triangles[tri+1]]];
@@ -61,7 +61,9 @@ public class Solid : DCGElement {
             edges.Add(new Edge(p2, p3));
             edges.Add(new Edge(p3, p1));
 
-            faces.Add(new Face(edges));
+            Face f = new Face(edges);
+            faces.Add(f);
+            f.solids.Add(this);
         }
 
         mesh.SetVertices(verts);
@@ -71,12 +73,17 @@ public class Solid : DCGElement {
 
     public override void Render()
     {
-        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
     }
 
     public override void Update()
     {
         //TODO
+    }
+
+    public override void Remove()
+    {
+        DCGBase.solids.Remove(this);
     }
 
     public List<Point> getPoints()

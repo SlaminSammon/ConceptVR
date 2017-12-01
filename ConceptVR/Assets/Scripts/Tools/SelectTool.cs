@@ -8,7 +8,7 @@ public class SelectTool : Tool {
     protected List<DCGElement> sElements;
     protected List<Point> sPoints;
 
-    protected float selectDistance = .05f;
+    protected float selectDistance = .07f;
     public void Start()
     {
         sElements = new List<DCGElement>();
@@ -17,7 +17,8 @@ public class SelectTool : Tool {
 
     public void Update()
     {
-        selMat.SetFloat("Offset", Time.time);
+        base.Update();
+        selMat.SetFloat("_Offset", Time.time / 6f);
     }
 
     public override void Tap(Vector3 position)
@@ -29,12 +30,18 @@ public class SelectTool : Tool {
             foreach(DCGElement e in newSel)
             {
                 sElements.Add(e);
-                if (newSel.GetType() == typeof(Point))
+                Debug.Log(e.GetType());
+                if (e.GetType() == typeof(Point))
                 {
+                    sPoints.Remove(e as Point); //If the point exists in the point list, remove the copy before adding it in
                     sPoints.Add(e as Point);
                 }
             }
         }
+    }
+    public override void Swipe()
+    {
+        ClearSelection();
     }
 
     public List<DCGElement> Select(Point p)
@@ -51,6 +58,9 @@ public class SelectTool : Tool {
         {
             Deselect(e);
         }
+
+        sElements = new List<DCGElement>();
+        sPoints = new List<Point>();
     }
 
     public void Deselect(DCGElement e)
@@ -58,8 +68,12 @@ public class SelectTool : Tool {
         e.isSelected = false;
     }
 
-    void OnRenderObject()
+    protected void OnRenderObject()
     {
         selMat.SetPass(0);
+        foreach (DCGElement e in sElements)
+        {
+            e.Render();
+        }
     }
 }

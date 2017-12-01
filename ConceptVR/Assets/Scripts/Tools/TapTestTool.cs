@@ -11,7 +11,7 @@ public class TapTestTool : Tool {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        base.Update();
 	}
 
     public override void Tap(Vector3 position)

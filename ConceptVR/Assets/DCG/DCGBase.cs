@@ -19,12 +19,12 @@ public class DCGBase : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        /*Transform starter = transform.Find("Starter");
+        Transform starter = transform.Find("Starter");
         Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
         
         new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
 
-        starter.gameObject.SetActive(false);*/
+        starter.gameObject.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -34,45 +34,36 @@ public class DCGBase : MonoBehaviour {
 
     private void OnRenderObject()
     {
-        pointMat.SetPass(0);
-        foreach (Point p in points)
-        {
-            //Graphics.DrawMeshNow(pointMesh, Matrix4x4.TRS(p.position, Quaternion.identity, new Vector3(.02f, .02f, .02f)), pointMat, 1);
-            Graphics.DrawMeshNow(pointMesh, Matrix4x4.TRS(p.position, Quaternion.identity, new Vector3(.01f, .01f, .01f)));
-        }
-
-        edgeMat.SetPass(0);
-
-        foreach (Edge e in edges)
-        {
-            if (e.smooth)
-            {
-                Graphics.DrawMeshNow(e.mesh, Vector3.zero, Quaternion.identity, 0);
-            }
-            else
-            {
-                Vector3 edgeVec;
-                for (int i = 0; i < e.points.Count - 1; ++i)
-                {
-                    edgeVec = e.points[i].position - e.points[i + 1].position;
-                    Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
-                }
-                if (e.isLoop)
-                {
-                    edgeVec = e.points[e.points.Count - 1].position - e.points[0].position;
-                    Graphics.DrawMeshNow(edgeMesh, Matrix4x4.TRS(e.points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
-                }
-            }
-        }
-        
-        
-        faceMat.SetPass(0);
-        foreach (Face f in faces)
-            f.Render();
-        
+        //Render top-level DCG Elements
         solidMat.SetPass(0);
         foreach (Solid s in solids)
             s.Render();
+        foreach (Face f in faces)
+            if (f.solids.Count == 0 && !f.isSelected)
+                f.Render();
+        foreach (Edge e in edges)
+            if (e.faces.Count == 0 && !e.isSelected)
+                e.Render();
+        foreach (Point p in points)
+            if (p.edges.Count == 0 && !p.isSelected)
+                p.Render();
+
+
+        //Render highlights
+        pointMat.SetPass(0);
+        foreach (Point p in points)
+            if (p.edges.Count > 0 && !p.isSelected)
+                p.Render();
+
+        edgeMat.SetPass(0);
+        foreach (Edge e in edges)
+            if (e.faces.Count > 0 && !e.isSelected)
+                e.Render();
+        
+        faceMat.SetPass(0);
+        foreach (Face f in faces)
+            if (f.solids.Count > 0 && !f.isSelected)
+                f.Render();
     }
 
     public static int nextMoveID()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
 public class HandsUtil {
-    private static float dist = .025f;
+    private static float dist = .015f;
     //Gets the position of the fingers on a hand
     public Vector3 getIndexPos(Leap.Hand hand)
     {
@@ -63,7 +63,7 @@ public class HandsUtil {
     }
     public bool IsGrabbingAngle(Leap.Hand hand)
     {
-        return hand.GrabAngle > 3f;
+        return hand.GrabAngle > Mathf.PI * 2f / 3f;
     }
     public bool checkPinchOfFinger(Leap.Hand hand, string finger)
     {
@@ -162,18 +162,23 @@ public class HandsUtil {
 
         FrameInformation[] fArr = frameQueue.ToArray();
         float[] sharpness = new float[count];
+        float[] padvel = new float[count];
         for (int i = 1; i < count-1; ++i)
         {
-            Vector3 p = fArr[i - 1].index.tipPosition;
-            Vector3 n = fArr[i + 1].index.tipPosition;
-            Vector3 v = fArr[i].index.tipPosition;
-            Vector3 jerk = (fArr[i + 1].index.tipVelocity - fArr[i].index.tipVelocity) - (fArr[i].index.tipVelocity - fArr[i-1].index.tipVelocity);
-            sharpness[i] = Vector3.Angle(v - p, n - v) * jerk.sqrMagnitude;
+            FingerInformation p = fArr[i - 1].index;
+            FingerInformation n = fArr[i + 1].index;
+            FingerInformation v = fArr[i].index;
+            Vector3 jerk = (n.tipVelocity - v.tipVelocity) - (v.tipVelocity - p.tipVelocity);
+            jerk = Vector3.Project(jerk, fArr[i].index.padDirection);
+            padvel[i] = Vector3.Project(v.tipVelocity, fArr[i].index.padDirection).magnitude;
+            padvel[i] *= Mathf.Sign(v.tipVelocity.x) * Mathf.Sign(fArr[i].index.padDirection.x);
+            sharpness[i] = Vector3.Angle(v.tipPosition - p.tipPosition, n.tipPosition - v.tipPosition) * jerk.sqrMagnitude;
         }
         
-        if (sharpness[count - 2] > 100f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2])
+        if (sharpness[count - 2] > 2f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2]
+            && fArr[count-2].index.isExtended
+            && padvel[count - 3] > 0)
         {
-            //Debug.Log(sharpness[frameQueue.Count - 10]);
             return true;
         }
             
@@ -187,7 +192,7 @@ public class HandsUtil {
         {
             Vector3 swipeDirection = new Vector3();
             swipeDirection = hand.PalmPosition.ToVector3() - frames[frames.Length - 1].hand.palmPosition;
-            Debug.Log("sd" + swipeDirection.x);
+            //Debug.Log("sd" + swipeDirection.x);
             /*if (hand.IsRight)
                 swipeDirection = frames[frames.Length - 1].hand.palmPosition - hand.PalmPosition.ToVector3();
             else if (hand.IsLeft)
@@ -203,9 +208,9 @@ public class HandsUtil {
            
             if (absX > absY && absX > absZ)
             {
-                if (swipeDirection.x > 0 && handRoll > 0.5)
+                if (swipeDirection.x > .2f && handRoll > 0.5)
                     sDirection = "Right";
-                else if (swipeDirection.x < 0 && handRoll < -0.5)
+                else if (swipeDirection.x < .2f && handRoll < -0.5)
                     sDirection = "Left";
             }
             return ((hand.IsRight && sDirection == "Right") || (hand.IsLeft && sDirection == "Left")) ? true : false;

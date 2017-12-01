@@ -14,9 +14,15 @@ public abstract class Tool : MonoBehaviour {
         return controllerPosition;
     }
 
+    public void Update()
+    {
+        transform.position = controllerPosition;
+    }
+
     public virtual void TriggerDown() { }
     public virtual void TriggerUp() { }
     public virtual void GripDown() { }
     public virtual void GripUp() { }
     public virtual void Tap(Vector3 position) { }
+    public virtual void Swipe() { }
 }

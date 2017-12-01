@@ -35,6 +35,35 @@ public class Edge : DCGElement {
         DCGBase.edges.Add(this);
     }
 
+    public override void Render()
+    {
+        if (smooth)
+        {
+            Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
+        }
+        else
+        {
+            Vector3 edgeVec;
+            for (int i = 0; i < points.Count - 1; ++i)
+            {
+                edgeVec = points[i].position - points[i + 1].position;
+                Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+            }
+            if (isLoop)
+            {
+                edgeVec = points[points.Count - 1].position - points[0].position;
+                Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+            }
+        }
+    }
+
+    public override void Remove()
+    {
+        foreach (Face f in faces)
+            f.Remove();
+        DCGBase.edges.Remove(this);
+    }
+
     public void setSmooth(bool smooth)
     {
         this.smooth = smooth;
