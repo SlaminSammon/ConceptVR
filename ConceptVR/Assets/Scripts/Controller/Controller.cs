@@ -47,12 +47,12 @@ public abstract class Controller : MonoBehaviour {
     {
         return;
     }
-    public void changeTool(string toolName)
+    /*public void changeTool(string toolName)
     {
         switch(toolName)
         {
-            case "DragTool":
-                currentTool = getToolByType(typeof(DragTool));
+            case "MoveTool":
+                currentTool = getToolByType(typeof(MoveTool));
                 break;
             case "SketchTool":
                 currentTool = getToolByType(typeof(SketchTool));
@@ -60,20 +60,20 @@ public abstract class Controller : MonoBehaviour {
             case "BezierTool":
                 currentTool = getToolByType(typeof(BezierTool));
                 break;
-            /*case "ExtrudeTool":
+            case "ExtrudeTool":
                 currentTool = getToolByType(typeof(ExtrudeTool));
-                break;*/
+                break;
             default:
                 break;
         }
-    }
-    public Tool getToolByType(Type type)
+    }*/
+    public void getToolByType(Type type)
     {
         foreach (Tool t in tools)
         {
             if (t.GetType() == type)
-                return t;
+                currentTool = t;
         }
-        return currentTool;
+
     }
 }

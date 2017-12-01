@@ -11,7 +11,7 @@ public class DestroyTool : Tool {
 	void Start () {
 	}
 
-    private void Update()
+    new private void Update()
     {
         if (triggerInput)
         {
