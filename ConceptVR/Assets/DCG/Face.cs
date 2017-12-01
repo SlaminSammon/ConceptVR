@@ -47,6 +47,11 @@ public class Face : DCGElement {
     {
         mesh = new Mesh();
         List<Vector3> verts = new List<Vector3>();
+        List<Vector3> normals = new List<Vector3>();
+        Vector3 avgNormal = getNormal();
+        normals.Add(avgNormal);
+        normals.Add(avgNormal);
+        verts.Add(new Vector3());
         verts.Add(new Vector3());
 
         List<int> tris = new List<int>();
@@ -59,23 +64,25 @@ public class Face : DCGElement {
                 if (p.position != lpos)
                 {
                     verts.Add(p.position);
+                    verts.Add(p.position);
+                    normals.Add(avgNormal);
+                    normals.Add(avgNormal);
                     center += p.position;
-                    tris.Add(0); tris.Add(verts.Count - 1); tris.Add(verts.Count - 2);  //TODO: Nuke this line, it's here to get around backface culling by creating a seperate backface
-                    tris.Add(verts.Count - 2); tris.Add(verts.Count - 1); tris.Add(0);
+                    tris.Add(1); tris.Add(verts.Count - 1); tris.Add(verts.Count - 3);  //TODO: Nuke this line, it's here to get around backface culling by creating a seperate backface
+                    tris.Add(verts.Count - 4); tris.Add(verts.Count - 2); tris.Add(0);
                 }
                 lpos = p.position;
             }
         }
 
-        verts[0] = center / (verts.Count - 1);
+        verts[0] = center / ((verts.Count - 1) / 2f);
+        verts[1] = center / ((verts.Count - 1) / 2f);
         tris[2] = verts.Count-1;
         mesh.SetVertices(verts);
+        mesh.SetNormals(normals);
         mesh.SetTriangles(tris, 0);
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
-        mesh.RecalculateNormals();
-
-        
     }
     
     public List<Point> getPoints()
