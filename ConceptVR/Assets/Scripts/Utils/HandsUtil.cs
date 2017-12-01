@@ -59,7 +59,7 @@ public class HandsUtil {
     }
     public bool IsFlatHand(Leap.Hand hand)
     {
-        return hand.GrabAngle <= 1f;
+        return (hand.GrabAngle <= 1f) && ((Vector3.Angle(hand.PalmNormal.ToVector3(),Vector3.up))<10f);
     }
     public bool IsGrabbingAngle(Leap.Hand hand)
     {
@@ -92,7 +92,10 @@ public class HandsUtil {
     }
     public float getPinchDistance(Leap.Finger finger, Leap.Finger thumb)
     {
-        return Vector3.Distance(finger.TipPosition.ToVector3(),thumb.TipPosition.ToVector3());
+        Vector3 diff = thumb.TipPosition.ToVector3() - finger.TipPosition.ToVector3();
+        float dist = diff.magnitude;
+        Vector3 padDirection = Vector3.Cross(finger.Direction.ToVector3(), Vector3.Cross(finger.Direction.ToVector3(), finger.bones[1].Direction.ToVector3()));
+        return dist * Mathf.Sign(Vector3.Project(diff, padDirection).x) * Mathf.Sign(padDirection.x);
     }
     public Vector3 getMetacarpalPosition(Leap.Finger finger)
     {
@@ -163,21 +166,25 @@ public class HandsUtil {
         FrameInformation[] fArr = frameQueue.ToArray();
         float[] sharpness = new float[count];
         float[] padvel = new float[count];
+        float[] accelMag = new float[count];
         for (int i = 1; i < count-1; ++i)
         {
             FingerInformation p = fArr[i - 1].index;
             FingerInformation n = fArr[i + 1].index;
             FingerInformation v = fArr[i].index;
-            Vector3 jerk = (n.tipVelocity - v.tipVelocity) - (v.tipVelocity - p.tipVelocity);
-            jerk = Vector3.Project(jerk, fArr[i].index.padDirection);
+            //Vector3 jerk = (n.tipVelocity - v.tipVelocity) - (v.tipVelocity - p.tipVelocity);
+            //jerk = Vector3.Project(jerk, fArr[i].index.padDirection);
+            Vector3 accel = (n.tipVelocity - p.tipVelocity);
+            Vector3.Project(accel, fArr[i].index.padDirection);
+            accelMag[i] = Mathf.Sign(Vector3.Project(accel, fArr[i].index.padDirection).x) * accel.x;
             padvel[i] = Vector3.Project(v.tipVelocity, fArr[i].index.padDirection).magnitude;
             padvel[i] *= Mathf.Sign(v.tipVelocity.x) * Mathf.Sign(fArr[i].index.padDirection.x);
-            sharpness[i] = Vector3.Angle(v.tipPosition - p.tipPosition, n.tipPosition - v.tipPosition) * jerk.sqrMagnitude;
+            sharpness[i] = Vector3.Angle(v.tipPosition - p.tipPosition, n.tipPosition - v.tipPosition) * accel.sqrMagnitude;
         }
         
-        if (sharpness[count - 2] > 2f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2]
+        if (sharpness[count - 2] > 20f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2]
             && fArr[count-2].index.isExtended
-            && padvel[count - 3] > 0)
+            && accelMag[count-2] > 0)
         {
             return true;
         }

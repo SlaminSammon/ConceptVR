@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TapTestTool : Tool {
+    Vector3 grabPos;
+    Vector3 startPos;
+    Point grabbedPoint;
+    float maxDist = 0.07f;
 
 	// Use this for initialization
 	void Start () {
@@ -10,9 +14,26 @@ public class TapTestTool : Tool {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	new void Update () {
         base.Update();
+        if (triggerInput && grabbedPoint != null)
+            grabbedPoint.setPosition(startPos + controllerPosition - grabPos);
 	}
+
+    public override void TriggerDown()
+    {
+        grabbedPoint = DCGBase.NearestPoint(controllerPosition, maxDist);
+        if (grabbedPoint != null)
+        {
+            grabPos = controllerPosition;
+            startPos = grabbedPoint.position;
+        }
+    }
+
+    public override void TriggerUp()
+    {
+        grabbedPoint = null;
+    }
 
     public override void Tap(Vector3 position)
     {

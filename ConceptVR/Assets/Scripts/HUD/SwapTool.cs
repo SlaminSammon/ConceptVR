@@ -38,7 +38,7 @@ public class SwapTool : MonoBehaviour {
                 {
                     //HUD.Pop();
                     // add swap tool function right here swaptool(tool);
-                    controller.changeTool(tool);
+                    //controller.changeTool(tool);
 
                     HUD.setCooldownTime(Time.time + HUD.getCooldown());
                 }
