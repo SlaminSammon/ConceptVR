@@ -23,7 +23,7 @@ public class Point : DCGElement {
     public override void Remove()
     {
         foreach (Edge e in edges)
-            if (e.points[0] == this || e.points[e.points.Count] == this)
+            if (e.points[0] == this || e.points[e.points.Count-1] == this)
                 e.Remove();
             else
                 e.points.Remove(this);
