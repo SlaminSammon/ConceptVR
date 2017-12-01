@@ -78,7 +78,7 @@ public abstract class Controller : MonoBehaviour {
         foreach (Tool t in tools)
         {
             if (t.GetType() == type)
-                return  t;
+                return t;
         }
         //Debug.Log("Not Switching");
         return currentTool;
