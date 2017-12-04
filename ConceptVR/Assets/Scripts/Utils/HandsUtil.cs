@@ -190,7 +190,6 @@ public class HandsUtil {
         /*if (sharpness[count - 2] > 20f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2]
             && fArr[count-2].index.isExtended
             && accelMag[count-2] > 0)*/
-        Debug.Log(accelMag[count - 2]);
         if (accelMag[count-2] < -.5f && accelMag[count - 3] > accelMag[count - 2] && accelMag[count - 1] > accelMag[count - 2])
         {
             grapher.AddValue("velocity", padvel[count - 2], true);

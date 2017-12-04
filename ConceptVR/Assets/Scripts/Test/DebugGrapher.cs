@@ -40,7 +40,6 @@ public class DebugGrapher : MonoBehaviour {
         public void Update()
         {
             Vector3[] positions = new Vector3[values.Count];
-            Debug.Log(values.Count);
             Vector3 cPos = line.transform.position;
             int i = 0;
             foreach (GraphValue gv in values)
