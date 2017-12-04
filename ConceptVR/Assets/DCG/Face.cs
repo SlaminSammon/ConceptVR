@@ -40,6 +40,8 @@ public class Face : DCGElement {
     {
         foreach (Solid s in solids)
             s.Remove();
+        foreach (Edge e in edges)
+            e.faces.Remove(this);
         DCGBase.faces.Remove(this);
     }
 

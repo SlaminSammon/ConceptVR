@@ -83,6 +83,8 @@ public class Solid : DCGElement {
 
     public override void Remove()
     {
+        foreach (Face f in faces)
+            f.solids.Remove(this);
         DCGBase.solids.Remove(this);
     }
 

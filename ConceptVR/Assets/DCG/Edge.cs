@@ -61,6 +61,8 @@ public class Edge : DCGElement {
     {
         foreach (Face f in faces)
             f.Remove();
+        foreach (Point p in points)
+            p.edges.Remove(this);
         DCGBase.edges.Remove(this);
     }
 

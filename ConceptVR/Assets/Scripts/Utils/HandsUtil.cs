@@ -4,6 +4,8 @@ using UnityEngine;
 using Leap.Unity;
 public class HandsUtil {
     private static float dist = .015f;
+    public DebugGrapher grapher = GameObject.Find("HandUtilDebugGrapher").GetComponent<DebugGrapher>();
+
     //Gets the position of the fingers on a hand
     public Vector3 getIndexPos(Leap.Hand hand)
     {
@@ -178,20 +180,29 @@ public class HandsUtil {
             //jerk = Vector3.Project(jerk, fArr[i].index.padDirection);
             Vector3 accel = (n.tipVelocity - p.tipVelocity);
             Vector3.Project(accel, fArr[i].index.padDirection);
-            accelMag[i] = Mathf.Sign(Vector3.Project(accel, fArr[i].index.padDirection).x) * accel.x;
+            accelMag[i] = Vector3.Project(accel, fArr[i].index.padDirection).magnitude;
+            accelMag[i] *= Mathf.Sign(Vector3.Dot(accel, fArr[i].index.padDirection));
             padvel[i] = Vector3.Project(v.tipVelocity, fArr[i].index.padDirection).magnitude;
-            padvel[i] *= Mathf.Sign(v.tipVelocity.x) * Mathf.Sign(fArr[i].index.padDirection.x);
+            padvel[i] *= Mathf.Sign(Vector3.Dot(v.tipVelocity, fArr[i].index.padDirection));
             sharpness[i] = Vector3.Angle(v.tipPosition - p.tipPosition, n.tipPosition - v.tipPosition) * accel.sqrMagnitude;
         }
-        
-        if (sharpness[count - 2] > 20f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2]
+
+        /*if (sharpness[count - 2] > 20f && sharpness[count - 1] < sharpness[count - 2] && sharpness[count - 3] < sharpness[count - 2]
             && fArr[count-2].index.isExtended
-            && accelMag[count-2] > 0)
+            && accelMag[count-2] > 0)*/
+        Debug.Log(accelMag[count - 2]);
+        if (accelMag[count-2] < -.5f && accelMag[count - 3] > accelMag[count - 2] && accelMag[count - 1] > accelMag[count - 2])
         {
+            grapher.AddValue("velocity", padvel[count - 2], true);
+            grapher.AddValue("acceleration", accelMag[count - 2], true);
             return true;
         }
-            
-        return false;
+        else
+        {
+            grapher.AddValue("velocity", padvel[count - 2], false);
+            grapher.AddValue("acceleration", accelMag[count - 2], false);
+            return false;
+        }
     }
     public bool isSwiping(Leap.Hand hand, Queue<FrameInformation> framesQueue)
     {
