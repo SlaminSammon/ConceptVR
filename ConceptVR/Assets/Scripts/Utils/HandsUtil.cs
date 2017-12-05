@@ -207,6 +207,7 @@ public class HandsUtil {
     {
         if (framesQueue.Count < 50) return false;
         FrameInformation[] frames = framesQueue.ToArray();
+        List<float> accelMag = new List<float>();
         if (Extended(hand.Fingers) >= 4)
         {
             Vector3 swipeDirection = new Vector3();
@@ -217,17 +218,25 @@ public class HandsUtil {
             else if (hand.IsLeft)
                 swipeDirection = hand.PalmPosition.ToVector3() - frames[frames.Length-1].hand.palmPosition;
             else return false;*/
-
+            Vector3 accel = (hand.PalmVelocity.ToVector3() - frames[frames.Length - 2].hand.palmVelocity);
+            accelMag.Add(Vector3.Project(accel, hand.PalmNormal.ToVector3()).magnitude);
+            accelMag[0] *= Mathf.Sign(Vector3.Dot(accel, hand.PalmNormal.ToVector3()));
+            for (int i = frames.Length-1; i > frames.Length-7; --i)
+            {
+                accel = (frames[i].hand.palmVelocity - frames[frames.Length - 2].hand.palmVelocity);
+                accelMag.Add(Vector3.Project(accel, frames[i].hand.palmNormal).magnitude);
+                accelMag[accelMag.Count-1] *= Mathf.Sign(Vector3.Dot(accel, frames[i].hand.palmNormal));
+            }
             string sDirection = "";
 
             float absX = Mathf.Abs(swipeDirection.x);
             float absY = Mathf.Abs(swipeDirection.y);
             float absZ = Mathf.Abs(swipeDirection.z);
             float handRoll = hand.PalmNormal.Roll;
-           
+            
             if (absX > absY && absX > absZ)
             {
-                if (swipeDirection.x > .2f && handRoll > 0.5)
+                if (handRoll > 0.5 && accelMag[4] < -.5f && accelMag[3] > accelMag[4] && accelMag[5] > accelMag[4])
                     sDirection = "Right";
                 else if (swipeDirection.x < .2f && handRoll < -0.5)
                     sDirection = "Left";
@@ -252,6 +261,10 @@ public class HandsUtil {
             return Hands.Left;
         else
             return null;
+    }
+    public Vector3 weightedPos(Leap.Hand hand)
+    {
+        return getThumbPos(hand) * 75f + getIndexPos(hand) * .25f;
     }
 
 }

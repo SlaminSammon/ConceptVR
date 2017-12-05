@@ -29,6 +29,7 @@ public struct HandInformation
     public int velocityChange;
     public Vector3 palmVelocity;
     public Vector3 palmPosition;
+    public Vector3 palmNormal;
     public Vector3 direction;
     public float pitch;
     public float yaw;
@@ -121,16 +122,16 @@ public class LeapTrackedController : MonoBehaviour
         if (checkSwipe())
         {
 
-            //Debug.Log("Swipe Recognized!!" + swipeCount);
+            Debug.Log("Swipe Recognized!!" + swipeCount);
             if (swipeCount <4)
                 swipeCount++;
             if(swipeCount == 4)
             {
                 if (Time.time > swipeCooldownTime)
                 {
-                    //EditorApplication.Beep();
+                    EditorApplication.Beep();
                     swipeMade();
-                    //Debug.Log("Swipe Gesture!!" + swipeCount);
+                    Debug.Log("Swipe Gesture!!" + swipeCount);
                     swipeCooldownTime = Time.time + cooldown;
                 }
                 else
@@ -203,7 +204,8 @@ public class LeapTrackedController : MonoBehaviour
         if (hand == null)
             return false;
         //Get position and value of Pinch
-        position = util.getIndexPos(hand);
+        if(!flippedPinch)
+            position = util.weightedPos(hand);
         return util.IsPinching(hand);
     }
     public bool checkGrab()
@@ -297,6 +299,7 @@ public class LeapTrackedController : MonoBehaviour
         handInfo.yaw = hand.Direction.Yaw;
         handInfo.palmPosition = hand.PalmPosition.ToVector3();
         handInfo.palmVelocity = hand.PalmVelocity.ToVector3();
+        handInfo.palmNormal = hand.PalmNormal.ToVector3();
         handInfo.rotation = hand.Rotation.ToQuaternion();
         frameInfo.hand = handInfo;
         return frameInfo;
@@ -309,6 +312,17 @@ public class LeapTrackedController : MonoBehaviour
         for(int i = frames.Length-1; i > frames.Length-5; --i)
         {
             if (frames[i].pinchHeld)
+                return true;
+        }
+        return false;
+    }
+    public bool checkRecentGrabData()
+    {
+        if (frameQueue.Count < 50) return false;
+        FrameInformation[] frames = frameQueue.ToArray();
+        for (int i = frames.Length - 1; i > frames.Length - 5; --i)
+        {
+            if (frames[i].grabHeld)
                 return true;
         }
         return false;
