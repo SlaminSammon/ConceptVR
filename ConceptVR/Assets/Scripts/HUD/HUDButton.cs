@@ -3,15 +3,85 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HUDButton : MonoBehaviour {
+    Animator animator;
 
-    enum animState { Idle, HoverOn, HoverOff, Press };
-    // AnimatiorController
+    protected HUDManager HUD;
+    static float coolDown = 0.5f;
 
-    void OnPress(){
+    public GameObject startControl;
+    public GameObject endControl;
+    public Vector3 startPos;
+    public Vector3 endPos;
+    public float lerpAmt;
+    public float hoverHgt;
 
+    float lastPressTime;
+
+    public void Start()
+    {
+        GameObject MgrObject = GameObject.Find("Managers");
+        if (MgrObject != null)
+            HUD = MgrObject.GetComponent<HUDManager>();
+
+        animator = gameObject.GetComponent<Animator>();
+        Debug.Log(animator);
+        if (endControl == null && endPos == Vector3.zero)
+            endPos = transform.localPosition;
     }
 
-    void OnRelease(){
+    public void Update()
+    {
+        UpdatePosition();
+    }
 
+    public void UpdatePosition()
+    {
+        if (startControl != null)
+            startPos = startControl.transform.localPosition;
+        if (endControl != null)
+            endPos = endControl.transform.localPosition;
+    
+        transform.localPosition = Vector3.LerpUnclamped(startPos, endPos, lerpAmt) + Vector3.up * hoverHgt;
+    }
+
+    public virtual void OnPress() {}
+
+    public virtual void OnRelease() {}
+
+    public void OnEnable()
+    {
+        animator.Play("Enable");
+        UpdatePosition();
+    }
+
+    public void OnDisable()
+    {
+        lerpAmt = 0;
+        UpdatePosition();
+    }
+
+    public void OnSubTriggerEnter(Collider other, string triggerName)
+    {
+        if (triggerName == "PressCollider" && Time.time - lastPressTime > coolDown)
+        {
+            animator.Play("Press");
+            OnPress();
+        } else if (triggerName == "HoverCollider")
+        {
+            animator.SetBool("Hovering", true);
+        }
+    }
+
+    public void OnSubTriggerExit(Collider other, string triggerName)
+    {
+        if (triggerName == "PressCollider")
+        {
+            lastPressTime = Time.time;
+            OnRelease();
+        }
+        else if (triggerName == "HoverCollider")
+        {
+            animator.SetBool("Hovering", false);
+        }
     }
 }

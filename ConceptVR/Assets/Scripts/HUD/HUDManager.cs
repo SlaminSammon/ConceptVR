@@ -89,7 +89,7 @@ public class HUDManager : MonoBehaviour
         else
         {
             // if no hands are visible in the view, set the HUD inactive
-            HandsUpDisplay.SetActive(false);
+            //HandsUpDisplay.SetActive(false);
         }
     }
 

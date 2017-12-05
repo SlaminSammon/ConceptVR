@@ -10,9 +10,7 @@ public class HUDFrame: MonoBehaviour
     List<HUDView> viewList;
 
     void Update(){
-        // handle animation
-        // call OnUpdate
-        // check for presses
+
     }
 
     // called when the frame begins animating in
