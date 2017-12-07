@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
 public class HandsUtil {
-    private static float dist = .015f;
+    private static float dist = .04f;
     public DebugGrapher grapher = GameObject.Find("HandUtilDebugGrapher").GetComponent<DebugGrapher>();
 
     //Gets the position of the fingers on a hand
@@ -63,7 +63,7 @@ public class HandsUtil {
     {
         float angle = Vector3.Angle(hand.PalmNormal.ToVector3(), Vector3.up);
         //Debug.Log(angle);
-        return (hand.GrabAngle <= 1f) && (angle<35f);
+        return (hand.GrabAngle <= 1f) && (angle<60f);
     }
     public bool IsGrabbingAngle(Leap.Hand hand)
     {
@@ -99,7 +99,8 @@ public class HandsUtil {
         Vector3 diff = thumb.TipPosition.ToVector3() - finger.TipPosition.ToVector3();
         float dist = diff.magnitude;
         Vector3 padDirection = Vector3.Cross(finger.Direction.ToVector3(), Vector3.Cross(finger.Direction.ToVector3(), finger.bones[1].Direction.ToVector3()));
-        return dist * Mathf.Sign(Vector3.Project(diff, padDirection).x) * Mathf.Sign(padDirection.x);
+        return dist * Mathf.Sign(Vector3.Dot(diff, padDirection));
+        //return dist;
     }
     public Vector3 getMetacarpalPosition(Leap.Finger finger)
     {

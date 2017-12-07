@@ -137,7 +137,7 @@ public class DCGBase : MonoBehaviour {
             {
                 Vector3 proj3 = Vector3.ProjectOnPlane(p.position, zvec);
                 Vector3 projY = Vector3.Project(proj3, yvec);
-                pp.Add(new Vector2((proj3 - projY).magnitude, projY.magnitude));   //TODO
+                pp.Add(new Vector2((proj3 - projY).magnitude, projY.magnitude));
             }
 
 

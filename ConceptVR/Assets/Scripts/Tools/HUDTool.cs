@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HUDTool : MonoBehaviour {
+public class HUDTool : Tool {
+    HUDManager HUD;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    //TODO: change to PalmOpened
+    public override void TriggerDown()
+    {
+        HUD.HUDObject.SetActive(true);
+    }
+
+    //TODO: change to PalmClosed
+    public override void TriggerUp()
+    {
+        HUD.HUDObject.SetActive(false);
+    }
 }

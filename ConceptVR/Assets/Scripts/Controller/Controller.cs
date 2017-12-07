@@ -5,6 +5,7 @@ using UnityEngine;
 
 public abstract class Controller : MonoBehaviour {
     public bool hand;//Right is true, left is false;
+    public Controller other;    //controller attached to the other hand (it is assumed the user only has two hands)
     public List<Tool> tools;
 
     protected Tool currentTool;
@@ -49,7 +50,7 @@ public abstract class Controller : MonoBehaviour {
     }
     public void changeTool(string toolName)
     {
-        Debug.Log(toolName);
+        //Debug.Log(toolName);
         switch(toolName)
         {
             case "MoveTool":
@@ -70,7 +71,7 @@ public abstract class Controller : MonoBehaviour {
             default:
                 break;
         }
-        Debug.Log(currentTool.GetType());
+        //Debug.Log(currentTool.GetType());
     }
     public Tool getToolByType(Type type)
     {

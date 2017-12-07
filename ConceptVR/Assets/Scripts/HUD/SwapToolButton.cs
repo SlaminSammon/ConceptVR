@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwapToolButton : HUDButton {
+public class SwapToolButton : ToggleButton {
 
 	Controller controller;
     public string tool;
@@ -15,10 +15,13 @@ public class SwapToolButton : HUDButton {
         controller = GameObject.Find("LoPoly_Rigged_Hand_Right").GetComponent<handController>();
     }
 
-    public override void OnPress()
+    public override void ToggleOn()
     {
+        foreach (SwapToolButton b in transform.parent.GetComponentsInChildren<SwapToolButton>())
+            if (b.toggled && b != this)
+            {
+                b.OnPress();
+            }
         controller.changeTool(tool);
-        HUD.updateToolButtonColor(tool);
-        HUD.setCooldownTime(Time.time + HUD.getCooldown());
     }
 }

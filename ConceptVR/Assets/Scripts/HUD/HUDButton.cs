@@ -15,7 +15,7 @@ public class HUDButton : MonoBehaviour {
     public float lerpAmt;
     public float hoverHgt;
 
-    float lastPressTime;
+    static float lastPressTime;
 
     public void Start()
     {
@@ -24,7 +24,6 @@ public class HUDButton : MonoBehaviour {
             HUD = MgrObject.GetComponent<HUDManager>();
 
         animator = gameObject.GetComponent<Animator>();
-        Debug.Log(animator);
         if (endControl == null && endPos == Vector3.zero)
             endPos = transform.localPosition;
     }
@@ -50,13 +49,17 @@ public class HUDButton : MonoBehaviour {
 
     public void OnEnable()
     {
+        if (animator == null)
+            Start();
         animator.Play("Enable");
         UpdatePosition();
     }
 
     public void OnDisable()
     {
+        animator.Play("Idle");
         lerpAmt = 0;
+        hoverHgt = 0;
         UpdatePosition();
     }
 

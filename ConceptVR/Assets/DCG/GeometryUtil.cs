@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class GeometryUtil {
+public static class GeometryUtil
+{
     public static Mesh icoSphere2 = GenerateSphereMesh(2);
     public static Mesh icoSphere3 = GenerateSphereMesh(3);
     public static Mesh icoSphere4 = GenerateSphereMesh(4);
@@ -76,11 +77,11 @@ public static class GeometryUtil {
             tris.Add(v3);
         }
     }
-    
+
     public static Mesh GenerateSphereMesh(int depth)
     {
         float t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
-        
+
         List<int> tris = new List<int>(20 * Mathf.FloorToInt(Mathf.Pow(4, depth)));
         List<Vector3> verts = new List<Vector3>(12 * Mathf.FloorToInt(Mathf.Pow(2, depth)));
 
@@ -138,7 +139,7 @@ public static class GeometryUtil {
         List<int> tris = new List<int>();
         List<Vector3> verts = new List<Vector3>();
 
-        for(int i = 0; i < detail; ++i)
+        for (int i = 0; i < detail; ++i)
         {
             float theta = (float)i / detail * Mathf.PI * 2;
             verts.Add(new Vector3(Mathf.Cos(theta), -1, Mathf.Sin(theta)));
@@ -163,5 +164,139 @@ public static class GeometryUtil {
         m.RecalculateTangents();
 
         return m;
+    }
+
+
+    //WARNING: will hang i given a self-intersecting polygon
+    public static List<int> triangulate(List<Vector3> points, Vector3 normal)
+    {
+        int c = points.Count;
+        int i;
+        List<int> triangles = new List<int>();
+        bool[] concave = new bool[c];
+        bool[] consumed = new bool[c];
+        int consumedCount = 0;
+        int concaveCount = 0;
+
+        for (i = 0; i < c; ++i)
+        {
+            bool isConcave = Vector3.Angle(normal, Vector3.Cross(points[(i + 2) % c] - points[(i + 1) % c], points[(i + 1) % c] - points[i])) < 90;
+            concave[(i + 1) % c] = isConcave;
+            if (isConcave)
+                ++concaveCount;
+        }
+
+        i = 0;
+        int i1 = 1;
+        int i2 = 2;
+        while (consumedCount < c - 3)
+        {
+            i1 = (i + 1) % c;
+            while (consumed[i1])
+                i1 = (i1 + 1) % c;
+
+            i2 = (i1 + 1) % c;
+            while (consumed[i2])
+                i2 = (i2 + 1) % c;
+
+            Vector3 a = points[i];
+            Vector3 b = points[i1];
+            Vector3 g = points[i2];
+
+            if (Vector3.Angle(normal, Vector3.Cross(b - a, g - b)) < 90)
+            {
+                bool bad = false;
+                for (int j = 0; j < c; ++j) if (j != i && j != i1 && j != i2 && concave[j] && !consumed[j])
+                    {
+                        float signb = Mathf.Sign(Vector3.Dot(Vector3.Cross(normal, b - a), b - points[j]));
+                        float signg = Mathf.Sign(Vector3.Dot(Vector3.Cross(normal, g - b), g - points[j]));
+                        float signa = Mathf.Sign(Vector3.Dot(Vector3.Cross(normal, a - g), a - points[j]));
+
+                        if (signa < 0 || signb < 0 || signg < 0)
+                        {
+                            bad = true;
+                            break;
+                        }
+                    }
+
+                if (!bad)
+                {
+                    triangles.Add(i); triangles.Add(i1); triangles.Add(i2);
+                    consumed[i1] = true;
+                    consumedCount++;
+                    i = i2;
+                }
+            }
+            else
+            {
+                i = i1;
+            }
+        }
+
+        i1 = (i + 1) % c;
+        while (consumed[i1])
+            i1 = (i1 + 1) % c;
+
+        i2 = (i1 + 1) % c;
+        while (consumed[i2])
+            i2 = (i2 + 1) % c;
+
+        triangles.Add(i); triangles.Add(i1); triangles.Add(i2);
+
+        return triangles;
+    }
+
+    //
+    public static List<int> dumbTriangulate(List<Vector3> points)
+    {
+        List<int> tris = new List<int>();
+        for (int i = 1; i < points.Count - 1; ++i)
+        {
+            tris.Add(0); tris.Add(i); tris.Add(i + 1);
+        }
+
+        return tris;
+    }
+
+    //Not the worst I guess, 3D makes it make sense...ish
+    public static List<int> mediocreTriangulate(List<Vector3> points)
+    {
+        int c = points.Count;
+        List<int> triangles = new List<int>();
+        bool[] consumed = new bool[c];
+        int consumedCount = 0;
+
+        int i = 0;
+        int i1 = 1;
+        int i2 = 2;
+        while (consumedCount < c - 3)
+        {
+            i1 = (i + 1) % c;
+            while (consumed[i1])
+                i1 = (i1 + 1) % c;
+
+            i2 = (i1 + 1) % c;
+            while (consumed[i2])
+                i2 = (i2 + 1) % c;
+
+            triangles.Add(i); triangles.Add(i1); triangles.Add(i2);
+            consumed[i1] = true;
+            consumedCount++;
+            i = i2;
+
+        }
+
+
+        i1 = (i + 1) % c;
+        while (consumed[i1])
+            i1 = (i1 + 1) % c;
+
+        i2 = (i1 + 1) % c;
+        while (consumed[i2])
+            i2 = (i2 + 1) % c;
+
+        triangles.Add(i); triangles.Add(i1); triangles.Add(i2);
+
+        return triangles;
     }
 }
