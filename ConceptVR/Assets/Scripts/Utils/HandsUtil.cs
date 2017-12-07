@@ -230,19 +230,21 @@ public class HandsUtil {
             }
             string sDirection = "";
 
-            float absX = Mathf.Abs(swipeDirection.x);
+            /*float absX = Mathf.Abs(swipeDirection.x);
             float absY = Mathf.Abs(swipeDirection.y);
-            float absZ = Mathf.Abs(swipeDirection.z);
-            float handRoll = hand.PalmNormal.Roll;
-            
-            if (absX > absY && absX > absZ)
+            float absZ = Mathf.Abs(swipeDirection.z);*/
+            float handRoll = Mathf.Abs(hand.PalmNormal.Roll);
+            Debug.Log(handRoll);
+            //Debug.Log(accelMag[4] + "," + accelMag[3] + "," + accelMag[5]);
+            if (handRoll > 1.35 && accelMag[1] < -0.3f && accelMag[0] < accelMag[1] && accelMag[2] > accelMag[1])
             {
-                if (handRoll > 0.5 && accelMag[4] < -.5f && accelMag[3] > accelMag[4] && accelMag[5] > accelMag[4])
-                    sDirection = "Right";
-                else if (swipeDirection.x < .2f && handRoll < -0.5)
-                    sDirection = "Left";
+                Debug.Log(accelMag[1] + "," + accelMag[2] + "," + accelMag[3] + "," + accelMag[4] + "," + accelMag[5]);
+                Debug.Log("Butt");
+                return true;
             }
-            return ((hand.IsRight && sDirection == "Right") || (hand.IsLeft && sDirection == "Left")) ? true : false;
+            else
+                return false;
+            //return ((hand.IsRight && sDirection == "Right") || (hand.IsLeft && sDirection == "Left")) ? true : false;
         }
         return false;
     }

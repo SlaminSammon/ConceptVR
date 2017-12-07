@@ -12,7 +12,7 @@ public class ChangeClock : MonoBehaviour {
     void Start()
     {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
-        cdTime = HUD.getCooldownTime();
+        //cdTime = HUD.getCooldownTime();
     }
 
     // Update is called once per frame
@@ -27,14 +27,14 @@ public class ChangeClock : MonoBehaviour {
         {
             Leap.Unity.FingerModel finger = collision.gameObject.GetComponentInParent<Leap.Unity.FingerModel>();
 
-            cdTime = HUD.getCooldown();
+            //cdTime = HUD.getCooldown();
             if (Time.time > cdTime)
             {
                 if (finger && finger.fingerType.ToString() == "TYPE_INDEX")
                 {
                     // swaps clock from digital to analog
-                    HUD.changeClock();
-                    HUD.setCooldownTime(Time.time + HUD.getCooldown());
+                    //HUD.changeClock();
+                    //HUD.setCooldownTime(Time.time + HUD.getCooldown());
                 }
             }
         }

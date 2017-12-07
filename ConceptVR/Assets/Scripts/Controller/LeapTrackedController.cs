@@ -48,6 +48,7 @@ public class LeapTrackedController : MonoBehaviour
     public bool pinchInput = false;
     bool flippedGrab = false;
     public bool grabHeld = false;
+    public bool swipe = false;
     public int velocity = 1; //To be checked against a seperate frame. 0 means decreased velocity. 1 means stagnent. 2 means increased.
     public Vector3 position;
     public string handedness;
@@ -83,6 +84,7 @@ public class LeapTrackedController : MonoBehaviour
 
         bool grab = checkGrab();
         bool pinch = false;
+        swipe = false;
         if (!grab)
         {
             //Debug.Log("Not Grabbing");
@@ -109,8 +111,20 @@ public class LeapTrackedController : MonoBehaviour
             OnPinchHeld();
         }
 
+        if (checkSwipe())
+        {
 
-        if (checkTap())
+            if (Time.time > swipeCooldownTime)
+            {
+                swipe = true;
+                EditorApplication.Beep();
+                swipeMade();
+                swipeCooldownTime = Time.time + cooldown;
+            }
+            else
+                Debug.Log("Cooldown!!");
+        }
+        if (checkTap() && !swipe)
         {
             if (Time.time > tapCooldownTime)
             {
@@ -118,31 +132,6 @@ public class LeapTrackedController : MonoBehaviour
                 tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
                 tapCooldownTime = Time.time + tapCooldown;
             }
-        }
-        if (checkSwipe())
-        {
-
-            Debug.Log("Swipe Recognized!!" + swipeCount);
-            if (swipeCount <4)
-                swipeCount++;
-            if(swipeCount == 4)
-            {
-                if (Time.time > swipeCooldownTime)
-                {
-                    EditorApplication.Beep();
-                    swipeMade();
-                    Debug.Log("Swipe Gesture!!" + swipeCount);
-                    swipeCooldownTime = Time.time + cooldown;
-                }
-                else
-                    Debug.Log("Cooldown!!");
-                swipeCount = 0;
-            }
-
-        }
-        else
-        {
-            swipeCount = 0;
         }
         if (flippedPinch)
         {

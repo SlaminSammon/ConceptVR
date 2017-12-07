@@ -13,7 +13,7 @@ public class ChangeHUDColor : MonoBehaviour {
 	// Use this for initialization exodia
 	void Start () {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
-        cdTime = HUD.getCooldownTime();
+        //cdTime = HUD.getCooldownTime();
     }
 
     // Update is called once per frame
@@ -26,7 +26,7 @@ public class ChangeHUDColor : MonoBehaviour {
         if (collision.gameObject.name == "bone3" || collision.gameObject.name == "bone2") { 
             Leap.Unity.FingerModel finger = collision.gameObject.GetComponentInParent<Leap.Unity.FingerModel>();
 
-            cdTime = HUD.getCooldown();
+            //cdTime = HUD.getCooldown();
             if (Time.time > cdTime)
             {
                 if (finger && finger.fingerType.ToString() == "TYPE_INDEX")
@@ -37,7 +37,7 @@ public class ChangeHUDColor : MonoBehaviour {
                     color.b = color.r;
                     color.a = 1f;
                     HUD.setHUDColor(color);
-                    HUD.setCooldownTime(Time.time + HUD.getCooldown());
+                    //HUD.setCooldownTime(Time.time + HUD.getCooldown());
                 }
             }
         }
