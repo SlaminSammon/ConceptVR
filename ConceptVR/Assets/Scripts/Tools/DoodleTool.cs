@@ -6,6 +6,7 @@ public class DoodleTool : Tool {
     private LineRenderer currLineRend;//Line Renderer
     private int numClicks = 0;
     public Color currLineColor;
+    public Material material;
     void Start () {
 		currLineColor = Color.red;
 	}
@@ -23,6 +24,7 @@ public class DoodleTool : Tool {
     {
         GameObject go = new GameObject();
         currLineRend = go.AddComponent<LineRenderer>();
+        currLineRend.material = material;
         numClicks = 0;
         //Makes a thinner line
         currLineRend.SetWidth(.01f, .01f);
