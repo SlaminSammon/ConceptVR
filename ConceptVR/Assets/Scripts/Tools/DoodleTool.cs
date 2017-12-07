@@ -11,8 +11,8 @@ public class DoodleTool : Tool {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        if (triggerInput)
+	new void Update () {
+        if (triggerInput && currLineRend != null)
         {
             currLineRend.positionCount = numClicks + 1;
             currLineRend.SetPosition(numClicks, controllerPosition);

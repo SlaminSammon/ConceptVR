@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class Tool : MonoBehaviour {
     public bool triggerInput;
+    public bool gripInput;
     public Vector3 controllerPosition;
     public void setPos(Vector3 pos)
     {

@@ -46,6 +46,7 @@ public class LeapTrackedController : MonoBehaviour
     public bool pinchHeld = false;
     bool flippedPinch = false;
     public bool pinchInput = false;
+    public bool gripInput = false;
     bool flippedGrab = false;
     public bool grabHeld = false;
     public bool swipe = false;
@@ -81,15 +82,27 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        /*if(util.getHandCount() > 2)
+        {
+            GameObject.Destroy(GameObject.Find("RigidRoundHand_L(Copy)"));
+            GameObject.Destroy(GameObject.Find("RigidRoundHand_R(Copy)"));
+            GameObject.Destroy(GameObject.Find("LoPoly_Rigged_Hand_Left(Copy)"));
+            GameObject.Destroy(GameObject.Find("LoPoly_Rigged_Hand_Right(Copy)"));
+            return;
+        }*/
         bool grab = checkGrab();
+        if (!grab)
+        {
+            grab = checkRecentGrabData();
+            if (grab)
+                flippedGrab = true;
+        }
         bool pinch = false;
         swipe = false;
         if (!grab)
         {
-            //Debug.Log("Not Grabbing");
-            if (grabHeld)
-                OnGrabGone();
+            Debug.Log("Not Grabbing");
+            OnGrabGone();
             pinch = checkPinch();
             if (!pinch)
             {
@@ -97,13 +110,10 @@ public class LeapTrackedController : MonoBehaviour
                 if (pinch) flippedPinch = true;
             }
         }
-        else
+        if(!pinch) OnPinchGone();
+        if (grab && !grabHeld && !flippedGrab)
         {
             Debug.Log("Grabbing");
-        }
-        if(!pinch) OnPinchGone();
-        if (grab && !grabHeld)
-        {
             OnGrabHeld();
         }
         else if(pinch && !pinchHeld && !flippedPinch)
@@ -141,6 +151,14 @@ public class LeapTrackedController : MonoBehaviour
         }
         else
             pinchInput = false;
+        if (flippedGrab)
+        {
+            grabHeld = false;
+            flippedPinch = false;
+            gripInput = true;
+        }
+        else
+            gripInput = false;
         if (hand != null)
         {
             currentFrame = fetchFrameInformation();

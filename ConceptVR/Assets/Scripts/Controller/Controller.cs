@@ -16,14 +16,6 @@ public abstract class Controller : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (currentTool.GetType() == typeof(DragTool))
-            Debug.Log("Drag");
-        else if (currentTool.GetType() == typeof(SketchTool))
-            Debug.Log("Draw");
-        else if (currentTool.GetType() == typeof(BezierTool))
-            Debug.Log("Poo");
-        else
-            Debug.Log("Poobins");
 
     }
 

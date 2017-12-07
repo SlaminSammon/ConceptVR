@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
 public class HandsUtil {
-    private static float dist = .04f;
+    private static float dist = .025f;
     public DebugGrapher grapher = GameObject.Find("HandUtilDebugGrapher").GetComponent<DebugGrapher>();
 
     //Gets the position of the fingers on a hand
@@ -234,14 +234,8 @@ public class HandsUtil {
             float absY = Mathf.Abs(swipeDirection.y);
             float absZ = Mathf.Abs(swipeDirection.z);*/
             float handRoll = Mathf.Abs(hand.PalmNormal.Roll);
-            Debug.Log(handRoll);
-            //Debug.Log(accelMag[4] + "," + accelMag[3] + "," + accelMag[5]);
             if (handRoll > 1.35 && accelMag[1] < -0.3f && accelMag[0] < accelMag[1] && accelMag[2] > accelMag[1])
-            {
-                Debug.Log(accelMag[1] + "," + accelMag[2] + "," + accelMag[3] + "," + accelMag[4] + "," + accelMag[5]);
-                Debug.Log("Butt");
                 return true;
-            }
             else
                 return false;
             //return ((hand.IsRight && sDirection == "Right") || (hand.IsLeft && sDirection == "Left")) ? true : false;
@@ -268,6 +262,11 @@ public class HandsUtil {
     public Vector3 weightedPos(Leap.Hand hand)
     {
         return getThumbPos(hand) * 75f + getIndexPos(hand) * .25f;
+    }
+    public int getHandCount()
+    {
+        Leap.Frame frame = new LeapServiceProvider().CurrentFrame;
+        return frame.Hands.Count;
     }
 
 }

@@ -17,6 +17,7 @@ public class LinkTool : SelectTool {
 
     public override void TriggerDown()
     {
+        if (sPoints.Count <= 1) return;
         if (sPoints.Count == 2)
         {
             new Edge(sPoints[0], sPoints[1]);

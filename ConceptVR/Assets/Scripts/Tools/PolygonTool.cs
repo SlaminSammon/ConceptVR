@@ -21,7 +21,7 @@ public class PolygonTool : Tool {
     }
 
     // Update is called once per frame
-    void Update()
+    new void Update()
     {
         if (triggerInput && !currentLine.loop)
         {

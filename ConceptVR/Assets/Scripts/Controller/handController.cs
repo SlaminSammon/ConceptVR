@@ -25,6 +25,7 @@ public class handController: Controller {
             currentTool.triggerInput = leapControl.pinchInput;
         else
             currentTool.triggerInput = leapControl.pinchHeld;
+        currentTool.gripInput = leapControl.gripInput;
         currentTool.setPos(leapControl.position);
 
     }
