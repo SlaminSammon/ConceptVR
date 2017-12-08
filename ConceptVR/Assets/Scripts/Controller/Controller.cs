@@ -8,17 +8,10 @@ public abstract class Controller : MonoBehaviour {
     public Controller other;    //controller attached to the other hand (it is assumed the user only has two hands)
     public List<Tool> tools;
 
-    public Tool currentTool;
+    protected Tool currentTool;
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log(tools.Count); 
-        foreach(Tool t in tools)
-        {
-            if (t.GetType() != currentTool.GetType())
-                deactivateLastTool(t.GetType().ToString());
-            Debug.Log(t.GetType());
-        }
     }
 	
 	// Update is called once per frame
@@ -99,5 +92,14 @@ public abstract class Controller : MonoBehaviour {
         GameObject toolsList = GameObject.Find("Tools");
         toolsList.transform.Find(type).gameObject.SetActive(true);
     }
-
+    public void OnEnable()
+    {
+        if (currentTool == null) currentTool = tools[0];
+        foreach (Tool t in tools)
+        {
+            if (t.GetType() != currentTool.GetType())
+                deactivateLastTool(t.GetType().ToString());
+            Debug.Log(t.GetType());
+        }
+    }
 }

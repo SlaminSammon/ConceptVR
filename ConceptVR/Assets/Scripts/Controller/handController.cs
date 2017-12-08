@@ -15,7 +15,6 @@ public class handController: Controller {
         leapControl.grabGone += GripUp;
         leapControl.tapMade += Tap;
         leapControl.swipeMade += Swipe;
-        currentTool = tools[0];
     }
 
     // Update is called once per frame

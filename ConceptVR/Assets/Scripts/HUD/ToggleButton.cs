@@ -8,15 +8,7 @@ public class ToggleButton : HUDButton {
     new void Start()
     {
         base.Start();
-        if (toggled)
-        {
-            transform.Find("ViewOn").gameObject.SetActive(false);
-            transform.Find("ViewOff").gameObject.SetActive(true);
-        } else
-        {
-            transform.Find("ViewOff").gameObject.SetActive(false);
-            transform.Find("ViewOn").gameObject.SetActive(true);
-        }
+        
     }
 
     public override void OnPress()
@@ -35,7 +27,20 @@ public class ToggleButton : HUDButton {
             ToggleOn();
         }
     }
-    
+    new public void OnEnable()
+    {
+        if (!toggled)
+        {
+            transform.Find("ViewOn").gameObject.SetActive(false);
+            transform.Find("ViewOff").gameObject.SetActive(true);
+        }
+        else
+        {
+            transform.Find("ViewOff").gameObject.SetActive(false);
+            transform.Find("ViewOn").gameObject.SetActive(true);
+        }
+    }
+
     public virtual void ToggleOn() { }
     public virtual void ToggleOff() { }
 }

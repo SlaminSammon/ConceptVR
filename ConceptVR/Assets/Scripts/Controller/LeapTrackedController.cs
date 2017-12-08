@@ -82,7 +82,7 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        removeExtraHands();
         bool grab = checkGrab();
         if (!grab)
         {
@@ -329,13 +329,13 @@ public class LeapTrackedController : MonoBehaviour
     }
     public void removeExtraHands()
     {
-        GameObject go = GameObject.Find("RigidRoundHand_L(Copy)");
+        GameObject go = GameObject.Find("RigidRoundHand_L(Clone)");
         if (go != null) GameObject.Destroy(go);
-        go = GameObject.Find("RigidRoundHand_R(Copy)");
+        go = GameObject.Find("RigidRoundHand_R(Clone)");
         if(go != null) GameObject.Destroy(go);
-        go = GameObject.Find("LoPoly_Rigged_Hand_Left(Copy)");
+        go = GameObject.Find("LoPoly_Rigged_Hand_Left(Clone)");
         if (go != null) GameObject.Destroy(go);
-        go = GameObject.Find("LoPoly_Rigged_Hand_Right(Copy)");
+        go = GameObject.Find("LoPoly_Rigged_Hand_Right(Clone)");
         if (go != null) GameObject.Destroy(go);
     }
 }
