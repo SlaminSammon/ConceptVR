@@ -31,6 +31,8 @@ public class HandsUtil {
     //Check pinch and grab pose
     public bool IsPinching(Leap.Hand hand)
     {
+        if (Hands.GetIndex(hand).IsExtended)
+            return false;
         //return hand.PinchStrength > .9f;
         //first and foremost we need the index to be pinched, if it it is we have a true
         bool pinch = checkPinchOfFinger(hand, "index");
