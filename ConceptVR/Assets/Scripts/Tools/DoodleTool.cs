@@ -5,10 +5,11 @@ using UnityEngine;
 public class DoodleTool : Tool {
     private LineRenderer currLineRend;//Line Renderer
     private int numClicks = 0;
-    public Color currLineColor;
     public Material material;
+    private List<Color> colors = new List<Color>(new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta });
+    private int colorIndex;
     void Start () {
-		currLineColor = Color.red;
+        colorIndex = 0;
 	}
 	
 	// Update is called once per frame
@@ -27,6 +28,14 @@ public class DoodleTool : Tool {
         currLineRend.material = material;
         numClicks = 0;
         //Makes a thinner line
-        currLineRend.SetWidth(.01f, .01f);
+        currLineRend.startWidth = .01f;
+        currLineRend.endWidth = .01f;
+    }
+    public Color changeColor()
+    {
+        if (colors.Count - 1 == colorIndex)
+            colorIndex = -1;
+        material.SetColor("_SpecColor", colors[++colorIndex]);
+        return colors[colorIndex];
     }
 }
