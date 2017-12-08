@@ -73,4 +73,9 @@ public class SelectTool : Tool {
             e.Render();
         }
     }
+
+    void OnDisable()
+    {
+        ClearSelection();
+    }
 }
