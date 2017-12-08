@@ -93,7 +93,7 @@ public class Solid : DCGElement {
         List<Point> points = new List<Point>();
         foreach(Face f in faces)
         {
-            points.AddRange(f.getPoints());
+            points.AddRange(f.GetPoints());
         }
         return points.Distinct().ToList();
     }

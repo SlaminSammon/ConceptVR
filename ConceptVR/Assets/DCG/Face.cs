@@ -50,6 +50,48 @@ public class Face : DCGElement {
         DCGBase.faces.Remove(this);
     }
 
+    public override float Distance(Vector3 pos)
+    {
+        List<Point> fp = GetPoints();   //face points
+        List<Vector2> pp = new List<Vector2>();     //projected points
+        Vector3 zvec = getNormal();
+        Vector3 yvec = fp[1].position - fp[0].position;
+        Vector3 grabProj3 = Vector3.ProjectOnPlane(pos, zvec);
+        Vector3 grabProjY = Vector3.Project(grabProj3, yvec);
+        Vector2 grab = new Vector2((grabProj3 - grabProjY).magnitude, grabProjY.magnitude);
+
+        Vector3 posRel = pos - fp[0].position;
+        float dist2 = (posRel - Vector3.ProjectOnPlane(posRel, zvec)).sqrMagnitude;
+
+        foreach (Point p in fp)
+        {
+            Vector3 proj3 = Vector3.ProjectOnPlane(p.position, zvec);
+            Vector3 projY = Vector3.Project(proj3, yvec);
+            pp.Add(new Vector2((proj3 - projY).magnitude, projY.magnitude));
+        }
+
+
+        //Check if the projected poly contains the projected controller
+        float count = 0;
+        Vector2 prev = pp[pp.Count - 1];
+        foreach (Vector2 cur in pp)
+        {
+            if ((prev.y > grab.y != cur.y > grab.y) && (grab.x < Mathf.Lerp(prev.x, cur.x, (grab.y - prev.y) / (cur.y - prev.y))))
+                count++;
+            prev = cur;
+        }
+
+
+        if (count % 2 == 1)
+            return Mathf.Sqrt(dist2);
+        else return Mathf.Infinity;
+    }
+
+    /*public override List<Point> Extrude()
+    {
+
+    }*/
+
     public void updateAwful()
     {
         Vector3 avgNormal = getNormal();
@@ -58,7 +100,7 @@ public class Face : DCGElement {
             isAwful = true;
             return;
         }*/
-        List<Point> points = getPoints();
+        List<Point> points = GetPoints();
         Vector2[] proj = new Vector2[points.Count];     //projected points
         Vector3 yVec = points[1].position - points[0].position;
         for (int i = 0; i < points.Count; ++i)
@@ -139,7 +181,7 @@ public class Face : DCGElement {
         mesh.RecalculateTangents();
     }
     
-    public List<Point> getPoints()
+    public override List<Point> GetPoints()
     {
         List<Point> points = new List<Point>();
         foreach(Edge e in edges)
@@ -151,7 +193,7 @@ public class Face : DCGElement {
 
     public Vector3 getNormal()
     {
-        List<Point> points = getPoints();
+        List<Point> points = GetPoints();
         Vector3 prevPos = points[points.Count - 1].position;
         Vector3 prev = prevPos - points[points.Count - 2].position;
         Vector3 norm = new Vector3(0,0,0);

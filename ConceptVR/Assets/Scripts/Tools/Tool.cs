@@ -15,7 +15,7 @@ public abstract class Tool : MonoBehaviour {
         return controllerPosition;
     }
 
-    public void Update()
+    public virtual void Update()
     {
         transform.position = controllerPosition;
     }

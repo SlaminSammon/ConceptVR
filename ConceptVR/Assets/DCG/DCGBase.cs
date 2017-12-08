@@ -71,17 +71,47 @@ public class DCGBase : MonoBehaviour {
         return moveID++;
     }
 
+
+    public static DCGElement NearestElement(Vector3 pos, float maxDist)
+    {
+        Point np = NearestPoint(pos, maxDist);
+        Edge ne = NearestEdge(pos, maxDist / Mathf.Sqrt(2f));
+        Face nf = NearestFace(pos, maxDist / 2f);
+
+        float dp = Mathf.Infinity;
+        float de = Mathf.Infinity;
+        float df = Mathf.Infinity;
+
+        if (np != null)
+            dp = np.Distance(pos);
+        if (ne != null)
+            de = ne.Distance(pos) * Mathf.Sqrt(2f);
+        if (nf != null)
+            df = nf.Distance(pos) * 2f;
+
+        float min = Mathf.Min(dp, de, df);
+
+        if (min == dp)
+            return np;
+        else if (min == de)
+            return ne;
+        else if (min == df)
+            return nf;
+        else
+            return null;
+    }
+
     public static Point NearestPoint(Vector3 pos, float maxDist)
     {
-        float nDist2 = maxDist * maxDist;
+        float nDist = maxDist;
         Point nPoint = null;
         foreach (Point p in DCGBase.points)
         {
-            float dist2 = (pos - p.position).sqrMagnitude;
-            if (dist2 < nDist2)
+            float dist = p.Distance(pos);
+            if (dist < nDist)
             {
+                nDist = dist;
                 nPoint = p;
-                nDist2 = dist2;
             }
         }
 
@@ -90,21 +120,15 @@ public class DCGBase : MonoBehaviour {
 
     public static Edge NearestEdge(Vector3 pos, float maxDist)
     {
-        float nDist2 = maxDist * maxDist;
+        float nDist = maxDist;
         Edge nEdge = null;
         foreach (Edge e in DCGBase.edges)
         {
-            for (int i = 0; i < (e.isLoop ? e.points.Count : e.points.Count - 1); ++i)
+            float dist = e.Distance(pos);
+            if (dist < nDist)
             {
-                Vector3 ediff = (e.points[i].position - e.points[(i + 1) % e.points.Count].position);
-                Vector3 hdiff = (pos - e.points[i].position);
-                Vector3 proj = Vector3.Project(hdiff, ediff);
-                float dist2 = (hdiff - proj).sqrMagnitude;
-                if (dist2 < nDist2 && hdiff.sqrMagnitude < ediff.sqrMagnitude && (pos - e.points[(i + 1) % e.points.Count].position).sqrMagnitude < ediff.sqrMagnitude)
-                {
-                    nEdge = e;
-                    nDist2 = dist2;
-                }
+                nDist = dist;
+                nEdge = e;
             }
         }
 
@@ -113,48 +137,14 @@ public class DCGBase : MonoBehaviour {
 
     public static Face NearestFace(Vector3 pos, float maxDist)
     {
-        float nDist2 = maxDist * maxDist;
+        float nDist = maxDist;
         Face nFace = null;
         foreach (Face f in DCGBase.faces)
         {
-            if (f.edges.Count == 0)
-                continue;
-            List<Point> fp = f.getPoints();   //face points
-            List<Vector2> pp = new List<Vector2>();     //projected points
-            Vector3 zvec = f.getNormal();
-            Vector3 yvec = fp[1].position - fp[0].position;
-            Vector3 grabProj3 = Vector3.ProjectOnPlane(pos, zvec);
-            Vector3 grabProjY = Vector3.Project(grabProj3, yvec);
-            Vector2 grab = new Vector2((grabProj3 - grabProjY).magnitude, grabProjY.magnitude);
-
-            Vector3 grabRel = pos - fp[0].position;
-            float dist2 = (grabRel - Vector3.ProjectOnPlane(grabRel, zvec)).sqrMagnitude;
-
-            if (dist2 > nDist2)
-                continue;
-
-            foreach (Point p in fp)
+            float dist = f.Distance(pos);
+            if (dist < nDist)
             {
-                Vector3 proj3 = Vector3.ProjectOnPlane(p.position, zvec);
-                Vector3 projY = Vector3.Project(proj3, yvec);
-                pp.Add(new Vector2((proj3 - projY).magnitude, projY.magnitude));
-            }
-
-
-            //Check if the projected poly contains the projected controller
-            float count = 0;
-            Vector2 prev = pp[pp.Count - 1];
-            foreach (Vector2 cur in pp)
-            {
-                if ((prev.y > grab.y != cur.y > grab.y) && (grab.x < Mathf.Lerp(prev.x, cur.x, (grab.y - prev.y) / (cur.y - prev.y))))
-                    count++;
-                prev = cur;
-            }
-
-
-            if (count % 2 == 1)
-            {
-                nDist2 = dist2;//TODO
+                nDist = dist;
                 nFace = f;
             }
         }

@@ -66,7 +66,40 @@ public class Edge : DCGElement {
         DCGBase.edges.Remove(this);
     }
 
-    public void setSmooth(bool smooth)
+    public override float Distance(Vector3 position)
+    {
+        float nDist2 = Mathf.Infinity;
+        for (int i = 0; i < points.Count-1; ++i)
+            nDist2 = Mathf.Min(Vector3.ProjectOnPlane(position - points[i].position, points[i + 1].position - points[i].position).sqrMagnitude, nDist2);
+
+        if (isLoop)
+            nDist2 = Mathf.Min(Vector3.ProjectOnPlane(position - points[0].position, points[points.Count].position - points[0].position).sqrMagnitude, nDist2);
+
+        return Mathf.Sqrt(nDist2);
+    }
+
+    public override List<Point> GetPoints() { return points; }
+
+    public override List<Point> Extrude()
+    {
+        List<Point> ep = new List<Point>();
+        foreach (Point p in points)
+            ep.Add(new Point(p.position));
+
+        ep.Reverse();
+
+        List<Edge> ee = new List<Edge>();
+        ee.Add(new Edge(ep, isLoop));
+        ee.Add(new Edge(ep[ep.Count - 1], points[0]));
+        ee.Add(this);
+        ee.Add(new Edge(points[ep.Count - 1], ep[0]));
+
+        Face ef = new Face(ee);
+
+        return ep;
+    }
+
+        public void setSmooth(bool smooth)
     {
         this.smooth = smooth;
         if (smooth)

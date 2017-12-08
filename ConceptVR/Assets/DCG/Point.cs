@@ -30,6 +30,26 @@ public class Point : DCGElement {
         DCGBase.points.Remove(this);
     }
 
+    public override float Distance(Vector3 position)
+    {
+        return Vector3.Distance(position, this.position);
+    }
+    
+    public override List<Point> GetPoints() {
+        List<Point> me = new List<Point>();
+        me.Add(this);
+        return me;
+    }
+
+    public override List<Point> Extrude()
+    {
+        Point p = new Point(position);
+        new Edge(this, p);
+        List<Point> list = new List<Point>();
+        list.Add(p);
+        return list;
+    }
+
     public void setPosition(Vector3 value)
     {
         position = value;

@@ -15,7 +15,7 @@ public class SelectTool : Tool {
         sPoints = new List<Point>();
     }
 
-    public void Update()
+    public override void Update()
     {
         base.Update();
         selMat.SetFloat("_Offset", Time.time / 6f);
@@ -23,19 +23,18 @@ public class SelectTool : Tool {
 
     public override void Tap(Vector3 position)
     {
-        Point nearestPoint = DCGBase.NearestPoint(position, selectDistance);
-        if (nearestPoint != null)
+        DCGElement nearestElement = DCGBase.NearestPoint(position, selectDistance);
+        if (nearestElement != null)
         {
-            List<DCGElement> newSel = Select(nearestPoint);
-            foreach(DCGElement e in newSel)
+            List<Point> newSel = Select(nearestElement);
+            sElements.Remove(nearestElement);
+            sElements.Add(nearestElement);
+            foreach(Point p in newSel)
             {
-                sElements.Add(e);
-                Debug.Log(e.GetType());
-                if (e.GetType() == typeof(Point))
-                {
-                    sPoints.Remove(e as Point); //If the point exists in the point list, remove the copy before adding it in
-                    sPoints.Add(e as Point);
-                }
+                sElements.Remove(p);
+                sElements.Add(p);
+                sPoints.Remove(p); //If the point exists in the point list, remove the copy before adding it in
+                sPoints.Add(p);
             }
         }
     }
@@ -44,12 +43,10 @@ public class SelectTool : Tool {
         ClearSelection();
     }
 
-    public List<DCGElement> Select(Point p)
+    public List<Point> Select(DCGElement elem)
     {
-        p.isSelected = true;
-        List<DCGElement> n = new List<DCGElement>();
-        n.Add(p as DCGElement);
-        return n;
+        elem.isSelected = true;
+        return elem.GetPoints();
     }
 
     public void ClearSelection()
