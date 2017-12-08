@@ -4,7 +4,7 @@ using UnityEngine;
 using Leap.Unity;
 public class HandsUtil {
     private static float dist = .025f;
-    public DebugGrapher grapher = GameObject.Find("HandUtilDebugGrapher").GetComponent<DebugGrapher>();
+    //public DebugGrapher grapher = GameObject.Find("HandUtilDebugGrapher").GetComponent<DebugGrapher>();
 
     //Gets the position of the fingers on a hand
     public Vector3 getIndexPos(Leap.Hand hand)
@@ -63,7 +63,7 @@ public class HandsUtil {
     {
         float angle = Vector3.Angle(hand.PalmNormal.ToVector3(), Vector3.up);
         //Debug.Log(angle);
-        return (hand.GrabAngle <= 1f) && (angle<60f);
+        return (hand.GrabAngle <= 1f) && (angle<120f);
     }
     public bool IsGrabbingAngle(Leap.Hand hand)
     {
@@ -192,17 +192,9 @@ public class HandsUtil {
             && fArr[count-2].index.isExtended
             && accelMag[count-2] > 0)*/
         if (accelMag[count-2] < -.5f && accelMag[count - 3] > accelMag[count - 2] && accelMag[count - 1] > accelMag[count - 2])
-        {
-            grapher.AddValue("velocity", padvel[count - 2], true);
-            grapher.AddValue("acceleration", accelMag[count - 2], true);
             return true;
-        }
         else
-        {
-            grapher.AddValue("velocity", padvel[count - 2], false);
-            grapher.AddValue("acceleration", accelMag[count - 2], false);
             return false;
-        }
     }
     public bool isSwiping(Leap.Hand hand, Queue<FrameInformation> framesQueue)
     {
