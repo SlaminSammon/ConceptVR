@@ -93,7 +93,7 @@ public class DragTool : Tool
 
         if (nearestFace != null)
         {
-            grabbedPoints = nearestFace.getPoints();
+            grabbedPoints = nearestFace.GetPoints();
             grabType = GrabType.Face;
         }
 

@@ -38,7 +38,7 @@ public class FaceDragTool : Tool {
             nearestFace = null;
             foreach (Face f in DCGBase.faces)
             {
-                List<Point> fp = f.getPoints();   //face points
+                List<Point> fp = f.GetPoints();   //face points
                 List<Vector2> pp = new List<Vector2>();     //projected points
                 Vector3 zvec = f.getNormal();
                 Vector3 yvec = fp[1].position - fp[0].position;
@@ -84,7 +84,7 @@ public class FaceDragTool : Tool {
     {
         if (nearestFace != null)
         {
-            facePoints = nearestFace.getPoints();
+            facePoints = nearestFace.GetPoints();
             pointGrabPos = new List<Vector3>();
             foreach (Point p in facePoints)
                 pointGrabPos.Add(p.position);
