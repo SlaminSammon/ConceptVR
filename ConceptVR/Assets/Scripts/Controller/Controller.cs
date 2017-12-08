@@ -8,10 +8,17 @@ public abstract class Controller : MonoBehaviour {
     public Controller other;    //controller attached to the other hand (it is assumed the user only has two hands)
     public List<Tool> tools;
 
-    protected Tool currentTool;
+    public Tool currentTool;
 
 	// Use this for initialization
 	void Start () {
+        Debug.Log(tools.Count); 
+        foreach(Tool t in tools)
+        {
+            if (t.GetType() != currentTool.GetType())
+                deactivateLastTool(t.GetType().ToString());
+            Debug.Log(t.GetType());
+        }
     }
 	
 	// Update is called once per frame
@@ -42,6 +49,7 @@ public abstract class Controller : MonoBehaviour {
     }
     public void changeTool(string toolName)
     {
+        Tool lastTool = currentTool;
         //Debug.Log(toolName);
         switch(toolName)
         {
@@ -55,13 +63,20 @@ public abstract class Controller : MonoBehaviour {
                 currentTool = getToolByType(typeof(DestroyTool));
                 break;
             case "PointTool":
-                currentTool = getToolByType(typeof(TapTestTool));
+                currentTool = getToolByType(typeof(PointTool));
                 break;
             case "LinkTool":
                 currentTool = getToolByType(typeof(LinkTool));
                 break;
             default:
                 break;
+        }
+        Debug.Log("Cur" + currentTool.GetType());
+        Debug.Log("Last" + lastTool.GetType());
+        if (currentTool.GetType() != lastTool.GetType())
+        {
+            deactivateLastTool(lastTool.GetType().ToString());
+            activateNewTool(currentTool.GetType().ToString());
         }
         //Debug.Log(currentTool.GetType());
     }
@@ -76,4 +91,13 @@ public abstract class Controller : MonoBehaviour {
         //Debug.Log("Not Switching");
         return currentTool;
     }
+    public void deactivateLastTool(string type) {
+        GameObject.Find(type).SetActive(false);
+    }
+    public void activateNewTool(string type)
+    {
+        GameObject toolsList = GameObject.Find("Tools");
+        toolsList.transform.Find(type).gameObject.SetActive(true);
+    }
+
 }

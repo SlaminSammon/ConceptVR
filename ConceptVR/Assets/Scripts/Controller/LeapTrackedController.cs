@@ -82,14 +82,7 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if(util.getHandCount() > 2)
-        {
-            GameObject.Destroy(GameObject.Find("RigidRoundHand_L(Copy)"));
-            GameObject.Destroy(GameObject.Find("RigidRoundHand_R(Copy)"));
-            GameObject.Destroy(GameObject.Find("LoPoly_Rigged_Hand_Left(Copy)"));
-            GameObject.Destroy(GameObject.Find("LoPoly_Rigged_Hand_Right(Copy)"));
-            return;
-        }*/
+
         bool grab = checkGrab();
         if (!grab)
         {
@@ -333,5 +326,16 @@ public class LeapTrackedController : MonoBehaviour
                 return true;
         }
         return false;
+    }
+    public void removeExtraHands()
+    {
+        GameObject go = GameObject.Find("RigidRoundHand_L(Copy)");
+        if (go != null) GameObject.Destroy(go);
+        go = GameObject.Find("RigidRoundHand_R(Copy)");
+        if(go != null) GameObject.Destroy(go);
+        go = GameObject.Find("LoPoly_Rigged_Hand_Left(Copy)");
+        if (go != null) GameObject.Destroy(go);
+        go = GameObject.Find("LoPoly_Rigged_Hand_Right(Copy)");
+        if (go != null) GameObject.Destroy(go);
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TapTestTool : Tool {
+public class PointTool : Tool {
     Vector3 grabPos;
     Vector3 startPos;
     Point grabbedPoint;
