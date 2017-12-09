@@ -87,10 +87,62 @@ public class Face : DCGElement {
         else return Mathf.Infinity;
     }
 
-    /*public override List<Point> Extrude()
+    public override List<Point> Extrude()
     {
+        List<Point> corners = new List<Point>();
+        List<Point> eCorners = new List<Point>();
 
-    }*/
+        List<Point> ePoints = new List<Point>();
+        List<Edge> eEdges = new List<Edge>();
+        List<Face> eFaces = new List<Face>();
+
+        eFaces.Add(this);
+
+        foreach (Edge e in edges)
+        {
+            corners.Add(e.points[0]);
+            eCorners.Add(new Point(e.points[0].position));
+        }
+
+        int i = 0;
+        foreach (Edge e in edges)
+        {
+            List<Point> edgePoints = new List<Point>();
+            int j = 0;
+            foreach (Point p in e.points)
+            {
+                if (j < e.points.Count - 1)
+                    ePoints.Add(p);
+
+
+                if (j == 0)
+                    edgePoints.Add(eCorners[i]);
+                else if (j == e.points.Count - 1)
+                    edgePoints.Add(eCorners[(i + 1) % eCorners.Count]);
+                else
+                    edgePoints.Add(new Point(p.position));
+                ++j;
+            }
+
+            edgePoints.Reverse();
+            Edge eEdge = new Edge(edgePoints, e.isLoop);
+            eEdges.Add(eEdge);
+
+            List<Edge> faceEdges = new List<Edge>();
+            faceEdges.Add(eEdge);
+            faceEdges.Add(new Edge(eEdge.points[eEdge.points.Count - 1], e.points[0]));
+            faceEdges.Add(e);
+            faceEdges.Add(new Edge(e.points[e.points.Count - 1], eEdge.points[0]));
+            eFaces.Add(new Face(faceEdges));
+            ++i;
+        }
+
+        eEdges.Reverse();
+        Face gFace = new Face(eEdges);
+        eFaces.Add(gFace);
+
+        return ePoints;
+    }
 
     public void updateAwful()
     {
