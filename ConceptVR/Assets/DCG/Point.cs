@@ -78,4 +78,12 @@ public class Point : DCGElement {
                 e.Update();
             }
     }
+
+    public void Merge(Point that)
+    {
+        foreach (Edge e in that.edges)
+            e.points[e.points.FindIndex(x => x == that)] = this;
+        that.edges = new List<Edge>();
+        that.Remove();
+    }
 }

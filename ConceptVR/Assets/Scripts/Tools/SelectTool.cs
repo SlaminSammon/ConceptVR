@@ -23,7 +23,7 @@ public class SelectTool : Tool {
 
     public override void Tap(Vector3 position)
     {
-        DCGElement nearestElement = DCGBase.NearestPoint(position, selectDistance);
+        DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
         if (nearestElement != null)
         {
             List<Point> newSel = Select(nearestElement);
@@ -31,8 +31,6 @@ public class SelectTool : Tool {
             sElements.Add(nearestElement);
             foreach(Point p in newSel)
             {
-                sElements.Remove(p);
-                sElements.Add(p);
                 sPoints.Remove(p); //If the point exists in the point list, remove the copy before adding it in
                 sPoints.Add(p);
             }

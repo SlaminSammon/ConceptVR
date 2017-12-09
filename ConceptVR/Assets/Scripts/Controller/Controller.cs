@@ -61,6 +61,9 @@ public abstract class Controller : MonoBehaviour {
             case "LinkTool":
                 currentTool = getToolByType(typeof(LinkTool));
                 break;
+            case "ExtrudeTool":
+                currentTool = getToolByType(typeof(ExtrudeTool));
+                break;
             default:
                 break;
         }
