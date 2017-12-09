@@ -82,7 +82,8 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        removeExtraHands();
+        removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
+        //Grab logic. Currently deprecated. May come back.
         bool grab = checkGrab();
         if (!grab)
         {
@@ -90,6 +91,7 @@ public class LeapTrackedController : MonoBehaviour
             if (grab)
                 flippedGrab = true;
         }
+        //begin checking pinch logic
         bool pinch = false;
         swipe = false;
         if (!grab)
@@ -97,6 +99,7 @@ public class LeapTrackedController : MonoBehaviour
             Debug.Log("Not Grabbing");
             OnGrabGone();
             pinch = checkPinch();
+            //if pinch is false, chyeck recent frames to determine if its a leap motion hiccup
             if (!pinch)
             {
                 pinch = checkRecentPinchData();
@@ -104,19 +107,21 @@ public class LeapTrackedController : MonoBehaviour
             }
         }
         if(!pinch) OnPinchGone();
+        //Final grab check
         if (grab && !grabHeld && !flippedGrab)
         {
             Debug.Log("Grabbing");
             OnGrabHeld();
         }
+        //Final pinch check
         else if(pinch && !pinchHeld && !flippedPinch)
         {
             OnPinchHeld();
         }
-
+        //Begin swipe check
         if (checkSwipe())
         {
-
+            //We have a cooldown so swipes cannot be spammed
             if (Time.time > swipeCooldownTime)
             {
                 swipe = true;
