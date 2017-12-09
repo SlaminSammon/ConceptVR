@@ -242,7 +242,7 @@ public class LeapTrackedController : MonoBehaviour
         if (hand == null)
             return false;
         position = util.getIndexPos(hand);
-        bool ret = util.checkTap(frameQueue);
+        bool ret = util.checkTap(frameQueue, hand);
         return ret;
     }
     public bool checkSwipe()

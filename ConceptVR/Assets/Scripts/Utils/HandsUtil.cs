@@ -164,9 +164,11 @@ public class HandsUtil {
             return false;
         return true;
     }
-    public bool checkTap(Queue<FrameInformation> frameQueue)
+    public bool checkTap(Queue<FrameInformation> frameQueue, Leap.TestHandFactory hand)
     {
-        int count = frameQueue.Count;
+        if (Hands.GetRing(hand).IsExtended || Hands.GetPinky(hand).IsExtended)
+            return false;
+            int count = frameQueue.Count;
         if (count < 11)
             return false;
 
