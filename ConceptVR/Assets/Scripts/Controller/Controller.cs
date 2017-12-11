@@ -64,6 +64,9 @@ public abstract class Controller : MonoBehaviour {
             case "ExtrudeTool":
                 currentTool = getToolByType(typeof(ExtrudeTool));
                 break;
+            case "BezierTool":
+                currentTool = getToolByType(typeof(BezierTool));
+                break;
             default:
                 break;
         }
