@@ -66,6 +66,14 @@ public class Edge : DCGElement {
         DCGBase.edges.Remove(this);
     }
 
+    public override bool ChildrenSelected()
+    {
+        foreach (Point e in points)
+            if (!e.isSelected)
+                return false;
+        return true;
+    }
+
     public override float Distance(Vector3 position)
     {
         float nDist2 = Mathf.Infinity;

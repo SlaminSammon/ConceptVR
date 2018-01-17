@@ -12,6 +12,7 @@ public abstract class DCGElement {
     public virtual void Render() { }    //Called from OnRenderObject in DCGBase
     public virtual void Update() { }    //Called when an element associated with this one is updated
     public virtual void Remove() { }    //Called when this element is removed, should remove other elements that rely on this one
+    public virtual bool ChildrenSelected() { return false; }    //Returns true iff all children of this element are selected
     public virtual float Distance(Vector3 position) { return Mathf.Infinity; }
     public virtual List<Point> GetPoints() { return new List<Point>(); }
     public virtual List<Point> Extrude() { return new List<Point>(); }

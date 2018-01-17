@@ -50,6 +50,14 @@ public class Face : DCGElement {
         DCGBase.faces.Remove(this);
     }
 
+    public override bool ChildrenSelected()
+    {
+        foreach (Edge e in edges)
+            if (!e.isSelected && !e.ChildrenSelected())
+                return false;
+        return true;
+    }
+
     public override float Distance(Vector3 pos)
     {
         List<Point> fp = GetPoints();   //face points

@@ -30,6 +30,11 @@ public class Point : DCGElement {
         DCGBase.points.Remove(this);
     }
 
+    public override bool ChildrenSelected()
+    {
+        return (isSelected);
+    }
+
     public override float Distance(Vector3 position)
     {
         return Vector3.Distance(position, this.position);

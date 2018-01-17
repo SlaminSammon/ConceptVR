@@ -71,6 +71,11 @@ public class Solid : DCGElement {
         DCGBase.solids.Add(this);
     }
 
+    public void updateMesh()
+    {
+
+    }
+
     public override void Render()
     {
         Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
@@ -86,6 +91,14 @@ public class Solid : DCGElement {
         foreach (Face f in faces)
             f.solids.Remove(this);
         DCGBase.solids.Remove(this);
+    }
+    
+    public override bool ChildrenSelected()
+    {
+        foreach (Face e in faces)
+            if (!e.isSelected && !e.ChildrenSelected())
+                return false;
+        return true;
     }
 
     public List<Point> getPoints()
@@ -106,4 +119,9 @@ public class Solid : DCGElement {
         }
         return edges.Distinct().ToList();
     }
+
+    /*public static Solid FindClosedSurface(Point start)
+    {
+
+    }*/
 }
