@@ -6,6 +6,7 @@ using System.Linq;
 
 public class Solid : DCGElement {
     public List<Face> faces;
+    Mesh mesh;
 
     public Solid()
     {
@@ -150,7 +151,7 @@ public class Solid : DCGElement {
         List<Point> connected = start.GetConnectedPoints(-1);   //Get the set of points we can path to
         Dictionary<Face, int> touches = new Dictionary<Face, int>();
 
-        foreach (Point p in connected)
+        foreach (Point p in connected)  //Check for holes in the surface encompassed by the set of points
         {
             int singleTouches = 0;
             int doubleTouches = 0;
@@ -159,6 +160,8 @@ public class Solid : DCGElement {
             {
                 foreach (Face f in e.faces)
                 {
+                    if (!touches.ContainsKey(f))
+                        touches.Add(f, 0);
                     int t = ++touches[f];
                     if (t == 1)
                         singleTouches++;
@@ -172,7 +175,9 @@ public class Solid : DCGElement {
                 }
             }
 
-            if (singleTouches > 0 || plusTouches > 0)
+            Debug.Log(singleTouches + " " + doubleTouches + " " + plusTouches);
+
+            if (singleTouches > 0 || plusTouches > 0)   //if holes or weird shit are detected, fail out
                 return null;
 
             foreach (Edge e in p.edges)
@@ -182,6 +187,11 @@ public class Solid : DCGElement {
             }
         }
 
+        List<Face> faces = start.edges[0].faces[0].GetConnectedFaces(-1);
 
+        if (faces.Count > 1) //Ensure we didn't just make a single face
+            return new Solid(faces);    //return a new solid built from the set of connected faces
+        else
+            return null;
     }
 }

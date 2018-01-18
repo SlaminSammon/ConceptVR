@@ -30,6 +30,10 @@ public class LinkTool : SelectTool {
             new Face(newEdges);
         }
 
+        Solid nSolid = Solid.FindClosedSurface(sPoints[0]);
+        if (nSolid != null)
+            Debug.Log("Completed a shapesome thing!");
+
         ClearSelection();
     }
 

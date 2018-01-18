@@ -276,6 +276,9 @@ public class HandsUtil {
         Leap.Hand left = Hands.Left;
         Leap.Hand right = Hands.Right;
 
+        if (left == null || right == null)
+            return false;
+
         if (!(Extended(left.Fingers) >= 3 && Extended(right.Fingers) >= 3))
             return false;
         if (Vector3.Distance(left.PalmPosition.ToVector3(), right.PalmPosition.ToVector3()) > 5f)
