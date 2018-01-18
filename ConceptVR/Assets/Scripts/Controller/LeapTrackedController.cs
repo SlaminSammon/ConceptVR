@@ -50,6 +50,7 @@ public class LeapTrackedController : MonoBehaviour
     bool flippedGrab = false;
     public bool grabHeld = false;
     public bool swipe = false;
+    public bool forming = false;
     public int velocity = 1; //To be checked against a seperate frame. 0 means decreased velocity. 1 means stagnent. 2 means increased.
     public Vector3 position;
     public string handedness;
@@ -64,10 +65,13 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler grabMade;
     public event GestureEventHandler grabGone;
     public event GestureEventHandler swipeMade;
+    public event GestureEventHandler freeForm;
+    public event GestureEventHandler freeFormEnd;
     public event GesturePositionEventHandler tapMade;
     public int heldFrames = 75;
     public Queue<FrameInformation> frameQueue;
     public FrameInformation currentFrame;
+    public int playerID;
 
     // Use this for initialization
     void Start()
@@ -84,6 +88,17 @@ public class LeapTrackedController : MonoBehaviour
     {
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
         //Grab logic. Currently deprecated. May come back.
+        if (forming)
+        {
+            if (!util.checkEndFreeForm())
+                return;
+            forming = false;
+            freeFormEnd();
+        }
+        if (util.checkFreeForm())
+        {
+            freeForm();
+        }
         bool grab = checkGrab();
         if (!grab)
         {
