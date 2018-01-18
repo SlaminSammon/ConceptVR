@@ -271,5 +271,17 @@ public class HandsUtil {
         Leap.Frame frame = new LeapServiceProvider().CurrentFrame;
         return frame.Hands.Count;
     }
+    public bool checkFreeForm()
+    {
+        Leap.Hand left = Hands.Left;
+        Leap.Hand right = Hands.Right;
 
+        if (!(Extended(left.Fingers) >= 3 && Extended(right.Fingers) >= 3))
+            return false;
+        if (Vector3.Distance(left.PalmPosition.ToVector3(), right.PalmPosition.ToVector3()) > 5f)
+            return false;
+        if (Vector3.Angle(left.PalmNormal.ToVector3(), Vector3.down) > 100f && Vector3.Angle(right.PalmNormal.ToVector3(), Vector3.down) > 100f)
+            return false;
+        return true;
+    }
 }
