@@ -16,6 +16,9 @@ public abstract class DCGElement {
     public virtual float Distance(Vector3 position) { return Mathf.Infinity; }
     public virtual List<Point> GetPoints() { return new List<Point>(); }
     public virtual List<Point> Extrude() { return new List<Point>(); }
+    public virtual void Lock() { } //Is used to lock all elements below this element in the hierarchy.
+    public virtual void Unlock() { } //Is used to unlock all elements below this element in the hierarchy.
+
 
     public int nextElementID()
     {

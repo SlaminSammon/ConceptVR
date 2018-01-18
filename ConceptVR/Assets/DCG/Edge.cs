@@ -184,5 +184,24 @@ public class Edge : DCGElement {
         mesh.SetTriangles(tris, 0);
         mesh.SetNormals(normals);
     }
-    
+    public override void Lock()
+    {
+        foreach(Point p in points)
+        {
+            if (!p.isLocked)
+                p.Lock();
+        }
+        isLocked = true;
+    }
+    public override void Unlock()
+    {
+        foreach (Point p in points)
+        {
+            if (p.isLocked)
+                p.Unlock();
+        }
+        isLocked = false;
+    }
 }
+
+

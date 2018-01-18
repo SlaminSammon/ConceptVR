@@ -273,4 +273,22 @@ public class Face : DCGElement {
 
         return norm.normalized;
     }
+    public override void Lock()
+    {
+        foreach (Edge e in edges)
+        {
+            if (!e.isLocked)
+                e.Lock();
+        }
+        isLocked = true;
+    }
+    public override void Unlock()
+    {
+        foreach (Edge e in edges)
+        {
+            if (e.isLocked)
+                e.Unlock();
+        }
+        isLocked = false;
+    }
 }

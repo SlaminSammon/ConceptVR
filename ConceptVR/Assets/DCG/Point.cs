@@ -91,4 +91,12 @@ public class Point : DCGElement {
         that.edges = new List<Edge>();
         that.Remove();
     }
+    public override void Lock()
+    {
+        isLocked = true;
+    }
+    public override void Unlock()
+    {
+        isLocked = false;
+    }
 }
