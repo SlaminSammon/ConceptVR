@@ -119,7 +119,24 @@ public class Solid : DCGElement {
         }
         return edges.Distinct().ToList();
     }
-
+    public override void Lock()
+    {
+        foreach (Face f in faces)
+        {
+            if (!f.isLocked)
+                f.Lock();
+        }
+        isLocked = true;
+    }
+    public override void Unlock()
+    {
+        foreach (Face f in faces)
+        {
+            if (f.isLocked)
+                f.Unlock();
+        }
+        isLocked = false;
+    }
     /*public static Solid FindClosedSurface(Point start)
     {
 
