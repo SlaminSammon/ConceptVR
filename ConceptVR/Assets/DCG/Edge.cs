@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Edge : DCGElement {
+public class Edge : DCGElement
+{
     public List<Point> points;
     public List<Face> faces;
 
@@ -77,7 +78,7 @@ public class Edge : DCGElement {
     public override float Distance(Vector3 position)
     {
         float nDist2 = Mathf.Infinity;
-        for (int i = 0; i < points.Count-1; ++i)
+        for (int i = 0; i < points.Count - 1; ++i)
             nDist2 = Mathf.Min(Vector3.ProjectOnPlane(position - points[i].position, points[i + 1].position - points[i].position).sqrMagnitude, nDist2);
 
         if (isLoop)
@@ -88,26 +89,29 @@ public class Edge : DCGElement {
 
     public override List<Point> GetPoints() { return points; }
 
-    public override List<Point> Extrude()
+    public override List<DCGElement> Extrude()
     {
         List<Point> ep = new List<Point>();
+        List<DCGElement> eElem = new List<DCGElement>();
         foreach (Point p in points)
             ep.Add(new Point(p.position));
 
         ep.Reverse();
 
         List<Edge> ee = new List<Edge>();
-        ee.Add(new Edge(ep, isLoop));
+        Edge oppEdge = new Edge(ep, isLoop);
+        ee.Add(oppEdge);
+        eElem.Add(oppEdge);
         ee.Add(new Edge(ep[ep.Count - 1], points[0]));
         ee.Add(this);
         ee.Add(new Edge(points[ep.Count - 1], ep[0]));
 
         Face ef = new Face(ee);
 
-        return ep;
+        return eElem;
     }
 
-        public void setSmooth(bool smooth)
+    public void setSmooth(bool smooth)
     {
         this.smooth = smooth;
         if (smooth)
@@ -130,12 +134,12 @@ public class Edge : DCGElement {
 
     public Vector3[] smoothVerts(int res)
     {
-        Vector3[] verts = new Vector3[res+1];
+        Vector3[] verts = new Vector3[res + 1];
         Vector3[] control = new Vector3[points.Count];
 
         for (int i = 0; i < points.Count; ++i)
             control[i] = points[i].position;
-        
+
         for (int i = 0; i <= res; ++i)
             verts[i] = Bezerp(control, (float)i / (float)res);
 
@@ -164,10 +168,10 @@ public class Edge : DCGElement {
                 Vector3 v = Mathf.Cos(2 * Mathf.PI * j / roundRes) * left + Mathf.Sin(2 * Mathf.PI * j / roundRes) * up;
                 verts.Add(smoothPoints[i] + v * roundRad);
                 normals.Add(v);
-            }   
+            }
         }
 
-        for (int i = 0; i < (curveRes-1) * roundRes; ++i)
+        for (int i = 0; i < (curveRes - 1) * roundRes; ++i)
         {
             int tb = i * 6;
             tris[tb++] = i;
@@ -184,9 +188,10 @@ public class Edge : DCGElement {
         mesh.SetTriangles(tris, 0);
         mesh.SetNormals(normals);
     }
+
     public override void Lock()
     {
-        foreach(Point p in points)
+        foreach (Point p in points)
         {
             if (!p.isLocked)
                 p.Lock();
@@ -203,5 +208,3 @@ public class Edge : DCGElement {
         isLocked = false;
     }
 }
-
-

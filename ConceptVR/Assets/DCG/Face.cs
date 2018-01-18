@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Face : DCGElement {
+public class Face : DCGElement
+{
     public List<Edge> edges;   //The edges of this face
     public List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
     public Mesh mesh;
 
     public bool isAwful;
     bool normalConfident;
-    
+
     public Face()
     {
         solids = new List<Solid>();
@@ -95,7 +96,7 @@ public class Face : DCGElement {
         else return Mathf.Infinity;
     }
 
-    public override List<Point> Extrude()
+    public override List<DCGElement> Extrude()
     {
         List<Point> corners = new List<Point>();
         List<Point> eCorners = new List<Point>();
@@ -103,6 +104,7 @@ public class Face : DCGElement {
         List<Point> ePoints = new List<Point>();
         List<Edge> eEdges = new List<Edge>();
         List<Face> eFaces = new List<Face>();
+        List<DCGElement> eElems = new List<DCGElement>();
 
         eFaces.Add(this);
 
@@ -141,15 +143,18 @@ public class Face : DCGElement {
             faceEdges.Add(new Edge(eEdge.points[eEdge.points.Count - 1], e.points[0]));
             faceEdges.Add(e);
             faceEdges.Add(new Edge(e.points[e.points.Count - 1], eEdge.points[0]));
-            eFaces.Add(new Face(faceEdges));
+            Face nFace = new Face(faceEdges);
+            eFaces.Add(nFace);
             ++i;
         }
 
         eEdges.Reverse();
         Face gFace = new Face(eEdges);
         eFaces.Add(gFace);
+        new Solid(eFaces);
+        eElems.Add(gFace);
 
-        return ePoints;
+        return eElems;
     }
 
     public void updateAwful()
@@ -173,13 +178,13 @@ public class Face : DCGElement {
         for (int i = 0; i < points.Count; ++i)
         {
             Vector2 a = proj[i];
-            Vector2 b = proj[(i+1) % points.Count];
+            Vector2 b = proj[(i + 1) % points.Count];
             Vector2 ir = new Vector2(a.y, -a.x);
-            for (int j = i+1; j < points.Count; ++j)
+            for (int j = i + 1; j < points.Count; ++j)
             {
                 Vector2 c = proj[j];
                 Vector2 d = proj[(i + 1) % points.Count];
-                if (Mathf.Sign(Vector2.Dot(c-a, ir)) != Mathf.Sign(Vector2.Dot(d - a, ir)))
+                if (Mathf.Sign(Vector2.Dot(c - a, ir)) != Mathf.Sign(Vector2.Dot(d - a, ir)))
                 {
                     Vector2 jr = new Vector2(c.y, -c.x);
                     if (Mathf.Sign(Vector2.Dot(a - c, jr)) != Mathf.Sign(Vector2.Dot(b - c, jr)))
@@ -199,8 +204,8 @@ public class Face : DCGElement {
         List<Vector3> verts = new List<Vector3>();
         List<Vector3> normals = new List<Vector3>();
         Vector3 avgNormal = getNormal();
-        
-        Vector3 lpos = edges[edges.Count-1].points[edges[edges.Count-1].points.Count-1].position; //Gomenasai
+
+        Vector3 lpos = edges[edges.Count - 1].points[edges[edges.Count - 1].points.Count - 1].position; //Gomenasai
         foreach (Edge e in edges)
             foreach (Point p in e.points)
             {
@@ -208,7 +213,7 @@ public class Face : DCGElement {
                 {
                     verts.Add(p.position);
                     normals.Add(avgNormal);
-                }   
+                }
                 lpos = p.position;
             }
 
@@ -229,8 +234,8 @@ public class Face : DCGElement {
         for (int i = 0; i < triCount; i += 3)
         {
             tris.Add(tris[i] + vertCount);
-            tris.Add(tris[i+2] + vertCount);
-            tris.Add(tris[i+1] + vertCount);
+            tris.Add(tris[i + 2] + vertCount);
+            tris.Add(tris[i + 1] + vertCount);
         }
 
         mesh.SetVertices(verts);
@@ -240,11 +245,11 @@ public class Face : DCGElement {
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
     }
-    
+
     public override List<Point> GetPoints()
     {
         List<Point> points = new List<Point>();
-        foreach(Edge e in edges)
+        foreach (Edge e in edges)
         {
             points.AddRange(e.points);
         }
@@ -256,7 +261,7 @@ public class Face : DCGElement {
         List<Point> points = GetPoints();
         Vector3 prevPos = points[points.Count - 1].position;
         Vector3 prev = prevPos - points[points.Count - 2].position;
-        Vector3 norm = new Vector3(0,0,0);
+        Vector3 norm = new Vector3(0, 0, 0);
         foreach (Point p in points)
         {
             Vector3 next = p.position - prevPos;
@@ -273,7 +278,8 @@ public class Face : DCGElement {
 
         return norm.normalized;
     }
-    public override void Lock()
+
+public override void Lock()
     {
         foreach (Edge e in edges)
         {
