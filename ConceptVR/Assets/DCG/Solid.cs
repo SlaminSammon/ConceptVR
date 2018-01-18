@@ -1,15 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 using System.Linq;
 
 public class Solid : DCGElement {
     public List<Face> faces;
-    public Mesh mesh;
 
     public Solid()
     {
         faces = new List<Face>();
+        DCGBase.solids.Add(this);
+    }
+
+    public Solid(List<Face> faces)
+    {
+        this.faces = faces;
         DCGBase.solids.Add(this);
     }
 
@@ -78,7 +84,8 @@ public class Solid : DCGElement {
 
     public override void Render()
     {
-        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+        foreach (Face f in faces)
+            f.Render();
     }
 
     public override void Update()
@@ -137,8 +144,44 @@ public class Solid : DCGElement {
         }
         isLocked = false;
     }
-    /*public static Solid FindClosedSurface(Point start)
-    {
 
-    }*/
+    public static Solid FindClosedSurface(Point start)
+    {
+        List<Point> connected = start.GetConnectedPoints(-1);   //Get the set of points we can path to
+        Dictionary<Face, int> touches = new Dictionary<Face, int>();
+
+        foreach (Point p in connected)
+        {
+            int singleTouches = 0;
+            int doubleTouches = 0;
+            int plusTouches = 0;
+            foreach (Edge e in p.edges)
+            {
+                foreach (Face f in e.faces)
+                {
+                    int t = ++touches[f];
+                    if (t == 1)
+                        singleTouches++;
+                    else if (t == 2)
+                    {
+                        singleTouches--;
+                        doubleTouches++;
+                    }
+                    else if (t > 2)
+                        plusTouches++;
+                }
+            }
+
+            if (singleTouches > 0 || plusTouches > 0)
+                return null;
+
+            foreach (Edge e in p.edges)
+            {
+                foreach (Face f in e.faces)
+                    touches[f] = 0;
+            }
+        }
+
+
+    }
 }

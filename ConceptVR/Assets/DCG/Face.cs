@@ -279,7 +279,32 @@ public class Face : DCGElement
         return norm.normalized;
     }
 
-public override void Lock()
+    public List<Face> GetConnectedFaces(int depth)
+    {
+        int id = DCGBase.nextMoveID();
+        List<Face> found = new List<Face>();
+        TraverseFaces(found, depth, id);
+        return found;
+    }
+
+    protected void TraverseFaces(List<Face> found, int depth, int moveID)
+    {
+        found.Add(this);    //Add this to found faces
+        lastMoveID = moveID;
+        if (depth == 0) //If we're at the bottom of the depth, don't search any further
+            return;
+
+        foreach (Edge e in edges)
+        {
+            foreach (Face w in e.faces)
+                if (w.lastMoveID != moveID)
+                    w.TraverseFaces(found, depth - 1, moveID);
+        }
+
+        return;
+    }
+
+    public override void Lock()
     {
         foreach (Edge e in edges)
         {

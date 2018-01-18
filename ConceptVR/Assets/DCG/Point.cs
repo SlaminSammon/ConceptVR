@@ -94,13 +94,31 @@ public class Point : DCGElement
         that.Remove();
     }
 
-    public void ConnectedPoints(List<Point> found, int depth, int moveID)
+    public List<Point> GetConnectedPoints(int depth)
+    {
+        int id = DCGBase.nextMoveID();
+        List<Point> found = new List<Point>();
+        TraversePoints(found, depth, id);
+        return found;
+    }
+
+    protected void TraversePoints(List<Point> found, int depth, int moveID)
     {
         found.Add(this);    //Add this to found points
+        lastMoveID = moveID;
         if (depth == 0) //If we're at the bottom of the depth, don't search any further
             return;
 
-        //found
+        foreach (Edge e in edges)
+        {
+            Point w = e.points[0];  //Grab a point at an end of the edge
+            if (e.points[0] == this)    //If we grabbed the point we're at, grab the one at the other end
+                w = e.points[e.points.Count - 1];
+            if (w.lastMoveID != moveID) //If the grabbed point has not been traversed, traverse it.
+                w.TraversePoints(found, depth-1, moveID);
+        }
+
+        return;
     }
 
     public override void Lock()
