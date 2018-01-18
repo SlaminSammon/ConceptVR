@@ -24,7 +24,7 @@ public class SelectTool : Tool {
     public override void Tap(Vector3 position)
     {
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
-        if (nearestElement != null)
+        if (nearestElement != null && !nearestElement.isLocked)
         {
             List<Point> newSel = Select(nearestElement);
             sElements.Remove(nearestElement);
@@ -44,6 +44,7 @@ public class SelectTool : Tool {
     public List<Point> Select(DCGElement elem)
     {
         elem.isSelected = true;
+        elem.isLocked = true;
         return elem.GetPoints();
     }
 
@@ -61,6 +62,7 @@ public class SelectTool : Tool {
     public void Deselect(DCGElement e)
     {
         e.isSelected = false;
+        e.isLocked = false;
     }
 
     protected void OnRenderObject()
