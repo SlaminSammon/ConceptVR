@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Point : DCGElement
 {
@@ -128,5 +129,16 @@ public class Point : DCGElement
     public override void Unlock()
     {
         isLocked = false;
+    }
+
+    public List<Face> AdjacentFaces()
+    {
+        List<Face> faces = new List<Face>();
+        
+        foreach(Edge e in edges)
+            foreach (Face f in e.faces)
+                faces.Add(f);
+
+        return faces.Distinct().ToList<Face>();
     }
 }

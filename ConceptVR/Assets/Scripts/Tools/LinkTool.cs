@@ -26,7 +26,18 @@ public class LinkTool : SelectTool {
         {
             List<Edge> newEdges = new List<Edge>();
             for(int i = 0; i < sPoints.Count; ++i)
-                newEdges.Add(new Edge(sPoints[i], sPoints[(i+1) % sPoints.Count]));
+            {
+                Edge newEdge = null;
+
+                foreach (Edge e in sPoints[i].edges) //check if this edge already exists
+                    if (e.HasEndpoints(sPoints[i], sPoints[(i + 1) % sPoints.Count]))
+                        newEdge = e;
+
+                if (newEdge == null)    //create this edge if it doesn't already exist
+                    newEdge = new Edge(sPoints[i], sPoints[(i + 1) % sPoints.Count]);
+
+                newEdges.Add(newEdge);
+            }
             new Face(newEdges);
         }
 

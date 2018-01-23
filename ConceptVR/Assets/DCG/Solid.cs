@@ -17,6 +17,8 @@ public class Solid : DCGElement {
     public Solid(List<Face> faces)
     {
         this.faces = faces;
+        foreach (Face f in faces)
+            f.solids.Add(this);
         DCGBase.solids.Add(this);
     }
 
@@ -149,49 +151,15 @@ public class Solid : DCGElement {
     public static Solid FindClosedSurface(Point start)
     {
         List<Point> connected = start.GetConnectedPoints(-1);   //Get the set of points we can path to
-        Dictionary<Face, int> touches = new Dictionary<Face, int>();
 
         foreach (Point p in connected)  //Check for holes in the surface encompassed by the set of points
         {
-            int singleTouches = 0;
-            int doubleTouches = 0;
-            int plusTouches = 0;
-            foreach (Edge e in p.edges)
-            {
-                foreach (Face f in e.faces)
-                {
-                    if (!touches.ContainsKey(f))
-                        touches.Add(f, 0);
-                    int t = ++touches[f];
-                    if (t == 1)
-                        singleTouches++;
-                    else if (t == 2)
-                    {
-                        singleTouches--;
-                        doubleTouches++;
-                    }
-                    else if (t > 2)
-                        plusTouches++;
-                }
-            }
-
-            Debug.Log(singleTouches + " " + doubleTouches + " " + plusTouches);
-
-            if (singleTouches > 0 || plusTouches > 0)   //if holes or weird shit are detected, fail out
+            if (p.AdjacentFaces().Count != p.edges.Count)
                 return null;
-
-            foreach (Edge e in p.edges)
-            {
-                foreach (Face f in e.faces)
-                    touches[f] = 0;
-            }
         }
 
         List<Face> faces = start.edges[0].faces[0].GetConnectedFaces(-1);
-
-        if (faces.Count > 1) //Ensure we didn't just make a single face
-            return new Solid(faces);    //return a new solid built from the set of connected faces
-        else
-            return null;
+        //Debug.Log("Faces: " + faces.Count);
+        return new Solid(faces);
     }
 }

@@ -9,6 +9,7 @@ public abstract class DCGElement
     public int lastMoveID;
     public bool isSelected;
     public bool isLocked;
+    public int playerLocked;
 
     public virtual void Render() { }    //Called from OnRenderObject in DCGBase
     public virtual void Update() { }    //Called when an element associated with this one is updated

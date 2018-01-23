@@ -118,20 +118,6 @@ public class Edge : DCGElement
             updateMesh();
     }
 
-    Vector3 Bezerp(Vector3[] control, float t)
-    {
-        Vector3[] nControl = new Vector3[control.Length - 1];
-        for (int i = 0; i < nControl.Length; ++i)
-        {
-            nControl[i] = Vector3.Lerp(control[i], control[i + 1], t);
-        }
-
-        if (nControl.Length == 1)
-            return nControl[0];
-        else
-            return Bezerp(nControl, t);
-    }
-
     public Vector3[] smoothVerts(int res)
     {
         Vector3[] verts = new Vector3[res + 1];
@@ -141,7 +127,7 @@ public class Edge : DCGElement
             control[i] = points[i].position;
 
         for (int i = 0; i <= res; ++i)
-            verts[i] = Bezerp(control, (float)i / (float)res);
+            verts[i] = GeometryUtil.Bezerp(control, (float)i / (float)res);
 
         return verts;
     }
@@ -206,5 +192,10 @@ public class Edge : DCGElement
                 p.Unlock();
         }
         isLocked = false;
+    }
+
+    public bool HasEndpoints(Point p1, Point p2)
+    {
+        return (points[0] == p1 && points[points.Count-1] == p2 || points[0] == p2 && points[points.Count-1] == p1);
     }
 }

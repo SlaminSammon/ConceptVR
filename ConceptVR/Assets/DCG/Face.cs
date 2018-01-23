@@ -296,6 +296,7 @@ public class Face : DCGElement
 
         foreach (Edge e in edges)
         {
+            Debug.Log("adjacent: " + e.faces.Count);
             foreach (Face w in e.faces)
                 if (w.lastMoveID != moveID)
                     w.TraverseFaces(found, depth - 1, moveID);

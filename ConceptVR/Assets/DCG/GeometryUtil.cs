@@ -299,4 +299,23 @@ public static class GeometryUtil
 
         return triangles;
     }
+    
+    public static Vector3 Bezerp(Vector3[] control, float t)
+    {
+        Vector3[] nControl = new Vector3[control.Length - 1];
+        for (int i = 0; i < nControl.Length; ++i)
+        {
+            nControl[i] = Vector3.Lerp(control[i], control[i + 1], t);
+        }
+
+        if (nControl.Length == 1)
+            return nControl[0];
+        else
+            return Bezerp(nControl, t);
+    }
+
+    /*public static Vector3[] ReControlBezier(Vector3[] control, int count)
+    {
+
+    }*/
 }
