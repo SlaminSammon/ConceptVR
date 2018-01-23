@@ -20,9 +20,9 @@ public class DCGBase : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         Transform starter = transform.Find("Starter");
-        Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
+        //Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
         
-        new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
+        //new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
 
         starter.gameObject.SetActive(false);
     }
