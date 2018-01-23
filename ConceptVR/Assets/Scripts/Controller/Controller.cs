@@ -67,6 +67,10 @@ public abstract class Controller : MonoBehaviour {
             case "BezierTool":
                 currentTool = getToolByType(typeof(BezierTool));
                 break;
+            case "RectangleTool":
+                currentTool = getToolByType(typeof(RectangleTool));
+                break;
+
             default:
                 break;
         }
@@ -105,7 +109,7 @@ public abstract class Controller : MonoBehaviour {
         {
             if (t.GetType() != currentTool.GetType())
                 deactivateLastTool(t.GetType().ToString());
-            Debug.Log(t.GetType());
+           // Debug.Log(t.GetType());
         }
     }
 }
