@@ -8,5 +8,8 @@ public class SmoothFace : Face {
 
     }
 
-	public SmoothFace
+	public SmoothFace()
+    {
+
+    }
 }
