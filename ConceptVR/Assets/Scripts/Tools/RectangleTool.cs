@@ -7,9 +7,12 @@ public class RectangleTool : Tool {
     List<Point> rectanglePoints;
     Solid rectangle;
     Vector3 startPosition;
+    List<Face> faces;
+    List<Vector3> verts;
 
     private void Start()
     {
+        faces = new List<Face>();
         rectanglePoints = new List<Point>();
         rectangle = new Solid();
         startPosition = new Vector3(0f, 0f, 0f);
@@ -19,44 +22,36 @@ public class RectangleTool : Tool {
     {
         if (triggerInput)
         {
-            UpdatePoints();
+            UpdateVerts();
         }
     }
 
     public override void TriggerDown()
     {
-        GenerateRectangle();
+        rectangle = new Solid();
+        rectanglePoints = new List<Point>();
+        startPosition = controllerPosition;
     }
 
     public override void TriggerUp()
     {
-
+        GenerateRectangle();
+        verts.Clear();
+        faces.Clear();
     }
 
     private void GenerateRectangle()
     {
-        rectangle = new Solid();
-        rectanglePoints = new List<Point>();
-        startPosition = controllerPosition;
-
-    }
-
-    private void UpdatePoints()
-    {
-        Vector3 endPosition = controllerPosition;
-
-        Point p1 = new Point(startPosition);
-        Point p2 = new Point(new Vector3(endPosition.x, startPosition.y, startPosition.z));
-        Point p3 = new Point(new Vector3(startPosition.x, endPosition.y, startPosition.z));
-        Point p4 = new Point(new Vector3(endPosition.x, endPosition.y, startPosition.z));
-        Point p5 = new Point(new Vector3(startPosition.x, startPosition.y, endPosition.z));
-        Point p6 = new Point(new Vector3(endPosition.x, startPosition.y, endPosition.z));
-        Point p7 = new Point(new Vector3(startPosition.x, endPosition.y, endPosition.z));
-        Point p8 = new Point(endPosition);
-
-
-        List<Face> faces = new List<Face>();
+        faces = new List<Face>();
         List<Edge> edges = new List<Edge>();
+        Point p1 = new Point(verts[0]);
+        Point p2 = new Point(verts[1]);
+        Point p3 = new Point(verts[2]);
+        Point p4 = new Point(verts[3]);
+        Point p5 = new Point(verts[4]);
+        Point p6 = new Point(verts[5]);
+        Point p7 = new Point(verts[6]);
+        Point p8 = new Point(verts[7]);
 
         // front face
         edges.Add(new Edge(p1, p2));
@@ -108,4 +103,19 @@ public class RectangleTool : Tool {
 
         rectangle = new Solid(faces);
     }
+
+    private void UpdateVerts()
+    {
+        verts = new List<Vector3>();
+        Vector3 endPosition = controllerPosition;
+
+        verts.Add(startPosition);
+        verts.Add(new Vector3(endPosition.x, startPosition.y, startPosition.z));
+        verts.Add(new Vector3(startPosition.x, endPosition.y, startPosition.z));
+        verts.Add(new Vector3(endPosition.x, endPosition.y, startPosition.z));
+        verts.Add(new Vector3(startPosition.x, startPosition.y, endPosition.z));
+        verts.Add(new Vector3(endPosition.x, startPosition.y, endPosition.z));
+        verts.Add(new Vector3(startPosition.x, endPosition.y, endPosition.z));
+        verts.Add(endPosition);
+    } 
 }

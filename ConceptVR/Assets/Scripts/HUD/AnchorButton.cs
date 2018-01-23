@@ -10,12 +10,12 @@ public class AnchorButton : ToggleButton {
 	public bool active;
 
 	// Use this for initialization
-	void Start () {
+	new void Start () {
 		active = false;
 		base.Start ();
 	}
 	
-	void OnPress(){
+	new void OnPress(){
 		if (active) {
 			active = false;
 		}
