@@ -9,14 +9,17 @@ public class HandsUpDisplay : MonoBehaviour
     Leap.Controller leapcontroller;
     Leap.Frame frame;
     Leap.Hand lHand;
-
+	bool placed;
     public GameObject LeapHandController;
+	public AnchorButton anchor;
 
     // Use this for initialization
     void Start()
     {
         leapcontroller = new Leap.Controller();
-    }
+		placed = false;
+		anchor.Anchor += placement;
+	}
 
     // Update is called once per frame
     void Update()
@@ -25,7 +28,7 @@ public class HandsUpDisplay : MonoBehaviour
         frame = leapcontroller.Frame();
 
         // if there are hands visible in the view.
-        if (frame.Hands.Count > 0)
+        if (frame.Hands.Count > 0 && !placed)
         {
             lHand = frame.Hands[0];
             // If it is the left hand, make the position of the HUD relative to the local position of the palm.
@@ -41,4 +44,11 @@ public class HandsUpDisplay : MonoBehaviour
             }
         }
     }
+	void placement(){
+		if (placed) {
+			placed = false;
+		}
+		else
+			placed = true;
+	}
 }
