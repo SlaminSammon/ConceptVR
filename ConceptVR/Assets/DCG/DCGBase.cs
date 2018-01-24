@@ -151,5 +151,4 @@ public class DCGBase : MonoBehaviour {
 
         return nFace;
     }
-
 }

@@ -5,9 +5,9 @@ using UnityEngine;
 public abstract class DCGElement
 {
     private static int currentID = 0;
-    public int elementID;
-    public int lastMoveID;
-    public bool isSelected;
+    public int elementID;   //Unique identifier for this element
+    public int lastMoveID;  
+    public bool isSelected; 
     public bool isLocked;
     public int playerLocked;
 

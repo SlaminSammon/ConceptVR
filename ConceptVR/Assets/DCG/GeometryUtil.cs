@@ -314,6 +314,38 @@ public static class GeometryUtil
             return Bezerp(nControl, t);
     }
 
+    public static Vector3 Trerp(Vector3 c, Vector3 xv, Vector3 yv, float x, float y)
+    {
+        return (x * (xv - c) + y * (yv - c));
+    }
+
+    public static Vector3 BezerpTri(Vector3[,] control, int size, float x, float y)
+    {
+        if (size == 1)
+            return Trerp(control[0,0], control[0,1], control[1,0], x, y);
+        else
+        {
+            Vector3[,] ncon = new Vector3[size, size];
+            for (int i = 0; i < size; ++i) for (int j = 0; j < size - i; ++j)
+                    ncon[i, j] = Trerp(control[i, j], control[i, j + 1], control[i + 1, j], x, y);
+            return BezerpTri(ncon, size - 1, x, y);
+        }
+    }
+
+    public static Vector3 BezerpQuad(Vector3[,] control, float x, float y)
+    {
+        Vector3[] ycon = new Vector3[control.GetLength(0)];
+        for(int i = 0; i < control.GetLength(0); ++i)
+        {
+            Vector3[] xcon = new Vector3[control.GetLength(1)];
+            for (int j = 0; j < control.GetLength(1); ++j)
+                xcon[j] = control[i, j];
+
+            ycon[i] = Bezerp(xcon, x);
+        }
+        return Bezerp(ycon, y);
+    }
+
     /*public static Vector3[] ReControlBezier(Vector3[] control, int count)
     {
 
