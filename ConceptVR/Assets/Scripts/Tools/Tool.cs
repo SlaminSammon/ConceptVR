@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Tool : MonoBehaviour {
     public bool triggerInput;
     public bool gripInput;
+    public bool formInput;
     public Vector3 controllerPosition;
     public int playerID;
     public void setPos(Vector3 pos)
@@ -27,4 +28,6 @@ public abstract class Tool : MonoBehaviour {
     public virtual void GripUp() { }
     public virtual void Tap(Vector3 position) { }
     public virtual void Swipe() { }
+    public virtual void FreeForm() { }
+    public virtual void FreeFormEnd() { }
 }

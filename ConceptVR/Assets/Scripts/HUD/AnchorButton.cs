@@ -15,11 +15,12 @@ public class AnchorButton : ToggleButton {
 		base.Start ();
 	}
 	
-	new void OnPress(){
+	public override void OnPress(){
 		if (active) {
 			active = false;
 		}
 		active = true;
-		Anchor ();
+		Anchor();
 	}
 }
+ 

@@ -81,6 +81,7 @@ public class LeapTrackedController : MonoBehaviour
         currentFrame = new FrameInformation();
         tapCooldownTime = Time.time;
         swipeCooldownTime = Time.time;
+        forming = false;
     }
 
     // Update is called once per frame
@@ -92,12 +93,17 @@ public class LeapTrackedController : MonoBehaviour
         {
             if (!util.checkEndFreeForm())
                 return;
+            EditorApplication.Beep();
             forming = false;
             freeFormEnd();
         }
         if (util.checkFreeForm())
         {
+            EditorApplication.Beep();
+            Debug.Log("Beep");
+            forming = true;
             freeForm();
+            return;
         }
         bool grab = checkGrab();
         if (!grab)

@@ -18,7 +18,6 @@ public class HandsUpDisplay : MonoBehaviour
     {
         leapcontroller = new Leap.Controller();
 		placed = false;
-		anchor.Anchor += placement;
 	}
 
     // Update is called once per frame
@@ -44,11 +43,4 @@ public class HandsUpDisplay : MonoBehaviour
             }
         }
     }
-	void placement(){
-		if (placed) {
-			placed = false;
-		}
-		else
-			placed = true;
-	}
 }

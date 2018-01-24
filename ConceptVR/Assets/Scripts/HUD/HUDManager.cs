@@ -24,6 +24,8 @@ public class HUDManager : MonoBehaviour
     Leap.Hand lHand;
     public GameObject LeapHandController;
     public GameObject HUDObject;
+    public AnchorButton anchor;
+    bool placed;
 
     // Use this for initialization
     void Start()
@@ -43,11 +45,15 @@ public class HUDManager : MonoBehaviour
 
         // initialize HUDColor to gray
         HUDColor = new Color(0.345f, 0.3568f, 0.3804f, 1.0f);
+        anchor.Anchor += Placement;
+        placed = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (placed)
+            return;
         frame = leapcontroller.Frame();
         lHand = Hands.Left;
         // if there are hands visible in the view.
@@ -159,4 +165,22 @@ public class HUDManager : MonoBehaviour
             digitalClock.SetActive(true);
         }
     }*/
+    void Placement()
+    {
+        if (placed) {
+            GameObject parent = GameObject.Find("RigidRoundHand_L").transform.Find("palm").gameObject;
+            GameObject HUD = GameObject.Find("HandsUpDisplay");
+            HUD.transform.SetParent(parent.transform);
+            HUD.transform.localPosition = new Vector3(0, 0, 0);
+            HUD.transform.localRotation = new Quaternion(180, 0, 0, 0);
+            placed = false;
+            HUDObject.SetActive(false);
+
+        }
+        else {
+            GameObject.Find("HandsUpDisplay").transform.parent = null;
+            placed = true;
+            HUDObject.SetActive(true);
+        }
+    }
 }

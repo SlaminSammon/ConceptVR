@@ -6,6 +6,7 @@ using Leap;
 
 public class handController: Controller {
     LeapTrackedController leapControl;
+    private Tool lastTool;
     // Use this for initialization
     void Start () {
         leapControl = GetComponent<LeapTrackedController>();
@@ -15,17 +16,26 @@ public class handController: Controller {
         leapControl.grabGone += GripUp;
         leapControl.tapMade += Tap;
         leapControl.swipeMade += Swipe;
+        leapControl.freeForm += freeForm;
+        leapControl.freeFormEnd += freeFormEnd;
     }
 
     // Update is called once per frame
     void Update () {
+        currentTool.setPos(leapControl.position);
         //Check to see if a pinch is being held.
+        if (currentTool.GetType() == typeof(FreeFormTool))
+        {
+            if (leapControl.forming)
+                currentTool.formInput = true;
+            else
+                currentTool.formInput = false;
+        }
         if(!leapControl.pinchHeld && leapControl.pinchInput)
             currentTool.triggerInput = leapControl.pinchInput;
         else
             currentTool.triggerInput = leapControl.pinchHeld;
         currentTool.gripInput = leapControl.gripInput;
-        currentTool.setPos(leapControl.position);
 
     }
     protected void TriggerDown()
@@ -54,6 +64,17 @@ public class handController: Controller {
     protected void Swipe()
     {
         currentTool.Swipe();
+    }
+    protected void freeForm()
+    {
+        lastTool = currentTool;
+        currentTool = GameObject.Find("FreeFormTool").GetComponent<FreeFormTool>();
+        currentTool.FreeForm();
+    }
+    protected void freeFormEnd()
+    {
+        currentTool = lastTool;
+        currentTool.FreeFormEnd();
     }
 
 }
