@@ -89,7 +89,7 @@ public class LeapTrackedController : MonoBehaviour
     {
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
         //Grab logic. Currently deprecated. May come back.
-        if (forming)
+        /*if (forming)
         {
             if (!util.checkEndFreeForm())
                 return;
@@ -104,7 +104,7 @@ public class LeapTrackedController : MonoBehaviour
             forming = true;
             freeForm();
             return;
-        }
+        }*/
         bool grab = checkGrab();
         if (!grab)
         {
@@ -127,7 +127,7 @@ public class LeapTrackedController : MonoBehaviour
                 if (pinch) flippedPinch = true;
             }
         }
-        if(!pinch) OnPinchGone();
+        if(!pinch && pinchHeld) OnPinchGone();
         //Final grab check
         if (grab && !grabHeld && !flippedGrab)
         {
