@@ -105,6 +105,16 @@ public class LeapTrackedController : MonoBehaviour
             freeForm();
             return;
         }*/
+
+        //Set default position
+        if (handedness == "Right")
+            hand = Hands.Right;
+        else
+            hand = Hands.Left;
+        if (hand == null)
+            position = util.getIndexPos(hand);  
+
+
         bool grab = checkGrab();
         if (!grab)
         {
@@ -127,7 +137,7 @@ public class LeapTrackedController : MonoBehaviour
                 if (pinch) flippedPinch = true;
             }
         }
-        if(!pinch && pinchHeld) OnPinchGone();
+        if(!pinch) OnPinchGone();
         //Final grab check
         if (grab && !grabHeld && !flippedGrab)
         {
@@ -230,9 +240,10 @@ public class LeapTrackedController : MonoBehaviour
         if (hand == null)
             return false;
         //Get position and value of Pinch
-        if(!flippedPinch)
+        bool detected = util.IsPinching(hand);
+        if (detected)
             position = util.weightedPos(hand);
-        return util.IsPinching(hand);
+        return detected;
     }
     public bool checkGrab()
     {
