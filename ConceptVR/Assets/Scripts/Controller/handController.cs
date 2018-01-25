@@ -30,6 +30,8 @@ public class handController: Controller {
                 currentTool.formInput = true;
             else
                 currentTool.formInput = false;
+            if (!currentTool.formInput)
+                freeFormEnd();
         }
         if(!leapControl.pinchHeld && leapControl.pinchInput)
             currentTool.triggerInput = leapControl.pinchInput;
@@ -68,13 +70,16 @@ public class handController: Controller {
     protected void freeForm()
     {
         lastTool = currentTool;
-        currentTool = GameObject.Find("FreeFormTool").GetComponent<FreeFormTool>();
+        Debug.Log(currentTool);
+        currentTool = getToolByType(typeof(FreeFormTool));
+        activateNewTool(currentTool.GetType().ToString());
         currentTool.FreeForm();
     }
     protected void freeFormEnd()
     {
-        currentTool = lastTool;
+        //deactivateLastTool(currentTool.GetType().ToString());
         currentTool.FreeFormEnd();
+        currentTool = lastTool;
     }
 
 }
