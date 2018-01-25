@@ -70,6 +70,12 @@ public abstract class Controller : MonoBehaviour {
             case "RectangleTool":
                 currentTool = getToolByType(typeof(RectangleTool));
                 break;
+            case "LightTool":
+                currentTool = getToolByType(typeof(LightTool));
+                break;
+            case "SelectTool":
+                currentTool = getToolByType(typeof(SelectTool));
+                break;
 
             default:
                 break;
