@@ -87,12 +87,14 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        EditorApplication.Beep();
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
         //Grab logic. Currently deprecated. May come back.
-        /*if (forming)
+        if (forming)
         {
             if (!util.checkEndFreeForm())
                 return;
+            Debug.Log("Boop");
             EditorApplication.Beep();
             forming = false;
             freeFormEnd();
@@ -104,7 +106,7 @@ public class LeapTrackedController : MonoBehaviour
             forming = true;
             freeForm();
             return;
-        }*/
+        }
 
         //Set default position
         if (handedness == "Right")
