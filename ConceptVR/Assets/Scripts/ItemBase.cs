@@ -22,5 +22,9 @@ public class ItemBase : MonoBehaviour {
         lights.Add(newLight);
         lightCount++;
     }
+    public void removeLight(GameObject removeLight)
+    {
+        lights.Remove(removeLight);
+    }
 
 }

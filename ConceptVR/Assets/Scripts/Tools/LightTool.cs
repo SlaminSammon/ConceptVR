@@ -11,7 +11,7 @@ public class LightTool : Tool {
 	// Use this for initialization
 	void Start () {
         itembase = GameObject.Find("ItemBase");
-        LightPrefab.GetComponent<Light>().color = LightPrefab.GetComponent<Material>().color;
+        //LightPrefab.GetComponent<Light>().color = LightPrefab.GetComponent<Material>().color;
 	}
 	
 	// Update is called once per frame
