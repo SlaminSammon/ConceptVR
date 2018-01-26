@@ -28,6 +28,7 @@ public class FreeFormTool : Tool {
             if (Hands.Left == null || Hands.Right == null)
             {
                 formInput = false;
+                return;
             }
             if (frameCount == 100)
             {
@@ -74,10 +75,6 @@ public class FreeFormTool : Tool {
     }
     public override void FreeFormEnd()
     {
-        endPos = (Hands.Left.PalmPosition.ToVector3() + Hands.Right.PalmPosition.ToVector3()) / 2;
-        freeFormLine.SetPosition(++freeFormLine.positionCount, endPos);
-        rightPoints.Add(endPos);
-        leftPoints.Add(endPos);
         for(int i = 0; i < freeFormLine.positionCount; ++i)
         {
             if (freeFormLine.GetPosition(i) == new Vector3(0, 0, 0))
