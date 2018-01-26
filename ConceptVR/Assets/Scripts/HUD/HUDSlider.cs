@@ -25,10 +25,12 @@ public class HUDSlider : HUDButton {
         if (touching)
         {
             localPressPos = transform.worldToLocalMatrix * fingerTip.transform.position;
-            targetValue = Mathf.Clamp01(Vector3.Project(localPressPos, positiveRange).magnitude / positiveRange.magnitude / 2 + 0.5f);
+            targetValue = Vector3.Project(localPressPos - positiveRange, positiveRange).magnitude;
+            Debug.Log(targetValue);
+            targetValue = Mathf.Clamp01(targetValue);
         }
-        value = (value * friction + targetValue);
-        sliderObject.transform.position = (value * 2 - 1) * positiveRange;
+        value = (value * friction + targetValue) / (1+friction);
+        sliderObject.transform.localPosition = (value * 2 - 1) * positiveRange;
 	}
 
     public override void OnPress()
