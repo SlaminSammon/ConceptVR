@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ElementType { point, edge, face, solid }
+
 public class DCGBase : MonoBehaviour {
     public Mesh pointMesh;
     public Mesh edgeMesh;
@@ -14,6 +16,8 @@ public class DCGBase : MonoBehaviour {
     public static List<Edge> edges = new List<Edge>();
     public static List<Face> faces = new List<Face>();
     public static List<Solid> solids = new List<Solid>();
+
+    public static Dictionary<int, DCGElement> all = new Dictionary<int, DCGElement>();
 
     private static int moveID = 0;
 
