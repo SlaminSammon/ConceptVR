@@ -5,6 +5,7 @@ using UnityEditor;
 using Leap.Unity;
 using Leap;
 
+#region Structs
 public struct FrameInformation
 {
     public bool grabHeld;
@@ -36,13 +37,21 @@ public struct HandInformation
     public float roll;
     public Quaternion rotation;
 }
+#endregion
 public delegate void GestureEventHandler();
 public delegate void GesturePositionEventHandler(Vector3 position);
 public class LeapTrackedController : MonoBehaviour
 {
+    #region Hand/frame info
     private Leap.Hand hand;
     private HandsUtil util;
+    public Vector3 position;
+    public string handedness;
     private LeapServiceProvider leapProvider;
+    public Queue<FrameInformation> frameQueue;
+    public FrameInformation currentFrame;
+    #endregion
+    #region input booleans
     public bool pinchHeld = false;
     bool flippedPinch = false;
     public bool pinchInput = false;
@@ -51,15 +60,14 @@ public class LeapTrackedController : MonoBehaviour
     public bool grabHeld = false;
     public bool swipe = false;
     public bool forming = false;
-    public int velocity = 1; //To be checked against a seperate frame. 0 means decreased velocity. 1 means stagnent. 2 means increased.
-    public Vector3 position;
-    public string handedness;
-    public int toolIndex = 0;
-    public int swipeCount = 0;
+    #endregion
+    #region cooldowns
     public static float cooldown = 1.25f;
     public static float tapCooldown = .25f;
     public float swipeCooldownTime;
     public float tapCooldownTime;
+    #endregion
+    #region Event Handlers
     public event GestureEventHandler pinchMade;
     public event GestureEventHandler pinchGone;
     public event GestureEventHandler grabMade;
@@ -68,9 +76,18 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler freeForm;
     public event GestureEventHandler freeFormEnd;
     public event GesturePositionEventHandler tapMade;
+    #endregion
+    #region Forming Specific Members
+    public PalmDirectionDetector palmDirectorRight;
+    public PalmDirectionDetector palmDirectorLeft;
+    public PalmDirectionDetector palmDirectorRightUp;
+    public PalmDirectionDetector palmDirectorLeftUp;
+    public bool rightStart = false;
+    public bool leftStart = false;
+    public int rFrameCount = 0;
+    public int lFrameCount = 0;
+    #endregion
     public int heldFrames = 75;
-    public Queue<FrameInformation> frameQueue;
-    public FrameInformation currentFrame;
     public int playerID;
 
     // Use this for initialization
@@ -82,41 +99,64 @@ public class LeapTrackedController : MonoBehaviour
         tapCooldownTime = Time.time;
         swipeCooldownTime = Time.time;
         forming = false;
+        if (handedness == "Right")
+        {
+            palmDirectorRight.OnActivate.AddListener(freeFormRight);
+            palmDirectorLeft.OnActivate.AddListener(freeFormLeft);
+            palmDirectorRightUp.OnActivate.AddListener(freeFormEndRight);
+            palmDirectorLeftUp.OnActivate.AddListener(freeFormEndLeft);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         EditorApplication.Beep();
-        Debug.Log("y" + Hands.Right.PalmPosition.ToVector3().y);
+        //Debug.Log("y" + Mathf.Abs(Hands.Right.PalmNormal.ToVector3().y));
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
         //Grab logic. Currently deprecated. May come back.
-        if (forming)
-        {
-            if (!util.checkEndFreeForm())
-                return;
-            Debug.Log("Boop");
-            EditorApplication.Beep();
-            forming = false;
-            freeFormEnd();
-        }
-        if (util.checkFreeForm())
-        {
-            EditorApplication.Beep();
-            Debug.Log("Beep");
-            forming = true;
-            freeForm();
-            return;
-        }
-
         //Set default position
         if (handedness == "Right")
             hand = Hands.Right;
         else
             hand = Hands.Left;
-        if (hand == null)
-            position = util.getIndexPos(hand);  
-
+        position = hand.PalmPosition.ToVector3();
+        if (forming)
+        {
+            return;
+        }
+        #region  FreeForm Logic
+        if(rightStart && !leftStart)
+        {
+            if (rFrameCount >= 15)
+            {
+                rightStart = false;
+                palmDirectorRight.PointingDirection = new Vector3(0, -1, 0);
+                rFrameCount = 0;
+            }
+            else
+                ++rFrameCount;
+        }
+        if (!rightStart && leftStart)
+        {
+            if (lFrameCount >= 15)
+            {
+                leftStart = false;
+                palmDirectorLeft.PointingDirection = new Vector3(0, -1, 0);
+                lFrameCount = 0;
+            }
+            else
+                ++lFrameCount;
+        }
+        if(rightStart && leftStart && util.checkHandsDist() < .2f)
+        {
+            Debug.Log("Start Free Form");
+            forming = true;
+            freeForm();
+            rFrameCount = 0;
+            lFrameCount = 0;
+        }
+        #endregion
 
         bool grab = checkGrab();
         if (!grab)
@@ -377,5 +417,35 @@ public class LeapTrackedController : MonoBehaviour
         if (go != null) GameObject.Destroy(go);
         go = GameObject.Find("LoPoly_Rigged_Hand_Right(Clone)");
         if (go != null) GameObject.Destroy(go);
+    }
+    public void freeFormRight()
+    {
+        Debug.Log("Hand Down Right");
+        rightStart = true;
+    }
+    public void freeFormLeft()
+    {
+        Debug.Log("Hand Down Left");
+        leftStart = true;
+    }
+    public void freeFormEndRight()
+    {
+        Debug.Log("Hand Up Right");
+        rightStart = false;
+        if (forming && util.checkHandsDist() < .25f)
+        {
+            forming = false;
+            freeFormEnd();
+        }
+    }
+    public void freeFormEndLeft()
+    {
+        Debug.Log("Hand Up Left");
+        leftStart = false;
+        if (forming && util.checkHandsDist() < .25f)
+        {
+            forming = false;
+            freeFormEnd();
+        }
     }
 }
