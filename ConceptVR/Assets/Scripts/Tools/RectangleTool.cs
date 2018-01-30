@@ -14,7 +14,6 @@ public class RectangleTool : Tool {
     {
         faces = new List<Face>();
         rectanglePoints = new List<Point>();
-        rectangle = new Solid();
         startPosition = new Vector3(0f, 0f, 0f);
     }
 
@@ -42,7 +41,8 @@ public class RectangleTool : Tool {
 
     private void GenerateRectangle()
     {
-        faces = new List<Face>();
+        //faces = new List<Face>();
+        faces.Clear();
         List<Edge> edges = new List<Edge>();
         Point p1 = new Point(verts[0]);
         Point p2 = new Point(verts[1]);
