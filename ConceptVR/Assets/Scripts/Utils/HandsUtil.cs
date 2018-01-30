@@ -302,4 +302,8 @@ public class HandsUtil {
             return false;
         return true;
     }
+    public float checkHandsDist()
+    {
+        return Vector3.Distance(Hands.Left.PalmPosition.ToVector3(), Hands.Right.PalmPosition.ToVector3());
+    }
 }
