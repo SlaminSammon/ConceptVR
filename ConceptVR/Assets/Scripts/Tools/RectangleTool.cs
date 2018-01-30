@@ -8,16 +8,14 @@ public class RectangleTool : Tool {
     Vector3 startPosition;
     List<Vector3> verts;
     float time;
-
     public GameObject ghost;
-
 
     private void Start()
     {
         ghost = Instantiate(ghost);
         ghost.gameObject.SetActive(true);
         ghost.transform.position = controllerPosition;
-       ghost.gameObject.SetActive(false);
+        ghost.gameObject.SetActive(false);
         time = Time.time;
         startPosition = new Vector3(0f, 0f, 0f);
     }
@@ -32,6 +30,7 @@ public class RectangleTool : Tool {
 
     public override void TriggerDown()
     {
+        ghost.transform.localScale = Vector3.zero;
         startPosition = controllerPosition;
         ghost.gameObject.SetActive(true);
         ghost.transform.position = startPosition;
@@ -128,6 +127,9 @@ public class RectangleTool : Tool {
         verts.Add(new Vector3(startPosition.x, endPosition.y, endPosition.z));
         verts.Add(endPosition);
 
+        // update scale of ghost
         ghost.transform.localScale = startPosition - controllerPosition;
+        // update position of ghost to be half of the scale so it is anchored to the start position
+        ghost.transform.position = startPosition - (startPosition - controllerPosition) / 2;
     } 
 }
