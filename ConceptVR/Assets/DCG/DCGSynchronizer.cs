@@ -24,12 +24,12 @@ public class DCGSynchronizer : NetworkBehaviour {
 
 
     Dictionary<int, ExpectedElement> expectations;
-    List<ElementPacket> waiting;
+    Dictionary<int, ElementPacket> waiting;
 
 
 	void Start () {
         expectations = new Dictionary<int, ExpectedElement>();
-        waiting = new List<ElementPacket>();
+        waiting = new Dictionary<int, ElementPacket>();
 	}
 
     void Receive(ElementPacket e)
@@ -56,26 +56,84 @@ public class DCGSynchronizer : NetworkBehaviour {
         if (hasreqs)
             Create(e);
         else
-            waiting.Add(e); //If we couldn't create e yet, put it in the waitlist
+            waiting.Add(e.id, e); //If we couldn't create e yet, put it in the waitlist
     }
 
-    void Create(ElementPacket e)
+    void Create(ElementPacket packet)
     {
-        //register the element in DCG
-        //if this item is in the waitlist, remove it.
-        //check if this element was expected, and if so check if we can create any elements it was expected by, recursively call create on each.
+        switch(packet.type)
+        {
+            case ElementType.point:
+                PointPacket p = packet as PointPacket;
+                new Point(p.position, p.id);
+                break;
+            case ElementType.edge:
+                List<Point> points = new List<Point>();
+                foreach (int reqid in packet.requirements)
+                    points.Add(DCGBase.all[reqid] as Point);
+                new Edge(points, packet.id);
+                break;
+            case ElementType.face:
+                List<Edge> edges = new List<Edge>();
+                foreach (int reqid in packet.requirements)
+                    edges.Add(DCGBase.all[reqid] as Edge);
+                new Face(edges, packet.id);
+                break;
+            case ElementType.solid:
+                List<Face> faces = new List<Face>();
+                foreach (int reqid in packet.requirements)
+                    faces.Add(DCGBase.all[reqid] as Face);
+                new Solid(faces, packet.id);
+                break;
+        }
+        
+        if (waiting.ContainsKey(packet.id)) //if this item is in the waitlist, remove it.
+            waiting.Remove(packet.id);
+        
+        //TODO: check if this element was expected, and if so check if we can create any elements it was expected by, recursively call create on each.
     }
 
 
     [Command]
-    public void CmdAddPoint()
+    public void CmdAddPoint(int id, Vector3 position, int senderID)
     {
-
+        RpcAddPoint(id, position, senderID);
     }
 
     [ClientRpc]
-    public void RpcAddPoint()
+    public void RpcAddPoint(int id, Vector3 position, int senderID)
     {
+        if (NetPlayer.local.playerID == senderID)
+            return;
+        else
+        {
+            PointPacket ep = new PointPacket();
+            ep.id = id;
+            ep.requirements = new int[0];
+            ep.type = ElementType.point;
+            ep.position = position;
+            Receive(ep);
+        }
+    }
 
+    [Command]
+    public void CmdAddElement(int id, int[] requirements, ElementType type, int senderID)
+    {
+        RpcAddElement(id, requirements, type, senderID);
+    }
+
+    [ClientRpc]
+    public void RpcAddElement(int id, int[] requirements, ElementType type, int senderID)
+    {
+        if (NetPlayer.local.playerID == senderID)
+            return;
+        else
+        {
+            ElementPacket ep = new ElementPacket();
+            ep.id = id;
+            ep.requirements = requirements;
+            ep.type = type;
+            Receive(ep);
+        }
     }
 }

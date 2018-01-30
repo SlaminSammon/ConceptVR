@@ -22,6 +22,14 @@ public class Solid : DCGElement {
         DCGBase.solids.Add(this);
     }
 
+    public Solid(List<Face> faces, int nedID)
+    {
+        this.faces = faces;
+        foreach (Face f in faces)
+            f.solids.Add(this);
+        DCGBase.solids.Add(this);
+    }
+
     public Solid(Mesh m, Matrix4x4 t, Vector3 translate)
     {
         mesh = new Mesh();
