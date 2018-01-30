@@ -432,7 +432,7 @@ public class LeapTrackedController : MonoBehaviour
     {
         Debug.Log("Hand Up Right");
         rightStart = false;
-        if (forming && util.checkHandsDist() < .25f)
+        if (forming)
         {
             forming = false;
             freeFormEnd();
@@ -442,7 +442,7 @@ public class LeapTrackedController : MonoBehaviour
     {
         Debug.Log("Hand Up Left");
         leftStart = false;
-        if (forming && util.checkHandsDist() < .25f)
+        if (forming)
         {
             forming = false;
             freeFormEnd();
