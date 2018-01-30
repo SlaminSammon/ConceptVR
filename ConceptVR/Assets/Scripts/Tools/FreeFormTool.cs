@@ -24,20 +24,16 @@ public class FreeFormTool : Tool {
 	new void Update () {
         if (formInput)
         {
-            //If we are lacking a hand set everything back to it's start
-            if (Hands.Left == null || Hands.Right == null)
+
+            if (frameCount >= 700)
             {
-                formInput = false;
-                return;
-            }
-            if (frameCount == 100)
-            {
+                Debug.Log(frameCount);
                 //Add points to the line renderer and the point lists
                 Vector3 rightPos = Hands.Right.PalmPosition.ToVector3();
                 Vector3 leftPos = Hands.Left.PalmPosition.ToVector3();
                 if (leftPos == null || rightPos == null)
                     return;
-                if (rightPos == new Vector3(0, 0, 0) || leftPos == new Vector3(0, 0, 0))
+                if (rightPos == Vector3.zero || leftPos == Vector3.zero)
                     return;
                 freeFormLine.positionCount++;
                 freeFormLine.SetPosition(freeFormLine.positionCount-1, leftPos);
@@ -51,6 +47,7 @@ public class FreeFormTool : Tool {
 	}
     public override void FreeForm()
     {
+        Debug.Log("Starting the ultimate freeform!!");
         Vector3 rightPos = Hands.Right.PalmPosition.ToVector3();
         Vector3 leftPos = Hands.Left.PalmPosition.ToVector3();
         //Initialize the new Line renderer
@@ -75,15 +72,22 @@ public class FreeFormTool : Tool {
     }
     public override void FreeFormEnd()
     {
-        for(int i = 0; i < freeFormLine.positionCount; ++i)
-        {
-            if (freeFormLine.GetPosition(i) == new Vector3(0, 0, 0))
-                Debug.Log("It's here: " + i);
-        }
-        for (int i = 0; i < rightFreeFormLine.positionCount; ++i)
-        {
-            if (rightFreeFormLine.GetPosition(i) == new Vector3(0, 0, 0))
-                Debug.Log("It's here: " + i);
-        }
+        rightPoints.Add(Hands.Right.PalmPosition.ToVector3());
+        leftPoints.Add(Hands.Left.PalmPosition.ToVector3());
+        List<Point> rPoints = new List<Point>();
+        List<Point> lPoints = new List<Point>();
+        foreach (Vector3 v in rightPoints)
+            rPoints.Add(new Point(v));
+        foreach (Vector3 v in leftPoints)
+            lPoints.Add(new Point(v));
+        List<Edge> edges = new List<Edge>();
+        edges.Add(new Edge(lPoints[0], rPoints[rPoints.Count - 1]));
+        edges.Add(new Edge(rPoints[0], lPoints[lPoints.Count - 1]));
+        for (int p = 0; p < rPoints.Count - 1; ++p)
+            edges.Add(new Edge(rPoints[p], rPoints[p + 1]));
+        for (int p = 0; p < lPoints.Count - 1; ++p)
+            edges.Add(new Edge(lPoints[p], lPoints[p + 1]));
+        new Face(edges);
+        Debug.Log("Endign FreeForm");
     }
 }

@@ -30,8 +30,6 @@ public class handController: Controller {
                 currentTool.formInput = true;
             else
                 currentTool.formInput = false;
-            if (!currentTool.formInput)
-                freeFormEnd();
         }
         if(!leapControl.pinchHeld && leapControl.pinchInput)
             currentTool.triggerInput = leapControl.pinchInput;
