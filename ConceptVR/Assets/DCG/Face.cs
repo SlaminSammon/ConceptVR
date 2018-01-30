@@ -29,6 +29,18 @@ public class Face : DCGElement
         DCGBase.faces.Add(this);
         updateAwful();
         updateMesh();
+        //TODO: Signal creation over network
+    }
+
+    public Face(List<Edge> edges, int netID)
+    {
+        solids = new List<Solid>();
+        this.edges = edges;
+        foreach (Edge e in edges)
+            e.faces.Add(this);
+        DCGBase.faces.Add(this);
+        updateAwful();
+        updateMesh();
     }
 
     public override void Render()

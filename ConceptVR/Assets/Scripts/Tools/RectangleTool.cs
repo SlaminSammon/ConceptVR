@@ -1,24 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class RectangleTool : Tool {
 
-    List<Point> rectanglePoints;
-    Solid rectangle;
     Vector3 startPosition;
-    List<Face> faces;
     List<Vector3> verts;
+    float time;
+    public GameObject ghost;
 
     private void Start()
     {
-        faces = new List<Face>();
-        rectanglePoints = new List<Point>();
-        rectangle = new Solid();
+        ghost = Instantiate(ghost);
+        ghost.gameObject.SetActive(true);
+        ghost.transform.position = controllerPosition;
+        ghost.gameObject.SetActive(false);
+        time = Time.time;
         startPosition = new Vector3(0f, 0f, 0f);
     }
 
-    void Update()
+    public override void Update()
     {
         if (triggerInput)
         {
@@ -28,21 +30,28 @@ public class RectangleTool : Tool {
 
     public override void TriggerDown()
     {
-        rectangle = new Solid();
-        rectanglePoints = new List<Point>();
+        ghost.transform.localScale = Vector3.zero;
         startPosition = controllerPosition;
+        ghost.gameObject.SetActive(true);
+        ghost.transform.position = startPosition;
     }
 
     public override void TriggerUp()
     {
-        GenerateRectangle();
+        // trigger up gets called twice >> BUG 
+        // this cooldown hack sets it so GenerateRectangle() only gets called every half a second
+        if (time + 0.5f < Time.time)
+        {
+            GenerateRectangle();
+            time = Time.time;
+        }
         verts.Clear();
-        faces.Clear();
+        ghost.gameObject.SetActive(false);
     }
 
     private void GenerateRectangle()
     {
-        faces = new List<Face>();
+        List<Face> faces = new List<Face>();
         List<Edge> edges = new List<Edge>();
         Point p1 = new Point(verts[0]);
         Point p2 = new Point(verts[1]);
@@ -55,53 +64,53 @@ public class RectangleTool : Tool {
 
         // front face
         edges.Add(new Edge(p1, p2));
-        edges.Add(new Edge(p1, p3));
         edges.Add(new Edge(p2, p4));
-        edges.Add(new Edge(p3, p4));
+        edges.Add(new Edge(p4, p3));
+        edges.Add(new Edge(p3, p1));
         faces.Add(new Face(edges));
         edges.Clear();
 
         // back face
         edges.Add(new Edge(p5, p6));
-        edges.Add(new Edge(p5, p7));
         edges.Add(new Edge(p6, p8));
-        edges.Add(new Edge(p7, p8));
+        edges.Add(new Edge(p8, p7));
+        edges.Add(new Edge(p7, p5));
         faces.Add(new Face(edges));
         edges.Clear();
 
         // left face
-        edges.Add(new Edge(p1, p3));
         edges.Add(new Edge(p1, p5));
-        edges.Add(new Edge(p3, p7));
         edges.Add(new Edge(p5, p7));
+        edges.Add(new Edge(p3, p7));
+        edges.Add(new Edge(p3, p1));
         faces.Add(new Face(edges));
         edges.Clear();
 
         // right face
-        edges.Add(new Edge(p2, p4));
         edges.Add(new Edge(p2, p6));
-        edges.Add(new Edge(p4, p8));
         edges.Add(new Edge(p6, p8));
+        edges.Add(new Edge(p8, p4));
+        edges.Add(new Edge(p4, p2));
         faces.Add(new Face(edges));
         edges.Clear();
 
         // top face
-        edges.Add(new Edge(p1, p2));
         edges.Add(new Edge(p1, p5));
-        edges.Add(new Edge(p2, p6));
         edges.Add(new Edge(p5, p6));
+        edges.Add(new Edge(p6, p2));
+        edges.Add(new Edge(p2, p1));
         faces.Add(new Face(edges));
         edges.Clear();
 
         // bottom face
-        edges.Add(new Edge(p3, p4));
         edges.Add(new Edge(p3, p7));
-        edges.Add(new Edge(p4, p8));
         edges.Add(new Edge(p7, p8));
+        edges.Add(new Edge(p8, p4));
+        edges.Add(new Edge(p4, p3));
         faces.Add(new Face(edges));
         edges.Clear();
 
-        rectangle = new Solid(faces);
+        Solid rectangle = new Solid(faces);
     }
 
     private void UpdateVerts()
@@ -117,5 +126,10 @@ public class RectangleTool : Tool {
         verts.Add(new Vector3(endPosition.x, startPosition.y, endPosition.z));
         verts.Add(new Vector3(startPosition.x, endPosition.y, endPosition.z));
         verts.Add(endPosition);
+
+        // update scale of ghost
+        ghost.transform.localScale = startPosition - controllerPosition;
+        // update position of ghost to be half of the scale so it is anchored to the start position
+        ghost.transform.position = startPosition - (startPosition - controllerPosition) / 2;
     } 
 }

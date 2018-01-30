@@ -22,6 +22,17 @@ public class Edge : DCGElement
         foreach (Point p in points)
             p.edges.Add(this);
         DCGBase.edges.Add(this);
+        //TODO: Signal creation over network
+    }
+
+    public Edge(List<Point> points, int netID)
+    {
+        this.isLoop = false;
+        this.points = points;
+        this.faces = new List<Face>();
+        foreach (Point p in points)
+            p.edges.Add(this);
+        DCGBase.edges.Add(this);
         Debug.Log(points.Count);
     }
 
