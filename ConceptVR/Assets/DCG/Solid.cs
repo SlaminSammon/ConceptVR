@@ -88,9 +88,25 @@ public class Solid : DCGElement {
         DCGBase.solids.Add(this);
     }
 
-    public void updateMesh()
+    public Mesh getMesh()
     {
+        List<Vector3> verts = new List<Vector3>();
+        List<int> tris = new List<int>();
 
+        int offset = 0;
+        foreach (Face f in faces)
+        {
+            verts.AddRange(f.mesh.vertices);
+            foreach (int i in f.mesh.triangles)
+                tris.Add(i + offset);
+            offset += f.mesh.vertexCount;
+        }
+
+        Mesh m = new Mesh();
+        m.SetVertices(verts);
+        m.SetTriangles(tris, 0);
+
+        return m;
     }
 
     public override void Render()
