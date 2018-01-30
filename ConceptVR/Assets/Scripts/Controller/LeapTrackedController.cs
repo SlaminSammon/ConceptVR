@@ -88,6 +88,7 @@ public class LeapTrackedController : MonoBehaviour
     void Update()
     {
         EditorApplication.Beep();
+        Debug.Log("y" + Hands.Right.PalmPosition.ToVector3().y);
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
         //Grab logic. Currently deprecated. May come back.
         if (forming)

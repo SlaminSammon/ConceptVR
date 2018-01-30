@@ -15,6 +15,7 @@ public class HUDButton : MonoBehaviour {
     public float lerpAmt;
     public float hoverHgt;
 
+    protected GameObject fingerTip;
     static float lastPressTime;
 
     public void Start()
@@ -68,6 +69,7 @@ public class HUDButton : MonoBehaviour {
         if (triggerName == "PressCollider" && Time.time - lastPressTime > coolDown)
         {
             animator.Play("Press");
+            fingerTip = other.gameObject;
             OnPress();
         } else if (triggerName == "HoverCollider")
         {

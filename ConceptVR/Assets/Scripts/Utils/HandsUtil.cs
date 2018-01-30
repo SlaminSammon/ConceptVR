@@ -279,11 +279,11 @@ public class HandsUtil {
         if (left == null || right == null)
             return false;
 
-        if (!(Extended(left.Fingers) >= 3 && Extended(right.Fingers) >= 3))
+        //if (!(Extended(left.Fingers) >= 3 && Extended(right.Fingers) >= 3))
+          //  return false;
+        if (Vector3.Distance(left.PalmPosition.ToVector3(), right.PalmPosition.ToVector3()) > .25f)
             return false;
-        if (Vector3.Distance(left.PalmPosition.ToVector3(), right.PalmPosition.ToVector3()) > 5f)
-            return false;
-        if (Vector3.Angle(left.PalmNormal.ToVector3(), Vector3.down) > 100f && Vector3.Angle(right.PalmNormal.ToVector3(), Vector3.down) > 100f)
+        if (left.PalmNormal.ToVector3().y < .9f && right.PalmNormal.ToVector3().y < .9f)
             return false;
         return true;
     }
@@ -294,11 +294,11 @@ public class HandsUtil {
         if (left == null || right == null)
             return false;
 
-        if (!(Extended(left.Fingers) >= 3 && Extended(right.Fingers) >= 3))
+        //if (!(Extended(left.Fingers) >= 3 && Extended(right.Fingers) >= 3))
+          //  return false;
+        if (Vector3.Distance(left.PalmPosition.ToVector3(), right.PalmPosition.ToVector3()) > .25f)
             return false;
-        if (Vector3.Distance(left.PalmPosition.ToVector3(), right.PalmPosition.ToVector3()) > 5f)
-            return false;
-        if (Vector3.Angle(left.PalmNormal.ToVector3(), Vector3.up) > 100f && Vector3.Angle(right.PalmNormal.ToVector3(), Vector3.up) > 100f)
+        if (left.PalmNormal.ToVector3().y > .9f && right.PalmNormal.ToVector3().y > .9f)
             return false;
         return true;
     }
