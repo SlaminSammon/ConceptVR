@@ -76,6 +76,9 @@ public abstract class Controller : MonoBehaviour {
             case "SelectItemsTool":
                 currentTool = getToolByType(typeof(SelectItemsTool));
                 break;
+            case "SphereTool":
+                currentTool = getToolByType(typeof(SphereTool));
+                break;
 
             default:
                 break;
