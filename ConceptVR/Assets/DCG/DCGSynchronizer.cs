@@ -30,6 +30,8 @@ public class DCGSynchronizer : NetworkBehaviour {
 	void Start () {
         expectations = new Dictionary<int, ExpectedElement>();
         waiting = new Dictionary<int, ElementPacket>();
+
+        DCGBase.synch = this;
 	}
 
     void Receive(ElementPacket e)

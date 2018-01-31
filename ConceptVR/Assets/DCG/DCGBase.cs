@@ -18,6 +18,7 @@ public class DCGBase : MonoBehaviour {
     public static List<Solid> solids = new List<Solid>();
 
     public static Dictionary<int, DCGElement> all = new Dictionary<int, DCGElement>();
+    public static DCGSynchronizer synch;
 
     private static int moveID = 0;
 

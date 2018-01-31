@@ -8,26 +8,35 @@ public class Solid : DCGElement {
     public List<Face> faces;
     Mesh mesh;
 
-    public Solid()
+    /*public Solid()
     {
         faces = new List<Face>();
         DCGBase.solids.Add(this);
-    }
+    }*/
 
     public Solid(List<Face> faces)
     {
         this.faces = faces;
         foreach (Face f in faces)
             f.solids.Add(this);
+
+        elementID = nextElementID();
         DCGBase.solids.Add(this);
+        DCGBase.all.Add(elementID, this as DCGElement);
+
+        //TODO: Net creation
     }
 
-    public Solid(List<Face> faces, int nedID)
+    //Network constructor
+    public Solid(List<Face> faces, int netID)
     {
         this.faces = faces;
         foreach (Face f in faces)
             f.solids.Add(this);
+
+        elementID = netID;
         DCGBase.solids.Add(this);
+        DCGBase.all.Add(elementID, this as DCGElement);
     }
 
     public Solid(Mesh m, Matrix4x4 t, Vector3 translate)
@@ -85,7 +94,13 @@ public class Solid : DCGElement {
 
         mesh.SetVertices(verts);
         mesh.SetTriangles(tris.ToArray(), 0);
+
+
+        elementID = nextElementID();
         DCGBase.solids.Add(this);
+        DCGBase.all.Add(elementID, this as DCGElement);
+
+        //TODO: Net creation
     }
 
     public Mesh getMesh()

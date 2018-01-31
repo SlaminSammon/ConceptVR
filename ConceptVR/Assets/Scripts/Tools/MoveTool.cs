@@ -21,7 +21,7 @@ public class MoveTool : SelectTool {
     public override void TriggerDown()
     { 
         startPositions = new List<Vector3>(sPoints.Count);
-        Debug.Log(sPoints.Count);
+        //Debug.Log(sPoints.Count);
         foreach (Point p in sPoints)
             startPositions.Add(p.position);
 

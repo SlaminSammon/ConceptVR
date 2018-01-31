@@ -12,13 +12,14 @@ public class Face : DCGElement
     public bool isAwful;
     bool normalConfident;
 
-    public Face()
+    /*public Face()
     {
         solids = new List<Solid>();
         edges = new List<Edge>();
+        elementID = nextElementID();
 
         DCGBase.faces.Add(this);
-    }
+    }*/
 
     public Face(List<Edge> edges)
     {
@@ -26,19 +27,28 @@ public class Face : DCGElement
         this.edges = edges;
         foreach (Edge e in edges)
             e.faces.Add(this);
+
+        elementID = nextElementID();
         DCGBase.faces.Add(this);
+        DCGBase.all.Add(elementID, this as DCGElement);
+
         updateAwful();
         updateMesh();
         //TODO: Signal creation over network
     }
 
+    //Network constructor
     public Face(List<Edge> edges, int netID)
     {
         solids = new List<Solid>();
         this.edges = edges;
         foreach (Edge e in edges)
             e.faces.Add(this);
+
+        elementID = netID;
         DCGBase.faces.Add(this);
+        DCGBase.all.Add(elementID, this as DCGElement);
+
         updateAwful();
         updateMesh();
     }

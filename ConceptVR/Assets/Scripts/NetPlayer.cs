@@ -10,10 +10,19 @@ public class NetPlayer : NetworkBehaviour {
 
 
 	void Start () {
-		
+		if (isLocalPlayer)
+        {
+            local = this;
+        }
 	}
 	
 	void Update () {
 		
 	}
+
+    private void OnDestroy()
+    {
+        if (this == local)
+            local = null;
+    }
 }

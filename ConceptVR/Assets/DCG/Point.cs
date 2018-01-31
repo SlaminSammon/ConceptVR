@@ -14,16 +14,25 @@ public class Point : DCGElement
         this.position = position;
         edges = new List<Edge>();
         elements = new List<DCGElement>();
+
+        elementID = nextElementID();
         DCGBase.points.Add(this);
-        //TODO: Signal creation over network
+        DCGBase.all.Add(elementID, this as DCGElement);
+
+        if (NetPlayer.local != null)
+            DCGBase.synch.CmdAddPoint(elementID, position, NetPlayer.local.playerID);
     }
 
+    //Network constructor
     public Point(Vector3 position, int netID)
     {
         this.position = position;
         edges = new List<Edge>();
         elements = new List<DCGElement>();
+
+        elementID = netID;
         DCGBase.points.Add(this);
+        DCGBase.all.Add(elementID, this as DCGElement);
     }
 
     public override void Render()
