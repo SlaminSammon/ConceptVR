@@ -75,7 +75,7 @@ public class handController: Controller {
     }
     protected void freeFormEnd()
     {
-        //deactivateLastTool(currentTool.GetType().ToString());
+        deactivateLastTool(currentTool.GetType().ToString());
         currentTool.FreeFormEnd();
         currentTool = lastTool;
     }

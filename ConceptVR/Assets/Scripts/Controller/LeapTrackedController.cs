@@ -126,12 +126,12 @@ public class LeapTrackedController : MonoBehaviour
             return;
         }
         #region  FreeForm Logic
+        /*
         if(rightStart && !leftStart)
         {
             if (rFrameCount >= 15)
             {
                 rightStart = false;
-                palmDirectorRight.PointingDirection = new Vector3(0, -1, 0);
                 rFrameCount = 0;
             }
             else
@@ -142,7 +142,6 @@ public class LeapTrackedController : MonoBehaviour
             if (lFrameCount >= 15)
             {
                 leftStart = false;
-                palmDirectorLeft.PointingDirection = new Vector3(0, -1, 0);
                 lFrameCount = 0;
             }
             else
@@ -156,6 +155,7 @@ public class LeapTrackedController : MonoBehaviour
             rFrameCount = 0;
             lFrameCount = 0;
         }
+        */
         #endregion
 
         bool grab = checkGrab();
