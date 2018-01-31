@@ -15,8 +15,8 @@ public class FreeFormTool : Tool {
     private LineRenderer freeFormLine;
     private List<Vector3> startCurve;
     private List<Vector3> endCurve;
-    private List<Vector3> backFacePoints;
-    private List<Vector3> frontFacePoints;
+    private List<Point> backFacePoints;
+    private List<Point> frontFacePoints;
     #endregion
 
     // Use this for initialization
@@ -41,13 +41,14 @@ public class FreeFormTool : Tool {
                 Vector3 leftPos = Hands.Left.PalmPosition.ToVector3();
                 if (leftPos == null || rightPos == null)
                     return;
+                #region Line Renderer adding
                 freeFormLine.positionCount++;
                 freeFormLine.SetPosition(freeFormLine.positionCount-1, leftPos);
                 rightFreeFormLine.positionCount++;
                 rightFreeFormLine.SetPosition(rightFreeFormLine.positionCount-1, rightPos);
                 rightPoints.Add(rightPos);
                 leftPoints.Add(leftPos);
-                Debug.Log("Bacon");
+                #endregion
                 frameCount = 0;
             }
             else frameCount++;
@@ -107,8 +108,14 @@ public class FreeFormTool : Tool {
         endCurve.Clear();
         */
     }
+    /*  Bezerp
+     *  Input - none
+     *  Output - Start & end Bezier curves
+     *  Creates a minor curve connecting the start and end positions of a free form.
+     */
     public void Bezerp()
     {
+        #region Start Curve Bezier
         Vector3 virtL = leftPoints[1] + (leftPoints[1] - leftPoints[2]);
         Vector3 virtR = rightPoints[0] + (rightPoints[0] - rightPoints[1]);
         Vector3[] startVerts = { leftPoints[0], virtL, virtR, rightPoints[0] };
@@ -116,38 +123,89 @@ public class FreeFormTool : Tool {
         startCurve.Add(GeometryUtil.Bezerp(startVerts,.25f));
         startCurve.Add(GeometryUtil.Bezerp(startVerts, .5f));
         startCurve.Add(GeometryUtil.Bezerp(startVerts, .75f));
+        #endregion
 
+        #region End Curve Bezier
         virtL = leftPoints[leftPoints.Count-1] + (leftPoints[leftPoints.Count - 1] - leftPoints[leftPoints.Count - 2]);
         virtR = rightPoints[rightPoints.Count - 1] + (rightPoints[rightPoints.Count - 1] - rightPoints[rightPoints.Count - 2]);
         Vector3[] endVerts = { leftPoints[leftPoints.Count - 1], virtL, virtR, rightPoints[rightPoints.Count - 1] };
+
         endCurve.Add(GeometryUtil.Bezerp(endVerts, .25f));
         endCurve.Add(GeometryUtil.Bezerp(endVerts, .5f));
         endCurve.Add(GeometryUtil.Bezerp(endVerts, .75f));
+        #endregion
 
     }
-    public void generateFaceLists()
+    /*  generateFreeFormSolidCubic
+     *  Input - none
+     *  Output - Generated Solid
+     *  Takes the drawn line made by the user, and turns it into a cubic solid
+     */
+    public void generateFreeFormSolidCubic()
     {
-        backFacePoints.Add(generateBackFacePoint(startCurve[1]));
-        backFacePoints.Add(generateBackFacePoint(startCurve[2]));
+        #region Back Face Generation
+        backFacePoints.Add(new Point(generateBackFacePoint(startCurve[1])));
+        backFacePoints.Add(new Point(generateBackFacePoint(startCurve[2])));
         for (int i = 0; i < rightPoints.Count; ++i)
-            backFacePoints.Add(generateBackFacePoint(rightPoints[i]));
-        backFacePoints.Add(generateBackFacePoint(endCurve[0]));
-        backFacePoints.Add(generateBackFacePoint(endCurve[1]));
-        backFacePoints.Add(generateBackFacePoint(endCurve[2]));
+            backFacePoints.Add(new Point(generateBackFacePoint(rightPoints[i])));
+        backFacePoints.Add(new Point(generateBackFacePoint(endCurve[0])));
+        backFacePoints.Add(new Point(generateBackFacePoint(endCurve[1])));
+        backFacePoints.Add(new Point(generateBackFacePoint(endCurve[2])));
         for (int i = leftPoints.Count; i > 0; --i)
-            backFacePoints.Add(generateBackFacePoint(leftPoints[i]));
-        backFacePoints.Add(generateBackFacePoint(startCurve[0]));
+            backFacePoints.Add(new Point(generateBackFacePoint(leftPoints[i])));
+        backFacePoints.Add(new Point(generateBackFacePoint(startCurve[0])));
 
-        frontFacePoints.Add(generateFrontFacePoint(startCurve[1]));
-        frontFacePoints.Add(generateFrontFacePoint(startCurve[2]));
+        List<Edge> backEdges = new List<Edge>();
+        for(int i = 0; i < backFacePoints.Count-1; ++i)
+        {
+            backEdges.Add(new Edge(backFacePoints[i], backFacePoints[i + 1]));
+        }
+        backEdges.Add(new Edge(backFacePoints[backFacePoints.Count-1], backFacePoints[0]));
+        new Face(backEdges);
+        #endregion
+
+        #region Front Face Generation
+        frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[1])));
+        frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[2])));
         for (int i = 0; i < rightPoints.Count; ++i)
-            frontFacePoints.Add(generateFrontFacePoint(rightPoints[i]));
-        frontFacePoints.Add(generateFrontFacePoint(endCurve[0]));
-        frontFacePoints.Add(generateFrontFacePoint(endCurve[1]));
-        frontFacePoints.Add(generateFrontFacePoint(endCurve[2]));
+            frontFacePoints.Add(new Point (generateFrontFacePoint(rightPoints[i])));
+        frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[0])));
+        frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[1])));
+        frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[2])));
         for (int i = leftPoints.Count; i > 0; --i)
-            frontFacePoints.Add(generateFrontFacePoint(leftPoints[i]));
-        frontFacePoints.Add(generateFrontFacePoint(startCurve[0]));
+            frontFacePoints.Add(new Point(generateFrontFacePoint(leftPoints[i])));
+        frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[0])));
+
+        List<Edge> frontEdges = new List<Edge>();
+        for (int i = 0; i < frontFacePoints.Count - 1; ++i)
+        {
+            frontEdges.Add(new Edge(frontFacePoints[i], frontFacePoints[i + 1]));
+        }
+        frontEdges.Add(new Edge(frontFacePoints[backFacePoints.Count - 1], frontFacePoints[0]));
+        new Face(frontEdges);
+        #endregion
+
+        #region Side Edges and Face Generation
+        List<Edge> sideEdges = new List<Edge>();
+        for (int i = 0; i < frontFacePoints.Count ; ++i)
+        {
+            sideEdges.Add(new Edge(frontFacePoints[i], backFacePoints[i]));
+        }
+        List<Edge> tempEdges = new List<Edge>();
+        for(int i =0; i < sideEdges.Count; ++i)
+        {
+            if (i == sideEdges.Count - 1)
+            {
+                tempEdges = new List<Edge>() { sideEdges[0], frontEdges[i], sideEdges[i], backEdges[i] };
+            }
+            else
+            {
+                tempEdges = new List<Edge>() { sideEdges[i+1], frontEdges[i], sideEdges[i], backEdges[i] };
+            }
+                
+        }
+        #endregion
+
     }
     public Vector3 generateBackFacePoint(Vector3 vec)
     {

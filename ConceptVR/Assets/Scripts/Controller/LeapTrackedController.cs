@@ -5,7 +5,7 @@ using UnityEditor;
 using Leap.Unity;
 using Leap;
 
-#region Structs
+#region Structs and Event Handlers
 public struct FrameInformation
 {
     public bool grabHeld;
@@ -37,9 +37,10 @@ public struct HandInformation
     public float roll;
     public Quaternion rotation;
 }
-#endregion
+
 public delegate void GestureEventHandler();
 public delegate void GesturePositionEventHandler(Vector3 position);
+#endregion
 public class LeapTrackedController : MonoBehaviour
 {
     #region Hand/frame info
@@ -111,21 +112,17 @@ public class LeapTrackedController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        EditorApplication.Beep();
-        //Debug.Log("y" + Mathf.Abs(Hands.Right.PalmNormal.ToVector3().y));
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
-        //Grab logic. Currently deprecated. May come back.
-        //Set default position
         if (handedness == "Right")
             hand = Hands.Right;
         else
             hand = Hands.Left;
         position = hand.PalmPosition.ToVector3();
+        #region  FreeForm Logic
         if (forming)
         {
             return;
         }
-        #region  FreeForm Logic
         /*
         if(rightStart && !leftStart)
         {
@@ -158,6 +155,7 @@ public class LeapTrackedController : MonoBehaviour
         */
         #endregion
 
+        #region Pinch and Grab Logic
         bool grab = checkGrab();
         if (!grab)
         {
@@ -180,7 +178,7 @@ public class LeapTrackedController : MonoBehaviour
                 if (pinch) flippedPinch = true;
             }
         }
-        if(!pinch) OnPinchGone();
+        if (!pinch) OnPinchGone();
         //Final grab check
         if (grab && !grabHeld && !flippedGrab)
         {
@@ -188,10 +186,13 @@ public class LeapTrackedController : MonoBehaviour
             OnGrabHeld();
         }
         //Final pinch check
-        else if(pinch && !pinchHeld && !flippedPinch)
+        else if (pinch && !pinchHeld && !flippedPinch)
         {
             OnPinchHeld();
         }
+        #endregion
+
+        #region Swipe and Tap Logic
         //Begin swipe check
         if (checkSwipe())
         {
@@ -215,6 +216,9 @@ public class LeapTrackedController : MonoBehaviour
                 tapCooldownTime = Time.time + tapCooldown;
             }
         }
+        #endregion
+
+        #region Additional Pinch and Grab logic
         if (flippedPinch)
         {
             pinchHeld = false;
@@ -231,6 +235,7 @@ public class LeapTrackedController : MonoBehaviour
         }
         else
             gripInput = false;
+        #endregion
         if (hand != null)
         {
             currentFrame = fetchFrameInformation();
@@ -238,10 +243,10 @@ public class LeapTrackedController : MonoBehaviour
             if (frameQueue.Count > heldFrames)
                 frameQueue.Dequeue();
         }
-     
 
-    }
+    }//end Update()
 
+    #region Pinch and Grab Event Handlers
     public void OnPinchHeld()
     {
         pinchHeld = true;
@@ -267,15 +272,13 @@ public class LeapTrackedController : MonoBehaviour
         if (grabGone != null)
             grabGone();
     }
+    #endregion
 
-
-
-
-
+    #region Gesture Check Funtions
     public bool checkPinch()
     {
         //Determine which hand.
-        if(handedness == "Right")
+        if (handedness == "Right")
             hand = Hands.Right;
         else
             hand = Hands.Left;
@@ -298,7 +301,7 @@ public class LeapTrackedController : MonoBehaviour
             return false;
         position = util.getIndexPos(hand);
         return util.IsGrabbing(hand);
-        
+
     }
     //in progress
     public bool checkThumbsUp()
@@ -336,12 +339,15 @@ public class LeapTrackedController : MonoBehaviour
         position = util.getIndexPos(hand);
         return util.isSwiping(hand, frameQueue);
     }
+    #endregion
+
+    #region Frame Info and Recent Frame checks
     FrameInformation fetchFrameInformation()
     {
         FrameInformation frameInfo = new FrameInformation();
         frameInfo.grabHeld = grabHeld;
         frameInfo.pinchHeld = pinchHeld;
-        foreach(Leap.Finger f in hand.Fingers)
+        foreach (Leap.Finger f in hand.Fingers)
         {
             FingerInformation fingerInfo = new FingerInformation();
             fingerInfo.isExtended = f.IsExtended;
@@ -368,7 +374,7 @@ public class LeapTrackedController : MonoBehaviour
                     break;
             }
         }
-        if(handedness == "Right")
+        if (handedness == "Right")
             hand = Hands.Right;
         else
             hand = Hands.Left;
@@ -389,7 +395,7 @@ public class LeapTrackedController : MonoBehaviour
     {
         if (frameQueue.Count < 50) return false;
         FrameInformation[] frames = frameQueue.ToArray();
-        for(int i = frames.Length-1; i > frames.Length-5; --i)
+        for (int i = frames.Length - 1; i > frames.Length - 5; --i)
         {
             if (frames[i].pinchHeld)
                 return true;
@@ -407,17 +413,19 @@ public class LeapTrackedController : MonoBehaviour
         }
         return false;
     }
+    #endregion
     public void removeExtraHands()
     {
         GameObject go = GameObject.Find("RigidRoundHand_L(Clone)");
         if (go != null) GameObject.Destroy(go);
         go = GameObject.Find("RigidRoundHand_R(Clone)");
-        if(go != null) GameObject.Destroy(go);
+        if (go != null) GameObject.Destroy(go);
         go = GameObject.Find("LoPoly_Rigged_Hand_Left(Clone)");
         if (go != null) GameObject.Destroy(go);
         go = GameObject.Find("LoPoly_Rigged_Hand_Right(Clone)");
         if (go != null) GameObject.Destroy(go);
     }
+    #region FreeForm Event Handlers
     public void freeFormRight()
     {
         Debug.Log("Hand Down Right");
@@ -448,4 +456,5 @@ public class LeapTrackedController : MonoBehaviour
             freeFormEnd();
         }
     }
+    #endregion
 }
