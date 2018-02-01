@@ -17,6 +17,7 @@ public class FreeFormTool : Tool {
     private List<Vector3> endCurve;
     private List<Point> backFacePoints;
     private List<Point> frontFacePoints;
+
     #endregion
 
     // Use this for initialization
@@ -183,7 +184,7 @@ public class FreeFormTool : Tool {
             }
             else
             {
-                tempList = new List<Edge>() { sideEdges[i+1], frontEdges[i], sideEdges[i], backEdges[i] };
+                tempList = new List<Edge>() {  frontEdges[i], backEdges[i],sideEdges[i+1], sideEdges[i] };
                 tempEdges.AddRange(tempList);
             }
                 
