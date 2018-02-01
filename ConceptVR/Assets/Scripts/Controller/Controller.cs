@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class Controller : MonoBehaviour {
     public bool hand;//Right is true, left is false;
     public Controller other;    //controller attached to the other hand (it is assumed the user only has two hands)
-    public List<Tool> tools;
+    public GameObject tools;
 
     protected Tool currentTool;
 
@@ -43,56 +43,19 @@ public abstract class Controller : MonoBehaviour {
     public void changeTool(string toolName)
     {
         Tool lastTool = currentTool;
+        currentTool = tools.transform.Find(toolName).GetComponent<Tool>();
         //Debug.Log(toolName);
-        switch(toolName)
-        {
-            case "MoveTool":
-                currentTool = getToolByType(typeof(MoveTool));
-                break;
-            case "DoodleTool":
-                currentTool = getToolByType(typeof(DoodleTool));
-                break;
-            case "DestroyTool":
-                currentTool = getToolByType(typeof(DestroyTool));
-                break;
-            case "PointTool":
-                currentTool = getToolByType(typeof(PointTool));
-                break;
-            case "LinkTool":
-                currentTool = getToolByType(typeof(LinkTool));
-                break;
-            case "ExtrudeTool":
-                currentTool = getToolByType(typeof(ExtrudeTool));
-                break;
-            case "BezierTool":
-                currentTool = getToolByType(typeof(BezierTool));
-                break;
-            case "RectangleTool":
-                currentTool = getToolByType(typeof(RectangleTool));
-                break;
-            case "LightTool":
-                currentTool = getToolByType(typeof(LightTool));
-                break;
-            case "SelectItemsTool":
-                currentTool = getToolByType(typeof(SelectItemsTool));
-                break;
-            case "SphereTool":
-                currentTool = getToolByType(typeof(SphereTool));
-                break;
-
-            default:
-                break;
-        }
+        
         Debug.Log("Cur" + currentTool.GetType());
         Debug.Log("Last" + lastTool.GetType());
         if (currentTool.GetType() != lastTool.GetType())
         {
-            deactivateLastTool(lastTool.GetType().ToString());
-            activateNewTool(currentTool.GetType().ToString());
+            deactivateLastTool(lastTool);
+            activateNewTool(currentTool);
         }
         //Debug.Log(currentTool.GetType());
     }
-    public Tool getToolByType(Type type)
+    /*public Tool getToolByType(Type type)
     {
         //Debug.Log("Switching");
         foreach (Tool t in tools)
@@ -102,23 +65,23 @@ public abstract class Controller : MonoBehaviour {
         }
         //Debug.Log("Not Switching");
         return currentTool;
-    }
-    public void deactivateLastTool(string type) {
-        GameObject.Find(type).SetActive(false);
-    }
-    public void activateNewTool(string type)
+    }*/
+    public Tool GetToolByName(String name)
     {
-        GameObject toolsList = GameObject.Find("Tools");
-        toolsList.transform.Find(type).gameObject.SetActive(true);
+        return tools.transform.Find(name).GetComponent<Tool>();
+    }
+    
+    public void deactivateLastTool(Tool t) {
+        t.gameObject.SetActive(false);
+    }
+    public void activateNewTool(Tool t)
+    {
+        t.gameObject.SetActive(true);
     }
     public void OnEnable()
     {
-        if (currentTool == null) currentTool = tools[0];
-        foreach (Tool t in tools)
-        {
-            if (t.GetType() != currentTool.GetType())
-                deactivateLastTool(t.GetType().ToString());
-           // Debug.Log(t.GetType());
-        }
+        if (currentTool == null) currentTool = tools.GetComponentInChildren<Tool>();
+        foreach (Tool t in tools.GetComponentsInChildren<Tool>())
+            deactivateLastTool(t);
     }
 }

@@ -69,15 +69,13 @@ public class handController: Controller {
     {
         lastTool = currentTool;
         Debug.Log(currentTool);
-        currentTool = getToolByType(typeof(FreeFormTool));
-        activateNewTool(currentTool.GetType().ToString());
+        changeTool("FreeFormTool");
         currentTool.FreeForm();
     }
     protected void freeFormEnd()
     {
-        deactivateLastTool(currentTool.GetType().ToString());
         currentTool.FreeFormEnd();
-        currentTool = lastTool;
+        changeTool(lastTool.GetType().ToString());
     }
 
 }

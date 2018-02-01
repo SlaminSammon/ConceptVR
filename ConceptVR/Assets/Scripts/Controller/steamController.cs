@@ -11,7 +11,8 @@ public class steamController : Controller {
         trackedController.TriggerClicked += this.TriggerDown;
         trackedController.TriggerUnclicked += this.TriggerUp;
         trackedController.Gripped += this.GripDown;
-        currentTool = tools[0];
+        if (currentTool == null)
+            currentTool = tools.GetComponentInChildren<Tool>();
     }
 	
 	// Update is called once per frame
