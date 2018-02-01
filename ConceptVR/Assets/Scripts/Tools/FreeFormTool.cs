@@ -26,6 +26,8 @@ public class FreeFormTool : Tool {
         util = new HandsUtil();
         startCurve = new List<Vector3>();
         endCurve = new List<Vector3>();
+        backFacePoints = new List<Point>();
+        frontFacePoints = new List<Point>();
     }
 	
 	// Update is called once per frame
@@ -79,34 +81,10 @@ public class FreeFormTool : Tool {
     }
     public override void FreeFormEnd()
     {
-        /*
+        
         Bezerp();
-        List<Point> rPoints = new List<Point>();
-        List<Point> lPoints = new List<Point>();
-        for (int i = 0; i < rightPoints.Count; ++i)
-            rPoints.Add(new Point(rightPoints[i]));
-        for (int i = 0; i < leftPoints.Count; ++i)
-            lPoints.Add(new Point(leftPoints[i]));
-        List<Edge> edges = new List<Edge>();
-        edges.Add(new Edge(startCurve[1], startCurve[2]));
-        edges.Add(new Edge(startCurve[2], rPoints[0]));
-        for (int p = 0; p < rPoints.Count - 1; ++p)
-            edges.Add(new Edge(rPoints[p], rPoints[p + 1]));
-        edges.Add(new Edge(rPoints[rPoints.Count - 1], endCurve[2]));
-        edges.Add(new Edge(endCurve[2], endCurve[1]));
-        edges.Add(new Edge(endCurve[1], endCurve[0]));
-        edges.Add(new Edge(lPoints[lPoints.Count-1], endCurve[0]));
-        for (int p = lPoints.Count-1; p > 0; --p)
-            edges.Add(new Edge(lPoints[p], lPoints[p - 1]));
-        edges.Add(new Edge(lPoints[0], startCurve[0]));
-        edges.Add(new Edge(startCurve[0], startCurve[1]));
-        new Face(edges);
-        Destroy(freeFormLine.gameObject);
-        Destroy(rightFreeFormLine.gameObject);
-        Debug.Log("Endign FreeForm");
-        startCurve.Clear();
-        endCurve.Clear();
-        */
+        generateFreeFormSolidCubic();
+        
     }
     /*  Bezerp
      *  Input - none
@@ -143,6 +121,8 @@ public class FreeFormTool : Tool {
      */
     public void generateFreeFormSolidCubic()
     {
+        if (startCurve.Count > 0)
+            Debug.Log(startCurve.Count);
         #region Back Face Generation
         backFacePoints.Add(new Point(generateBackFacePoint(startCurve[1])));
         backFacePoints.Add(new Point(generateBackFacePoint(startCurve[2])));
@@ -151,7 +131,7 @@ public class FreeFormTool : Tool {
         backFacePoints.Add(new Point(generateBackFacePoint(endCurve[0])));
         backFacePoints.Add(new Point(generateBackFacePoint(endCurve[1])));
         backFacePoints.Add(new Point(generateBackFacePoint(endCurve[2])));
-        for (int i = leftPoints.Count; i > 0; --i)
+        for (int i = leftPoints.Count-1; i > 0; --i)
             backFacePoints.Add(new Point(generateBackFacePoint(leftPoints[i])));
         backFacePoints.Add(new Point(generateBackFacePoint(startCurve[0])));
 
@@ -172,7 +152,7 @@ public class FreeFormTool : Tool {
         frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[0])));
         frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[1])));
         frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[2])));
-        for (int i = leftPoints.Count; i > 0; --i)
+        for (int i = leftPoints.Count-1; i > 0; --i)
             frontFacePoints.Add(new Point(generateFrontFacePoint(leftPoints[i])));
         frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[0])));
 
@@ -192,27 +172,33 @@ public class FreeFormTool : Tool {
             sideEdges.Add(new Edge(frontFacePoints[i], backFacePoints[i]));
         }
         List<Edge> tempEdges = new List<Edge>();
-        for(int i =0; i < sideEdges.Count; ++i)
+        List<Edge> tempList = new List<Edge>();
+        for (int i =0; i < sideEdges.Count; ++i)
         {
             if (i == sideEdges.Count - 1)
             {
-                tempEdges = new List<Edge>() { sideEdges[0], frontEdges[i], sideEdges[i], backEdges[i] };
+                
+                tempList = new List<Edge>() { sideEdges[0], frontEdges[i], sideEdges[i], backEdges[i] };
+                tempEdges.AddRange(tempList);
             }
             else
             {
-                tempEdges = new List<Edge>() { sideEdges[i+1], frontEdges[i], sideEdges[i], backEdges[i] };
+                tempList = new List<Edge>() { sideEdges[i+1], frontEdges[i], sideEdges[i], backEdges[i] };
+                tempEdges.AddRange(tempList);
             }
                 
         }
+        Debug.Log("temp edges" + tempEdges.Count);
+        new Face(tempEdges);
         #endregion
 
     }
     public Vector3 generateBackFacePoint(Vector3 vec)
-    {
-        return new Vector3((vec.x - (vec.x / 2)), vec.y, (vec.z - (vec.z / 2)));
+    { 
+        return new Vector3(vec.x- (vec.x / 6), vec.y, (vec.z - (vec.z / 6)));
     }
     public Vector3 generateFrontFacePoint(Vector3 vec)
     {
-        return new Vector3((vec.x + (vec.x / 2)), vec.y, (vec.z + (vec.z / 2)));
+        return new Vector3(vec.x + (vec.x / 6), vec.y, (vec.z+ (vec.z / 6)));
     }
 }
