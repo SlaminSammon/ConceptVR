@@ -56,15 +56,7 @@ public class Importer : HUDButton {
 
     public override void OnPress()
     {
-       
-        //Mesh holderMesh = new Mesh();
-        //ObjImporter newMesh = new ObjImporter();
         string fileName = transform.Find("Text").GetComponent<TextMesh>().text;
-        //holderMesh = newMesh.ImportFile("Assets/Resources/Imports/Meshes/" + fileName);
-
-        //MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
-        //MeshFilter filter = gameObject.AddComponent<MeshFilter>();
-        //filter.mesh = holderMesh;
 
         Vector3 pos = Hands.Left.PalmPosition.ToVector3();
         GameObject loadedObj = OBJLoader.LoadOBJFile("Assets/Resources/Imports/Meshes/" + fileName);
@@ -75,11 +67,11 @@ public class Importer : HUDButton {
 
 
         this.prefab.transform.position = new Vector3(pos.x, pos.y, pos.z) + new Vector3(0.00f, 0.00f, 0.25f); //+ new Vector3(Hands.Left.Rotation.x, Hands.Left.Rotation.y, Hands.Left.Rotation.z);
-            //LeapHandController.transform.rotation * (new Vector3(0.0f, 0.00f, 0.04f));
+        //LeapHandController.transform.rotation * (new Vector3(0.0f, 0.00f, 0.04f));
         this.prefab.transform.localScale = new Vector3(.02f, .02f, .02f);
         this.prefab.gameObject.name = fileName;
 
-        //new Solid(this.prefab.GetComponent<MeshFilter>().mesh, Matrix4x4.TRS(prefab.transform.position, prefab.transform.rotation, prefab.transform.localScale), prefab.transform.position);
+        new Solid(this.prefab.GetComponent<MeshFilter>().mesh, Matrix4x4.TRS(prefab.transform.position, prefab.transform.rotation, prefab.transform.localScale), prefab.transform.position);
 
         base.OnPress();
     }
