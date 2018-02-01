@@ -8,11 +8,11 @@ public class Solid : DCGElement {
     public List<Face> faces;
     Mesh mesh;
 
-    /*public Solid()
+    public Solid()
     {
-        faces = new List<Face>();
-        DCGBase.solids.Add(this);
-    }*/
+        /*faces = new List<Face>();
+        DCGBase.solids.Add(this);*/
+    }
 
     public Solid(List<Face> faces)
     {

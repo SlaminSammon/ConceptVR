@@ -12,14 +12,14 @@ public class Face : DCGElement
     public bool isAwful;
     bool normalConfident;
 
-    /*public Face()
+    public Face()
     {
-        solids = new List<Solid>();
+        /*solids = new List<Solid>();
         edges = new List<Edge>();
         elementID = nextElementID();
 
-        DCGBase.faces.Add(this);
-    }*/
+        DCGBase.faces.Add(this);*/
+    }
 
     public Face(List<Edge> edges)
     {
