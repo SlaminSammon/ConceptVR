@@ -27,6 +27,7 @@ public class handController: Controller {
         //Check to see if a pinch is being held.
         if (currentTool.GetType() == typeof(FreeFormTool))
         {
+
             if (leapControl.forming)
                 currentTool.formInput = true;
             else
@@ -93,11 +94,16 @@ public class handController: Controller {
         lastTool = currentTool;
         Debug.Log(currentTool);
         changeTool("FreeFormTool");
-        currentTool.FreeForm();
+        currentTool.FreeForm(leapControl);
     }
     protected void freeFormEnd()
     {
         currentTool.FreeFormEnd();
+        changeTool(lastTool.GetType().ToString());
+    }
+    protected void freeFormFailure()
+    {
+        currentTool.formInput = false;
         changeTool(lastTool.GetType().ToString());
     }
 

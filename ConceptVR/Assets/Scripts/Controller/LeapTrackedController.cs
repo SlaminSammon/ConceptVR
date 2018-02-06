@@ -76,6 +76,7 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler swipeMade;
     public event GestureEventHandler freeForm;
     public event GestureEventHandler freeFormEnd;
+    public event GestureEventHandler freeFormFailure;
     public event GesturePositionEventHandler tapMade;
     #endregion
     #region Forming Specific Members
@@ -119,40 +120,29 @@ public class LeapTrackedController : MonoBehaviour
             hand = Hands.Left;
         position = hand.PalmPosition.ToVector3();
         #region  FreeForm Logic
+        //I really hate this logic section.
+        //end case
+        /*if (!leftStart && !rightStart && forming && util.checkHandsDist() < .1f)
+        {
+            Debug.Log("Ending");
+            forming = false;
+            freeFormEnd();
+            rFrameCount = 0;
+            lFrameCount = 0;
+        }
+        //continue
         if (forming)
         {
             return;
         }
-        /*
-        if(rightStart && !leftStart)
-        {
-            if (rFrameCount >= 15)
-            {
-                rightStart = false;
-                rFrameCount = 0;
-            }
-            else
-                ++rFrameCount;
-        }
-        if (!rightStart && leftStart)
-        {
-            if (lFrameCount >= 15)
-            {
-                leftStart = false;
-                lFrameCount = 0;
-            }
-            else
-                ++lFrameCount;
-        }
+        //start
         if(rightStart && leftStart && util.checkHandsDist() < .2f)
         {
-            Debug.Log("Start Free Form");
             forming = true;
             freeForm();
             rFrameCount = 0;
             lFrameCount = 0;
-        }
-        */
+        }*/
         #endregion
 
         #region Pinch and Grab Logic
@@ -428,33 +418,27 @@ public class LeapTrackedController : MonoBehaviour
     #region FreeForm Event Handlers
     public void freeFormRight()
     {
-        Debug.Log("Hand Down Right");
         rightStart = true;
     }
     public void freeFormLeft()
     {
-        Debug.Log("Hand Down Left");
         leftStart = true;
     }
+
+    
     public void freeFormEndRight()
     {
-        Debug.Log("Hand Up Right");
         rightStart = false;
-        if (forming)
-        {
-            forming = false;
-            freeFormEnd();
-        }
     }
     public void freeFormEndLeft()
     {
-        Debug.Log("Hand Up Left");
         leftStart = false;
-        if (forming)
-        {
-            forming = false;
-            freeFormEnd();
-        }
+    }
+
+    public void freeFormFailureHandler()
+    {
+        forming = false;
+        freeFormFailure();
     }
     #endregion
 }

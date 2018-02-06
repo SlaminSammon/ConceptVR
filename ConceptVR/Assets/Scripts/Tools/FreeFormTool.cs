@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
+using System.Linq;
 
 public class FreeFormTool : Tool {
     #region Member Berries
@@ -16,7 +17,8 @@ public class FreeFormTool : Tool {
     private LineRenderer freeFormLine;
     private List<Point> backFacePoints;
     private List<Point> frontFacePoints;
-
+    private LeapTrackedController leapControl;
+    private List<Face> faces;
     #endregion
 
     // Use this for initialization
@@ -33,14 +35,19 @@ public class FreeFormTool : Tool {
 	new void Update () {
         if (formInput)
         {
-
-            if (frameCount >= 25)
+            if(Hands.Right == null || Hands.Left == null)
+            {
+                Destroy(freeFormLine.gameObject);
+                Destroy(rightFreeFormLine.gameObject);
+                leapControl.freeFormFailureHandler();
+            }
+            if (frameCount >= 15)
             {
                 Debug.Log(frameCount);
                 //Add points to the line renderer and the point lists
                 Vector3 rightPos = Hands.Right.PalmPosition.ToVector3();
                 Vector3 leftPos = Hands.Left.PalmPosition.ToVector3();
-                if (leftPos == null || rightPos == null)
+                if (rightPos.y == 0f || leftPos.y == 0f)
                     return;
                 #region Line Renderer adding
                 freeFormLine.positionCount++;
@@ -55,8 +62,9 @@ public class FreeFormTool : Tool {
             else frameCount++;
         }
 	}
-    public override void FreeForm()
+    public override void FreeForm(LeapTrackedController ltc)
     {
+        leapControl = ltc;
         Vector3 rightPos = Hands.Right.PalmPosition.ToVector3();
         Vector3 leftPos = Hands.Left.PalmPosition.ToVector3();
         #region Line Renderer Initialize
@@ -70,20 +78,33 @@ public class FreeFormTool : Tool {
         freeFormLine = gol.AddComponent<LineRenderer>();
         freeFormLine.startWidth = .01f;
         freeFormLine.endWidth = .01f;
-        #endregion
-        //Set all vars with the new pos
         freeFormLine.positionCount++;
         rightFreeFormLine.SetPosition(0, rightPos);
         freeFormLine.SetPosition(0, leftPos);
+        #endregion
         rightPoints.Add(rightPos);
         leftPoints.Add(leftPos);
     }
     public override void FreeFormEnd()
     {
-        
+        #region Initial and end Point removal
+        rightPoints.RemoveAt(0);
+        leftPoints.RemoveAt(0);
+        rightPoints.RemoveAt(rightPoints.Count-1);
+        leftPoints.RemoveAt(leftPoints.Count-1);
+        #endregion
         Bezerp();
         generateFreeFormSolidCubic();
-        
+        #region Clean up
+        Destroy(freeFormLine.gameObject);
+        Destroy(rightFreeFormLine.gameObject);
+        rightPoints.Clear();
+        leftPoints.Clear();
+        finalPoints.Clear();
+        backFacePoints.Clear();
+        frontFacePoints.Clear();
+        #endregion
+
     }
     /*  Bezerp
      *  Input - none
@@ -96,7 +117,6 @@ public class FreeFormTool : Tool {
         Vector3 virtL = leftPoints[1] + (leftPoints[1] - leftPoints[2]);
         Vector3 virtR = rightPoints[0] + (rightPoints[0] - rightPoints[1]);
         Vector3[] startVerts = { leftPoints[0], virtL, virtR, rightPoints[0] };
-
         rightPoints.Insert(0,GeometryUtil.Bezerp(startVerts,.75f));
         rightPoints.Insert(0, GeometryUtil.Bezerp(startVerts, .5f));
         rightPoints.Insert(0, GeometryUtil.Bezerp(startVerts, .25f));
@@ -107,10 +127,12 @@ public class FreeFormTool : Tool {
         virtR = rightPoints[rightPoints.Count - 1] + (rightPoints[rightPoints.Count - 1] - rightPoints[rightPoints.Count - 2]);
         Vector3[] endVerts = { leftPoints[leftPoints.Count - 1], virtL, virtR, rightPoints[rightPoints.Count - 1] };
 
-        /*endCurve.Add(GeometryUtil.Bezerp(endVerts, .25f));
-        endCurve.Add(GeometryUtil.Bezerp(endVerts, .5f));
-        endCurve.Add(GeometryUtil.Bezerp(endVerts, .75f));*/
+        rightPoints.Add(GeometryUtil.Bezerp(endVerts, .75f));
+        rightPoints.Add(GeometryUtil.Bezerp(endVerts, .5f));
+        rightPoints.Add(GeometryUtil.Bezerp(endVerts, .25f));
         #endregion
+        finalPoints.AddRange(rightPoints);
+        finalPoints.AddRange(Enumerable.Reverse(leftPoints));
 
     }
     /*  generateFreeFormSolidCubic
@@ -120,49 +142,34 @@ public class FreeFormTool : Tool {
      */
     public void generateFreeFormSolidCubic()
     {
-        /*
-        //Vector3 midpoint =-
-        if (startCurve.Count > 0)
-            Debug.Log(startCurve.Count);
+        Vector3 midPoint = findCenter(finalPoints);
+        Vector3 backMid = normalize(finalPoints)/4;
+        Debug.Log("mid " + midPoint);
+        Vector3 backDiff = midPoint - backMid;
+        Debug.Log("midb " + backMid);
+        Debug.Log("backF " + backDiff);
+        Vector3 frontMid = midPoint + backDiff;
         #region Back Face Generation
-        backFacePoints.Add(new Point(generateBackFacePoint(startCurve[1])));
-        backFacePoints.Add(new Point(generateBackFacePoint(startCurve[2])));
-        for (int i = 0; i < rightPoints.Count; ++i)
-            backFacePoints.Add(new Point(generateBackFacePoint(rightPoints[i])));
-        backFacePoints.Add(new Point(generateBackFacePoint(endCurve[0])));
-        backFacePoints.Add(new Point(generateBackFacePoint(endCurve[1])));
-        backFacePoints.Add(new Point(generateBackFacePoint(endCurve[2])));
-        for (int i = leftPoints.Count-1; i > 0; --i)
-            backFacePoints.Add(new Point(generateBackFacePoint(leftPoints[i])));
-        backFacePoints.Add(new Point(generateBackFacePoint(startCurve[0])));
-
+        foreach (Vector3 v in finalPoints)
+            backFacePoints.Add(new Point(v - backMid));
         List<Edge> backEdges = new List<Edge>();
-        for(int i = 0; i < backFacePoints.Count-1; ++i)
+        backEdges.Add(new Edge(backFacePoints[backFacePoints.Count - 1], backFacePoints[0]));
+        for(int p =0; p< backFacePoints.Count - 1; ++p)
         {
-            backEdges.Add(new Edge(backFacePoints[i], backFacePoints[i + 1]));
+            backEdges.Add(new Edge(backFacePoints[p], backFacePoints[p+1]));
         }
-        backEdges.Add(new Edge(backFacePoints[backFacePoints.Count-1], backFacePoints[0]));
         new Face(backEdges);
         #endregion
 
         #region Front Face Generation
-        frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[1])));
-        frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[2])));
-        for (int i = 0; i < rightPoints.Count; ++i)
-            frontFacePoints.Add(new Point (generateFrontFacePoint(rightPoints[i])));
-        frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[0])));
-        frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[1])));
-        frontFacePoints.Add(new Point(generateFrontFacePoint(endCurve[2])));
-        for (int i = leftPoints.Count-1; i > 0; --i)
-            frontFacePoints.Add(new Point(generateFrontFacePoint(leftPoints[i])));
-        frontFacePoints.Add(new Point(generateFrontFacePoint(startCurve[0])));
-
+        foreach (Vector3 v in finalPoints)
+            frontFacePoints.Add(new Point(v));
         List<Edge> frontEdges = new List<Edge>();
-        for (int i = 0; i < frontFacePoints.Count - 1; ++i)
+        frontEdges.Add(new Edge(frontFacePoints[frontFacePoints.Count - 1], frontFacePoints[0]));
+        for (int p = 0; p < frontFacePoints.Count - 1; ++p)
         {
-            frontEdges.Add(new Edge(frontFacePoints[i], frontFacePoints[i + 1]));
+            frontEdges.Add(new Edge(frontFacePoints[p], frontFacePoints[p + 1]));
         }
-        frontEdges.Add(new Edge(frontFacePoints[backFacePoints.Count - 1], frontFacePoints[0]));
         new Face(frontEdges);
         #endregion
 
@@ -172,35 +179,23 @@ public class FreeFormTool : Tool {
         {
             sideEdges.Add(new Edge(frontFacePoints[i], backFacePoints[i]));
         }
-        List<Edge> tempEdges = new List<Edge>();
         List<Edge> tempList = new List<Edge>();
         for (int i =0; i < sideEdges.Count; ++i)
         {
             if (i == sideEdges.Count - 1)
             {
-                
-                tempList = new List<Edge>() { sideEdges[0], frontEdges[i], sideEdges[i], backEdges[i] };
-                tempEdges.AddRange(tempList);
+                tempList = new List<Edge>() { sideEdges[0], frontEdges[i-1], sideEdges[i], backEdges[i-1] };
             }
             else
             {
                 tempList = new List<Edge>() {  frontEdges[i], backEdges[i],sideEdges[i+1], sideEdges[i] };
-                tempEdges.AddRange(tempList);
             }
+            new Face(tempList);
                 
         }
-        Debug.Log("temp edges" + tempEdges.Count);
-        new Face(tempEdges);
+        //new Solid(faces);
         #endregion
-        */
-    }
-    public Vector3 generateBackFacePoint(Vector3 vec)
-    { 
-        return new Vector3(vec.x- (vec.x / 6), vec.y, (vec.z - (vec.z / 6)));
-    }
-    public Vector3 generateFrontFacePoint(Vector3 vec)
-    {
-        return new Vector3(vec.x + (vec.x / 6), vec.y, (vec.z+ (vec.z / 6)));
+        
     }
     public Vector3 findCenter(List<Vector3> vecs)
     {
@@ -214,5 +209,20 @@ public class FreeFormTool : Tool {
             z += v.z;
         }
         return new Vector3(x / vecs.Count, y / vecs.Count, z / vecs.Count);
+    }
+    public Vector3 normalize(List<Vector3> vecs)
+    {
+        Vector3 sum = new Vector3();
+        Vector3 diffA = vecs[1] - vecs[0];
+        Vector3 diffB = new Vector3();
+        for(int i = 1; i< vecs.Count-1; ++i)
+        {
+            diffB = vecs[i+1] - vecs[i];
+            sum += Vector3.Cross(diffA, diffB).normalized;
+            diffA = diffB;
+        }
+        sum += Vector3.Cross(diffA,(vecs[vecs.Count-1]-vecs[0])).normalized;
+        return sum.normalized;
+
     }
 }
