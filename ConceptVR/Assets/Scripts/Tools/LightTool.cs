@@ -19,12 +19,13 @@ public class LightTool : Tool {
         
     }
 
-    public override void Tap(Vector3 position)
+    public override bool Tap(Vector3 position)
     {
         LightPrefab.transform.position = controllerPosition;
         GameObject newLight = Instantiate(LightPrefab) as GameObject;
         newLight.name = "GeneratedPointLight_" + itembase.GetComponent<ItemBase>().lightCount;
         newLight.transform.parent = itembase.transform;
         itembase.GetComponent<ItemBase>().addLight(newLight);
+        return true;
     }
 }

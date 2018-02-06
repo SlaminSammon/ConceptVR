@@ -8,7 +8,8 @@ public class handController: Controller {
     LeapTrackedController leapControl;
     private Tool lastTool;
     // Use this for initialization
-    void Start () {
+    new void Start () {
+        base.Start();
         leapControl = GetComponent<LeapTrackedController>();
         leapControl.pinchMade += TriggerDown;
         leapControl.pinchGone += TriggerUp;
@@ -56,9 +57,11 @@ public class handController: Controller {
         //currentTool.GripDown();
         return;
     }
-
     protected void Tap(Vector3 position)
     {
+        foreach (Tool tool in ToolQueue)
+            if (tool.Tap(position))
+                return;
         currentTool.Tap(position);
     }
     protected void Swipe()

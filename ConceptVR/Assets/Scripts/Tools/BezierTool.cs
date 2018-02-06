@@ -54,7 +54,7 @@ public class BezierTool : Tool
         currentEdge.points.Add(newPoint);
     }*/
 
-    public override void Tap(Vector3 position)
+    public override bool Tap(Vector3 position)
     {
         if (currentPoints != null)
         {
@@ -63,6 +63,7 @@ public class BezierTool : Tool
             currentPoints.Add(newPoint);
             currentEdge.points.Add(newPoint);
         }
+        return true;
     }
 
     public override void Swipe()

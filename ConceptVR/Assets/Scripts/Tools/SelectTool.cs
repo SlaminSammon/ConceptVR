@@ -21,7 +21,7 @@ public class SelectTool : Tool {
         selMat.SetFloat("_Offset", Time.time / 6f);
     }
 
-    public override void Tap(Vector3 position)
+    public override bool Tap(Vector3 position)
     {
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
         if (nearestElement != null && !nearestElement.isLocked)
@@ -29,12 +29,15 @@ public class SelectTool : Tool {
             List<Point> newSel = Select(nearestElement);
             sElements.Remove(nearestElement);
             sElements.Add(nearestElement);
-            foreach(Point p in newSel)
+            foreach (Point p in newSel)
             {
                 sPoints.Remove(p); //If the point exists in the point list, remove the copy before adding it in
                 sPoints.Add(p);
             }
+            return true;
         }
+        else
+            return false;
     }
     public override void Swipe()
     {

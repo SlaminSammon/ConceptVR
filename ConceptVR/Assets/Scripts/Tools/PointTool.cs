@@ -35,8 +35,9 @@ public class PointTool : Tool {
         grabbedPoint = null;
     }
 
-    public override void Tap(Vector3 position)
+    public override bool Tap(Vector3 position)
     {
         new Point(position);
+        return true;
     }
 }
