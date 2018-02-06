@@ -9,12 +9,11 @@ public class FreeFormTool : Tool {
 	private Vector3 endPos;
 	private List<Vector3> rightPoints;
 	private List<Vector3> leftPoints;
+    private List<Vector3> finalPoints;
     private HandsUtil util;
     private int frameCount = 0;
     private LineRenderer rightFreeFormLine;
     private LineRenderer freeFormLine;
-    private List<Vector3> startCurve;
-    private List<Vector3> endCurve;
     private List<Point> backFacePoints;
     private List<Point> frontFacePoints;
 
@@ -25,8 +24,7 @@ public class FreeFormTool : Tool {
 		rightPoints = new List<Vector3> ();
 		leftPoints = new List<Vector3> ();
         util = new HandsUtil();
-        startCurve = new List<Vector3>();
-        endCurve = new List<Vector3>();
+        finalPoints = new List<Vector3>();
         backFacePoints = new List<Point>();
         frontFacePoints = new List<Point>();
     }
@@ -99,9 +97,9 @@ public class FreeFormTool : Tool {
         Vector3 virtR = rightPoints[0] + (rightPoints[0] - rightPoints[1]);
         Vector3[] startVerts = { leftPoints[0], virtL, virtR, rightPoints[0] };
 
-        startCurve.Add(GeometryUtil.Bezerp(startVerts,.25f));
-        startCurve.Add(GeometryUtil.Bezerp(startVerts, .5f));
-        startCurve.Add(GeometryUtil.Bezerp(startVerts, .75f));
+        rightPoints.Insert(0,GeometryUtil.Bezerp(startVerts,.75f));
+        rightPoints.Insert(0, GeometryUtil.Bezerp(startVerts, .5f));
+        rightPoints.Insert(0, GeometryUtil.Bezerp(startVerts, .25f));
         #endregion
 
         #region End Curve Bezier
@@ -109,9 +107,9 @@ public class FreeFormTool : Tool {
         virtR = rightPoints[rightPoints.Count - 1] + (rightPoints[rightPoints.Count - 1] - rightPoints[rightPoints.Count - 2]);
         Vector3[] endVerts = { leftPoints[leftPoints.Count - 1], virtL, virtR, rightPoints[rightPoints.Count - 1] };
 
-        endCurve.Add(GeometryUtil.Bezerp(endVerts, .25f));
+        /*endCurve.Add(GeometryUtil.Bezerp(endVerts, .25f));
         endCurve.Add(GeometryUtil.Bezerp(endVerts, .5f));
-        endCurve.Add(GeometryUtil.Bezerp(endVerts, .75f));
+        endCurve.Add(GeometryUtil.Bezerp(endVerts, .75f));*/
         #endregion
 
     }
@@ -122,6 +120,8 @@ public class FreeFormTool : Tool {
      */
     public void generateFreeFormSolidCubic()
     {
+        /*
+        //Vector3 midpoint =-
         if (startCurve.Count > 0)
             Debug.Log(startCurve.Count);
         #region Back Face Generation
@@ -192,7 +192,7 @@ public class FreeFormTool : Tool {
         Debug.Log("temp edges" + tempEdges.Count);
         new Face(tempEdges);
         #endregion
-
+        */
     }
     public Vector3 generateBackFacePoint(Vector3 vec)
     { 
@@ -201,5 +201,18 @@ public class FreeFormTool : Tool {
     public Vector3 generateFrontFacePoint(Vector3 vec)
     {
         return new Vector3(vec.x + (vec.x / 6), vec.y, (vec.z+ (vec.z / 6)));
+    }
+    public Vector3 findCenter(List<Vector3> vecs)
+    {
+        float x = 0f;
+        float y = 0f;
+        float z = 0f;
+        foreach(Vector3 v in vecs)
+        {
+            x += v.x;
+            y += v.y;
+            z += v.z;
+        }
+        return new Vector3(x / vecs.Count, y / vecs.Count, z / vecs.Count);
     }
 }
