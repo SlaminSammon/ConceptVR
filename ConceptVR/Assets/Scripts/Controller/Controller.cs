@@ -8,17 +8,23 @@ public abstract class Controller : MonoBehaviour {
     public Controller other;    //controller attached to the other hand (it is assumed the user only has two hands)
     public GameObject tools;
 
+    public List<Tool> ToolQueue;
     protected Tool currentTool;
 
 	// Use this for initialization
-	void Start () {
+	protected void Start () {
+        if (ToolQueue == null)
+        {
+            ToolQueue = new List<Tool>();
+            ToolQueue.Add(new BaseTool());
+        }
     }
 	
 	// Update is called once per frame
 	void Update () {
 
     }
-
+    
     protected void TriggerDown(object sender, ClickedEventArgs e)
     {
         currentTool.TriggerDown();
@@ -40,6 +46,7 @@ public abstract class Controller : MonoBehaviour {
     {
         return;
     }
+
     public void changeTool(string toolName)
     {
         Tool lastTool = currentTool;

@@ -30,8 +30,9 @@ public class SelectItemsTool : Tool {
         Deselect();
     }
 
-    public override void Tap(Vector3 position)
+    public override bool Tap(Vector3 position)
     {
+        bool wasSelected = selected != null;
         Deselect();
         selected = findNearestItem();
         if (selected)
@@ -42,6 +43,10 @@ public class SelectItemsTool : Tool {
                 selected.gameObject.GetComponent<Light>().color = Color.blue;
             }
         }
+        if (selected != null || wasSelected)
+            return true;
+        else
+            return false;
     }
 
     public void Deselect()

@@ -26,7 +26,7 @@ public abstract class Tool : MonoBehaviour {
     public virtual void TriggerUp() { }
     public virtual void GripDown() { }
     public virtual void GripUp() { }
-    public virtual void Tap(Vector3 position) { }
+    public virtual bool Tap(Vector3 position) { return false; }
     public virtual void Swipe() { }
     public virtual void FreeForm() { }
     public virtual void FreeFormEnd() { }
