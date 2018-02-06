@@ -7,6 +7,7 @@ public class Face : DCGElement
 {
     public List<Edge> edges;   //The edges of this face
     public List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
+    public List<Vector3> subTriangles;  //The triangles this face is made up of
     public Mesh mesh;
 
     public bool isAwful;
@@ -34,7 +35,14 @@ public class Face : DCGElement
 
         updateAwful();
         updateMesh();
-        //TODO: Signal creation over network
+
+        if (NetPlayer.local != null)
+        {
+            int[] pointIDs = new int[edges.Count];
+            for (int i = 0; i < edges.Count; ++i)
+                pointIDs[i] = edges[i].elementID;
+            DCGBase.synch.CmdAddElement(elementID, pointIDs, ElementType.face, NetPlayer.local.playerID);
+        }
     }
 
     //Network constructor

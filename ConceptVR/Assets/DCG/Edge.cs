@@ -25,8 +25,15 @@ public class Edge : DCGElement
         elementID = nextElementID();
         DCGBase.edges.Add(this);
         DCGBase.all.Add(elementID, this as DCGElement);
-        
-        //TODO: Signal creation over network
+
+        if (NetPlayer.local != null)
+        {
+            int[] pointIDs = new int[points.Count];
+            for (int i = 0; i < points.Count; ++i)
+                pointIDs[i] = points[i].elementID;
+            DCGBase.synch.CmdAddElement(elementID, pointIDs, ElementType.edge, NetPlayer.local.playerID);
+        }
+            
     }
 
     //Network constructor
@@ -56,7 +63,13 @@ public class Edge : DCGElement
         DCGBase.edges.Add(this);
         DCGBase.all.Add(elementID, this as DCGElement);
 
-        //TODO: Signal creation over network
+        if (NetPlayer.local != null)
+        {
+            int[] pointIDs = new int[2];
+            pointIDs[0] = p1.elementID;
+            pointIDs[1] = p2.elementID;
+            DCGBase.synch.CmdAddElement(elementID, pointIDs, ElementType.edge, NetPlayer.local.playerID);
+        }
     }
 
     public override void Render()

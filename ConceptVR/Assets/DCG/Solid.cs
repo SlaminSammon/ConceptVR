@@ -23,8 +23,14 @@ public class Solid : DCGElement {
         elementID = nextElementID();
         DCGBase.solids.Add(this);
         DCGBase.all.Add(elementID, this as DCGElement);
-
-        //TODO: Net creation
+        
+        if (NetPlayer.local != null)
+        {
+            int[] pointIDs = new int[faces.Count];
+            for (int i = 0; i < faces.Count; ++i)
+                pointIDs[i] = faces[i].elementID;
+            DCGBase.synch.CmdAddElement(elementID, pointIDs, ElementType.solid, NetPlayer.local.playerID);
+        }
     }
 
     //Network constructor
@@ -100,7 +106,14 @@ public class Solid : DCGElement {
         DCGBase.solids.Add(this);
         DCGBase.all.Add(elementID, this as DCGElement);
 
-        //TODO: Net creation
+
+        if (NetPlayer.local != null)
+        {
+            int[] pointIDs = new int[faces.Count];
+            for (int i = 0; i < faces.Count; ++i)
+                pointIDs[i] = faces[i].elementID;
+            DCGBase.synch.CmdAddElement(elementID, pointIDs, ElementType.solid, NetPlayer.local.playerID);
+        }
     }
 
     public Mesh getMesh()
@@ -185,6 +198,12 @@ public class Solid : DCGElement {
                 f.Unlock();
         }
         isLocked = false;
+    }
+
+    //2D cross product of the xy components to vectors a and b
+    public float zCross(Vector3 a, Vector3 b)
+    {
+        return a.x * b.y - a.y * b.x;
     }
 
     public static Solid FindClosedSurface(Point start)
