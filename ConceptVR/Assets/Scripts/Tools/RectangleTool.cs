@@ -28,15 +28,16 @@ public class RectangleTool : Tool {
         }
     }
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         ghost.transform.localScale = Vector3.zero;
         startPosition = controllerPosition;
         ghost.gameObject.SetActive(true);
         ghost.transform.position = startPosition;
+        return true;
     }
 
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
         // trigger up gets called twice >> BUG 
         // this cooldown hack sets it so GenerateRectangle() only gets called every half a second
@@ -47,6 +48,7 @@ public class RectangleTool : Tool {
         }
         verts.Clear();
         ghost.gameObject.SetActive(false);
+        return true;
     }
 
     private void GenerateRectangle()

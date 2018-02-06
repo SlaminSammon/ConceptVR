@@ -6,14 +6,16 @@ public class HUDTool : Tool {
     HUDManager HUD;
 
     //TODO: change to PalmOpened
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         HUD.HUDObject.SetActive(true);
+        return true;
     }
 
     //TODO: change to PalmClosed
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
         HUD.HUDObject.SetActive(false);
+        return true;
     }
 }

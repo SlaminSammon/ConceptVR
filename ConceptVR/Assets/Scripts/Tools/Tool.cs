@@ -22,8 +22,8 @@ public abstract class Tool : MonoBehaviour {
         transform.position = controllerPosition;
     }
 
-    public virtual void TriggerDown() { }
-    public virtual void TriggerUp() { }
+    public virtual bool TriggerDown() { return false; }
+    public virtual bool TriggerUp() { return false; }
     public virtual void GripDown() { }
     public virtual void GripUp() { }
     public virtual bool Tap(Vector3 position) { return false; }

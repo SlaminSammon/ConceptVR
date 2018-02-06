@@ -24,7 +24,7 @@ public class BezierTool : Tool
         }
     }
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         if (currentPoints == null)
         {
@@ -38,6 +38,7 @@ public class BezierTool : Tool
             currentPoints = null;
             currentEdge = null;
         }
+        return true;
     }
 
     /*public override void TriggerUp()

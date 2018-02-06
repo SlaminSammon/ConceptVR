@@ -23,8 +23,10 @@ public class RotateTool : SelectTool
         }
     }
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
+        if (sPoints.Count == 0)
+            return false;
         startPositions = new List<Vector3>(sPoints.Count);
         startCenter = Vector3.zero;
 
@@ -36,10 +38,16 @@ public class RotateTool : SelectTool
         startCenter /= sPoints.Count;
 
         grabPosition = controllerPosition;
+        return true;
     }
 
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
-        startPositions = null;
+        if (startPositions != null)
+        {
+            startPositions = null;
+            return true;
+        }
+        return false;
     }
 }

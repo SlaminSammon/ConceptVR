@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class ExtrudeTool : MoveTool {
 
-	public override void TriggerDown()
+	public override bool TriggerDown()
     {
+        if (sElements == null || sElements.Count == 0)
+            return false;
         List<DCGElement> eElements = new List<DCGElement>();
         foreach(DCGElement e in sElements){
             e.Extrude();
         }
         base.TriggerDown();
+        return true;
     }
 }

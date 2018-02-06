@@ -27,13 +27,14 @@ public class SketchTool : Tool {
         }
 	}
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         currentPositions = new List<Vector3>();
         currentLine = Instantiate(linePrefab).GetComponent<LineRenderer>();
+        return true;
     }
 
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
         SimplifyCurrent();
         GlomCurrent(.005f);
@@ -44,7 +45,7 @@ public class SketchTool : Tool {
         currentLine.SetPositions(currentPositions.ToArray());
         currentLine.loop = true;
         //Generate the circle
-
+        return true;
     }
 
     void BuildCurrent()

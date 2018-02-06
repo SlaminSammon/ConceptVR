@@ -21,7 +21,7 @@ public class DoodleTool : Tool {
             numClicks++;
         }
 	}
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         GameObject go = new GameObject();
         currLineRend = go.AddComponent<LineRenderer>();
@@ -30,6 +30,7 @@ public class DoodleTool : Tool {
         //Makes a thinner line
         currLineRend.startWidth = .01f;
         currLineRend.endWidth = .01f;
+        return true;
     }
     public Color changeColor()
     {

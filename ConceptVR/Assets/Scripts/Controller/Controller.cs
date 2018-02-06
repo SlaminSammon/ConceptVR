@@ -13,7 +13,7 @@ public abstract class Controller : MonoBehaviour {
 
 	// Use this for initialization
 	protected void Start () {
-        if (ToolQueue == null)
+        if (ToolQueue.Count == 0)
         {
             ToolQueue = new List<Tool>();
             ToolQueue.Add(new BaseTool());
@@ -27,12 +27,20 @@ public abstract class Controller : MonoBehaviour {
     
     protected void TriggerDown(object sender, ClickedEventArgs e)
     {
-        currentTool.TriggerDown();
+        if (currentTool.TriggerDown())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.TriggerDown())
+                return;
     }
 
     protected void TriggerUp(object sender, ClickedEventArgs e)
     {
-        currentTool.TriggerUp();
+        if (currentTool.TriggerUp())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.TriggerUp())
+                return;
     }
     protected void LaserPointer()
     {

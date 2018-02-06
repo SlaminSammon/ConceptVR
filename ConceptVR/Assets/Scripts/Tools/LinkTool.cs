@@ -15,9 +15,9 @@ public class LinkTool : SelectTool {
 		
 	}
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
-        if (sPoints.Count <= 1) return;
+        if (sPoints.Count <= 1) return false;
         if (sPoints.Count == 2)
         {
             new Edge(sPoints[0], sPoints[1]);
@@ -46,6 +46,7 @@ public class LinkTool : SelectTool {
             Debug.Log("Completed a shapesome thing!");
 
         ClearSelection();
+        return true;
     }
 
     new void OnRenderObject()

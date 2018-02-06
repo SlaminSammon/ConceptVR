@@ -18,18 +18,27 @@ public class MoveTool : SelectTool {
         }
 	}
 
-    public override void TriggerDown()
-    { 
+    public override bool TriggerDown()
+    {
+        if (sPoints.Count == 0)
+            return false;
         startPositions = new List<Vector3>(sPoints.Count);
         //Debug.Log(sPoints.Count);
         foreach (Point p in sPoints)
             startPositions.Add(p.position);
 
         grabPosition = controllerPosition;
+        return true;
     }
 
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
-        startPositions = null;
+        if (startPositions != null)
+        {
+            startPositions = null;
+            return true;
+        }
+        else
+            return false;
     }
 }

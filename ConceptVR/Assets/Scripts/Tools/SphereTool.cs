@@ -14,16 +14,18 @@ public class SphereTool : Tool {
         }
     }
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         currentCenter = new Point(controllerPosition);
         currentShell = new Point(controllerPosition);
         new SphereSolid(currentCenter, currentShell);
+        return true;
     }
 
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
         currentCenter = null;
         currentShell = null;
+        return true;
     }
 }

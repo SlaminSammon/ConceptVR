@@ -20,19 +20,26 @@ public class PointTool : Tool {
             grabbedPoint.setPosition(startPos + controllerPosition - grabPos);
 	}
 
-    public override void TriggerDown()
+    public override bool TriggerDown()
     {
         grabbedPoint = DCGBase.NearestPoint(controllerPosition, maxDist);
         if (grabbedPoint != null)
         {
             grabPos = controllerPosition;
             startPos = grabbedPoint.position;
+            return true;
         }
+        return false;
     }
 
-    public override void TriggerUp()
+    public override bool TriggerUp()
     {
-        grabbedPoint = null;
+        if (grabbedPoint != null)
+        {
+            grabbedPoint = null;
+            return true;
+        }
+        return false;
     }
 
     public override bool Tap(Vector3 position)
