@@ -14,7 +14,7 @@ public class HUDManager : MonoBehaviour
     string toolSelected = "";
 
     Color HUDColor;
-    Stack<HUDFrame> frameStack;
+    public Stack<HUDFrame> frameStack;
     List<HUDView> viewList;
     HandsUtil util;
     public HUDFrame mainFrame;

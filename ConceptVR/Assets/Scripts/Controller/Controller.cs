@@ -18,6 +18,7 @@ public abstract class Controller : MonoBehaviour {
             ToolQueue = new List<Tool>();
             ToolQueue.Add(new BaseTool());
         }
+        currentTool = ToolQueue[0];
     }
 	
 	// Update is called once per frame
@@ -95,7 +96,8 @@ public abstract class Controller : MonoBehaviour {
     }
     
     public void deactivateLastTool(Tool t) {
-        t.gameObject.SetActive(false);
+        if (t)
+            t.gameObject.SetActive(false);
     }
     public void activateNewTool(Tool t)
     {
