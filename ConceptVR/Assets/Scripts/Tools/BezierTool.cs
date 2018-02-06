@@ -66,9 +66,5 @@ public class BezierTool : Tool
         }
         return true;
     }
-
-    public override void Swipe()
-    {
-        
-    }
+    
 }

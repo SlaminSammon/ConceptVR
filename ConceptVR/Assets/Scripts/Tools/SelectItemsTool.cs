@@ -25,9 +25,14 @@ public class SelectItemsTool : Tool {
         base.Update();
 	}
 
-    public override void Swipe()
+    public override bool Swipe()
     {
-        Deselect();
+        if (selected != null)
+        {
+            Deselect();
+            return true;
+        }
+        return false;
     }
 
     public override bool Tap(Vector3 position)

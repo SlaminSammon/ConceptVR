@@ -24,10 +24,10 @@ public abstract class Tool : MonoBehaviour {
 
     public virtual bool TriggerDown() { return false; }
     public virtual bool TriggerUp() { return false; }
-    public virtual void GripDown() { }
-    public virtual void GripUp() { }
+    public virtual bool GripDown() { return false; }
+    public virtual bool GripUp() { return false; }
     public virtual bool Tap(Vector3 position) { return false; }
-    public virtual void Swipe() { }
-    public virtual void FreeForm() { }
-    public virtual void FreeFormEnd() { }
+    public virtual bool Swipe() { return false; }
+    public virtual void FreeForm() {}
+    public virtual void FreeFormEnd() {}
 }

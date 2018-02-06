@@ -58,12 +58,19 @@ public class handController: Controller {
     }
     protected void GripUp()
     {
-        return;
+        if (currentTool.GripUp())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.GripUp())
+                return;
     }
     protected void GripDown()
     {
-        //currentTool.GripDown();
-        return;
+        if (currentTool.GripDown())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.GripDown())
+                return;
     }
     protected void Tap(Vector3 position)
     {
@@ -75,7 +82,11 @@ public class handController: Controller {
     }
     protected void Swipe()
     {
-        currentTool.Swipe();
+        if (currentTool.Swipe())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.Swipe())
+                return;
     }
     protected void freeForm()
     {

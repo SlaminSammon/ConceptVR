@@ -39,9 +39,14 @@ public class SelectTool : Tool {
         else
             return false;
     }
-    public override void Swipe()
+    public override bool Swipe()
     {
-        ClearSelection();
+        if (sElements.Count > 0)
+        {
+            ClearSelection();
+            return true;
+        }
+        return false;
     }
 
     public List<Point> Select(DCGElement elem)

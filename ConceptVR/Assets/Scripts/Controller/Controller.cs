@@ -48,11 +48,19 @@ public abstract class Controller : MonoBehaviour {
     }
     protected void GripDown(object sender, ClickedEventArgs e)
     {
-        currentTool.GripDown();
+        if (currentTool.GripDown())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.GripDown())
+                return;
     }
     protected void GripUp(object sender, ClickedEventArgs e)
     {
-        return;
+        if (currentTool.GripUp())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.GripUp())
+                return;
     }
 
     public void changeTool(string toolName)
