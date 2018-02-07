@@ -271,6 +271,9 @@ public class Face : DCGElement
             tris.Add(tris[i] + vertCount);
             tris.Add(tris[i + 2] + vertCount);
             tris.Add(tris[i + 1] + vertCount);
+            subTriangles.Add(verts[tris[i] + vertCount]);
+            subTriangles.Add(verts[tris[i + 1] + vertCount]);
+            subTriangles.Add(verts[tris[i + 2] + vertCount]);
         }
 
         mesh.SetVertices(verts);

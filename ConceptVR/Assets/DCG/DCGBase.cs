@@ -82,6 +82,7 @@ public class DCGBase : MonoBehaviour {
         Point np = NearestPoint(pos, maxDist);
         Edge ne = NearestEdge(pos, maxDist / Mathf.Sqrt(2f));
         Face nf = NearestFace(pos, maxDist / 2f);
+        Solid ns = NearestSolid(pos, maxDist / 2f);
 
         float dp = Mathf.Infinity;
         float de = Mathf.Infinity;
@@ -102,6 +103,8 @@ public class DCGBase : MonoBehaviour {
             return ne;
         else if (min == df)
             return nf;
+        else if (ns != null)
+            return ns;
         else
             return null;
     }
@@ -155,5 +158,13 @@ public class DCGBase : MonoBehaviour {
         }
 
         return nFace;
+    }
+
+    public static Solid NearestSolid(Vector3 pos, float maxDist)
+    {
+        foreach (Solid s in solids)
+            if (s.ContainsPoint(pos))
+                return s;
+        return null;
     }
 }
