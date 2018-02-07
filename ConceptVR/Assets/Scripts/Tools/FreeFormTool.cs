@@ -41,7 +41,7 @@ public class FreeFormTool : Tool {
                 Destroy(rightFreeFormLine.gameObject);
                 leapControl.freeFormFailureHandler();
             }
-            if (frameCount >= 15)
+            if (frameCount >=17)
             {
                 Debug.Log(frameCount);
                 //Add points to the line renderer and the point lists

@@ -61,6 +61,7 @@ public class LeapTrackedController : MonoBehaviour
     public bool grabHeld = false;
     public bool swipe = false;
     public bool forming = false;
+    public bool hudAnchor = true;
     #endregion
     #region cooldowns
     public static float cooldown = 1.25f;
@@ -122,27 +123,30 @@ public class LeapTrackedController : MonoBehaviour
         #region  FreeForm Logic
         //I really hate this logic section.
         //end case
-        /*if (!leftStart && !rightStart && forming && util.checkHandsDist() < .1f)
+        if (!hudAnchor)
         {
-            Debug.Log("Ending");
-            forming = false;
-            freeFormEnd();
-            rFrameCount = 0;
-            lFrameCount = 0;
+            if (!leftStart && !rightStart && forming && util.checkHandsDist() < .1f)
+            {
+                Debug.Log("Ending");
+                forming = false;
+                freeFormEnd();
+                rFrameCount = 0;
+                lFrameCount = 0;
+            }
+            //continue
+            if (forming)
+            {
+                return;
+            }
+            //start
+            if (rightStart && leftStart && util.checkHandsDist() < .2f)
+            {
+                forming = true;
+                freeForm();
+                rFrameCount = 0;
+                lFrameCount = 0;
+            }
         }
-        //continue
-        if (forming)
-        {
-            return;
-        }
-        //start
-        if(rightStart && leftStart && util.checkHandsDist() < .2f)
-        {
-            forming = true;
-            freeForm();
-            rFrameCount = 0;
-            lFrameCount = 0;
-        }*/
         #endregion
 
         #region Pinch and Grab Logic
