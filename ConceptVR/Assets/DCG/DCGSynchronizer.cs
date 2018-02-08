@@ -100,11 +100,13 @@ public class DCGSynchronizer : NetworkBehaviour {
     public void CmdAddPoint(int id, Vector3 position, int senderID)
     {
         RpcAddPoint(id, position, senderID);
+        Debug.Log("Server Added Point");
     }
 
     [ClientRpc]
     public void RpcAddPoint(int id, Vector3 position, int senderID)
     {
+        Debug.Log("Client Got Point");
         if (NetPlayer.local.playerID == senderID)
             return;
         else
@@ -122,11 +124,13 @@ public class DCGSynchronizer : NetworkBehaviour {
     public void CmdAddElement(int id, int[] requirements, ElementType type, int senderID)
     {
         RpcAddElement(id, requirements, type, senderID);
+        Debug.Log("Server Added Element");
     }
 
     [ClientRpc]
     public void RpcAddElement(int id, int[] requirements, ElementType type, int senderID)
     {
+        Debug.Log("Client Got Element");
         if (NetPlayer.local.playerID == senderID)
             return;
         else
