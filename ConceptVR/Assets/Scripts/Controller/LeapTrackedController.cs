@@ -37,6 +37,12 @@ public struct HandInformation
     public float roll;
     public Quaternion rotation;
 }
+public enum ThumbStatus
+{
+    Up = 0,
+    Neutral = 1,
+    Down = 2
+}
 
 public delegate void GestureEventHandler();
 public delegate void GesturePositionEventHandler(Vector3 position);
@@ -92,6 +98,13 @@ public class LeapTrackedController : MonoBehaviour
     #endregion
     public int heldFrames = 75;
     public int playerID;
+    public ThumbStatus thumbStatusR;
+    public ThumbStatus thumbStatusL;
+    public DetectorLogicGate thumbUpR;
+    public DetectorLogicGate thumbDownR;
+    public DetectorLogicGate thumbUpL;
+    public DetectorLogicGate thumbDownL;
+
 
     // Use this for initialization
     void Start()
@@ -445,4 +458,9 @@ public class LeapTrackedController : MonoBehaviour
         freeFormFailure();
     }
     #endregion
+
+    #region Thumbs Event Handlers
+
+    #endregion
+
 }
