@@ -109,7 +109,10 @@ public class DCGSynchronizer : NetworkBehaviour {
     {
         Debug.Log("Client Got Point");
         if (NetPlayer.local.playerID == senderID)
+        {
+            Debug.Log("But Client also made that point so fuckever I guess");
             return;
+        }
         else
         {
             PointPacket ep = new PointPacket();
