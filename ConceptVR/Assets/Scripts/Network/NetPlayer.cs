@@ -14,6 +14,8 @@ public class NetPlayer : NetworkBehaviour {
         {
             local = this;
             playerID = playerControllerId;
+
+            Debug.Log("I'm the local player, and my number is " + playerID);
         }
 	}
 	
