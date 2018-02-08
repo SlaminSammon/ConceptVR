@@ -201,9 +201,35 @@ public class Solid : DCGElement {
     }
 
     //2D cross product of the xy components to vectors a and b
-    public float zCross(Vector3 a, Vector3 b)
+    private float zCross(Vector3 a, Vector3 b)
     {
         return a.x * b.y - a.y * b.x;
+    }
+
+    public bool ContainsPoint(Vector3 p)
+    {
+        int colCount = 0;
+        foreach(Face f in faces)
+        {
+            for (int i = 0; i < f.subTriangles.Count; i += 3)
+            {
+                Vector3 triI = f.subTriangles[i+1] - f.subTriangles[i];
+                Vector3 triJ = f.subTriangles[i+2] - f.subTriangles[i];
+                Vector3 pDiff = p - f.subTriangles[i];
+
+                Vector3 pProj = f.subTriangles[i] - zCross(pDiff, triI)*triI + zCross(pDiff, triJ)*triJ;
+
+                float signA = Mathf.Sign(zCross(f.subTriangles[i + 1] - f.subTriangles[i], pDiff));
+                float signB = Mathf.Sign(zCross(f.subTriangles[i + 2] - f.subTriangles[i + 1], pDiff));
+                float signC = Mathf.Sign(zCross(f.subTriangles[i] - f.subTriangles[i + 2], pDiff));
+
+                if (signA == signB && signB == signC && pProj.z == p.z)
+                {
+                    colCount++;
+                }
+            }
+        }
+        return colCount % 2 == 1;
     }
 
     public static Solid FindClosedSurface(Point start)
