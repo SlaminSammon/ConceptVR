@@ -13,6 +13,7 @@ public class NetPlayer : NetworkBehaviour {
 		if (isLocalPlayer)
         {
             local = this;
+            playerID = playerControllerId;
         }
 	}
 	
