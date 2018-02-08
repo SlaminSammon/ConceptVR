@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class ChangeMaterialButton : HUDButton {
 
-    public Material material;
+    public DCGMaterial DCGMat;
     public Tool materialTool;
+    
 	// Use this for initialization
 	void Start () {
+        // set the color of the view of the button to the dcgmat
+        //this.transform.Find("View").GetComponent<MeshRenderer>().material = DCGMat.mat;
         base.Start();
 	}
 	
@@ -18,7 +21,7 @@ public class ChangeMaterialButton : HUDButton {
 
     public override void OnPress()
     {
-        materialTool.GetComponent<MaterialTool>().changeMaterial(material);
+        materialTool.GetComponent<MaterialTool>().changeMaterial(DCGMat.mat);
         base.OnPress();
     }
 }
