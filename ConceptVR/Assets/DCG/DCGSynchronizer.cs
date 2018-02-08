@@ -31,7 +31,8 @@ public class DCGSynchronizer : NetworkBehaviour {
         expectations = new Dictionary<int, ExpectedElement>();
         waiting = new Dictionary<int, ElementPacket>();
 
-        DCGBase.synch = this;
+        if (isLocalPlayer)
+            DCGBase.synch = this;
 	}
 
     void Receive(ElementPacket e)
