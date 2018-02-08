@@ -167,6 +167,7 @@ public class HUDManager : MonoBehaviour
     }*/
     void Placement()
     {
+        LeapTrackedController ltc = GameObject.Find("LoPoly_Rigged_Hand_Right").GetComponent<LeapTrackedController>();
         if (placed) {
             GameObject parent = GameObject.Find("RigidRoundHand_L").transform.Find("palm").gameObject;
             GameObject HUD = GameObject.Find("HandsUpDisplay");
@@ -175,12 +176,13 @@ public class HUDManager : MonoBehaviour
             HUD.transform.localRotation = new Quaternion(180, 0, 0, 0);
             placed = false;
             HUDObject.SetActive(false);
-
+            ltc.hudAnchor = true;
         }
         else {
             GameObject.Find("HandsUpDisplay").transform.parent = null;
             placed = true;
             HUDObject.SetActive(true);
+            ltc.hudAnchor = false;
         }
     }
 }

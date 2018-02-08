@@ -17,7 +17,7 @@ public class PolygonTool : Tool {
     void Start()
     {
         dcgBase = GameObject.Find("DCG").GetComponent<DCGBase>();
-        graph = GameObject.Find("PolygonDebugGrapher").GetComponent<DebugGrapher>();
+        //graph = GameObject.Find("PolygonDebugGrapher").GetComponent<DebugGrapher>();
     }
 
     // Update is called once per frame

@@ -29,7 +29,7 @@ public class DCGBase : MonoBehaviour {
         
         //new Solid(starterMesh, Matrix4x4.TRS(starter.position, starter.rotation, starter.localScale), starter.position);
 
-        starter.gameObject.SetActive(false);
+        //starter.gameObject.SetActive(false);
     }
 	
 	// Update is called once per frame

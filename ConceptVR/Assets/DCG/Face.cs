@@ -236,6 +236,7 @@ public class Face : DCGElement
     public void updateMesh()
     {
         mesh = new Mesh();
+        subTriangles = new List<Vector3>();
         List<Vector3> verts = new List<Vector3>();
         List<Vector3> normals = new List<Vector3>();
         Vector3 avgNormal = getNormal();

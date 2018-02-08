@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using Leap.Unity;
 using Leap;
 
@@ -207,7 +207,6 @@ public class LeapTrackedController : MonoBehaviour
             if (Time.time > swipeCooldownTime)
             {
                 swipe = true;
-                EditorApplication.Beep();
                 swipeMade();
                 swipeCooldownTime = Time.time + cooldown;
             }
