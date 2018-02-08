@@ -13,7 +13,7 @@ public class NetPlayer : NetworkBehaviour {
 		if (isLocalPlayer)
         {
             local = this;
-            playerID = int.Parse(Network.player.ToString());
+            playerID = GetComponent<NetworkIdentity>().netId;
 
             Debug.Log("I'm the local player, and my number is " + playerID);
         }
