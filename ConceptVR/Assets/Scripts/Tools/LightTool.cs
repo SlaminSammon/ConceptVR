@@ -6,13 +6,13 @@ public class LightTool : Tool {
     
     public GameObject LightPrefab;
 
-    GameObject itembase;
+    ItemBase itemBase;
 
 	// Use this for initialization
 	void Start () {
-        itembase = GameObject.Find("ItemBase");
+        itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
         //LightPrefab.GetComponent<Light>().color = LightPrefab.GetComponent<Material>().color;
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -21,11 +21,10 @@ public class LightTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
-        LightPrefab.transform.position = controllerPosition;
-        GameObject newLight = Instantiate(LightPrefab) as GameObject;
-        newLight.name = "GeneratedPointLight_" + itembase.GetComponent<ItemBase>().lightCount;
-        newLight.transform.parent = itembase.transform;
-        itembase.GetComponent<ItemBase>().addLight(newLight);
+        GameObject obj = Instantiate(ItemBase.LightPrefab);
+        obj.AddComponent<LightItem>();
+        obj.transform.position = position;
+        ItemBase.items.Add(obj.GetComponent<LightItem>());
         return true;
     }
 }

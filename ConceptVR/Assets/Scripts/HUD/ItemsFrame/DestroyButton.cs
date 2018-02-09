@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class DestroyButton : HUDButton {
 
-
+    ItemBase itemBase;
+    SelectItemsTool selectTool;
 	// Use this for initialization
 	void Start () {
 		
@@ -17,6 +18,12 @@ public class DestroyButton : HUDButton {
 
     public override void OnPress()
     {
+        foreach(Item item in ItemBase.sItems)
+        {
+            Destroy(item.gameObject);
+        }
+        ItemBase.sItems.Clear();
+        /*
         GameObject selectedItem = GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().selected;
         GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().Deselect();
 
@@ -25,6 +32,7 @@ public class DestroyButton : HUDButton {
             GameObject.Find("ItemBase").GetComponent<ItemBase>().removeLight(selectedItem);
         }
         Destroy(selectedItem);
+        */
         base.OnPress();
     }
 

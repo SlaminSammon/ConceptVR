@@ -2,22 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ListContains { lights, doodles } // this will be expanded as we gain more items
 public class SelectItemsTool : Tool {
 
-    public Material newMat;
-    public HUDFrame itemsFrame;
-
-    HUDManager HUD;
-    [HideInInspector]
-    public GameObject selected;
-    GameObject itembase;
-    Material selectedMaterial;
-    Color selectedLightColor;
+    ItemBase itemBase;
 
 	// Use this for initialization
 	void Start () {
-        HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
-        itembase = GameObject.Find("ItemBase");
+        itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
 	}
 	
 	// Update is called once per frame
@@ -27,7 +19,7 @@ public class SelectItemsTool : Tool {
 
     public override bool Swipe()
     {
-        if (selected != null)
+        if (ItemBase.sItems != null)
         {
             Deselect();
             return true;
@@ -37,6 +29,15 @@ public class SelectItemsTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
+        Item item = itemBase.findNearestItem(position);
+        if(item != null && !item.isLocked)
+        {
+            Select(item);
+            return true;
+        }
+        else
+            return false;
+        /*
         bool wasSelected = selected != null;
         Deselect();
         selected = findNearestItem();
@@ -52,10 +53,23 @@ public class SelectItemsTool : Tool {
             return true;
         else
             return false;
+            */
+
     }
 
     public void Deselect()
     {
+        foreach(Item item in ItemBase.sItems)
+        {
+            item.DeSelect();
+        }
+        ItemBase.sItems.Clear();
+        if (itemBase.isHUD)
+        {
+            Item.Pop();
+            itemBase.firstType = "";
+        }
+        /*
         if (selected)
         {
             if (selected.tag == "Light")
@@ -66,30 +80,14 @@ public class SelectItemsTool : Tool {
             HUD.Pop();
             selected = null;
         }
+        */
     }
-
-    GameObject findNearestItem()
+    public void Select(Item item)
     {
-        GameObject nearestItem = null;
-        float nearestDistance = 99999;
-        float maxDistance = 0.1f; // maximum distance to consider an object as being intended to be selected
-
-        foreach (GameObject light in itembase.GetComponent<ItemBase>().lights) {
-            float distance = Vector3.Distance(controllerPosition, light.transform.position);
-            if (distance < nearestDistance && distance < maxDistance)
-            {
-                nearestItem = light;
-                nearestDistance = distance;
-                selectedMaterial = light.GetComponent<MeshRenderer>().material;
-                selectedLightColor = light.GetComponent<Light>().color;
-            }
-        }
-        // TODO: same for text, or any other item that we add in the future
-
-        if (nearestItem)
-        {
-            HUD.Push(itemsFrame);
-        }
-        return nearestItem;
+        item.Select();
+        ItemBase.sItems.Add(item);
+        itemBase.itemHudManager(item);
     }
+
+
 }
