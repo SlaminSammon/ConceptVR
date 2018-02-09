@@ -27,6 +27,8 @@ public class HUDManager : MonoBehaviour
     public AnchorButton anchor;
     bool placed;
 
+    public static HUDManager hudManager;
+
     // Use this for initialization
     void Start()
     {
@@ -47,6 +49,8 @@ public class HUDManager : MonoBehaviour
         HUDColor = new Color(0.345f, 0.3568f, 0.3804f, 1.0f);
         anchor.Anchor += Placement;
         placed = false;
+
+        hudManager = this;
     }
 
     // Update is called once per frame
@@ -75,18 +79,16 @@ public class HUDManager : MonoBehaviour
     public void Push(HUDFrame hudframe) {
 
         // deactivate current top level HUDframe
-        this.frameStack.Peek().transform.gameObject.SetActive(false);
+        if (!hudframe.isSubFrame)
+            this.frameStack.Peek().transform.gameObject.SetActive(false);
         // activate new top level HUDframe
         hudframe.gameObject.SetActive(true);
-        // set all hudframe children to be active
-        /*foreach (Transform child in hudframe.GetComponentsInChildren<Transform>()) {
-            child.gameObject.SetActive(true);
-        }*/
         updateColor(hudframe);
 
         this.frameStack.Push(hudframe);
     }
 
+    //Whateven is this function?  Who wrote this?
     public void Push(HUDFrame hudframe1, HUDFrame hudframe2) {
         this.frameStack.Push(hudframe2);
         this.frameStack.Push(hudframe1);

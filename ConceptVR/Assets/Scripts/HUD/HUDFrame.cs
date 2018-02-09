@@ -5,31 +5,8 @@ using UnityEngine;
 
 public class HUDFrame: MonoBehaviour
 {
-    bool isSubFrame = false;
+    public bool isSubFrame = false;
+    public bool loose = false;
     enum animationState { In, Out, Idle };
     List<HUDView> viewList;
-
-    void Update(){
-
-    }
-
-    // called when the frame begins animating in
-    void OnEnable(){
-
-    }
-
-    // called when the frame finishes animating out
-    void OnDisable(){
-
-    }
-
-    // called by base Update function each update
-    void OnUpdate(){
-
-    }
-
-    internal void toggleSettingsButton()
-    {
-        throw new NotImplementedException();
-    }
 }
