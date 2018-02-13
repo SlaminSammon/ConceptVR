@@ -24,8 +24,6 @@ public class MaterialTool : Tool {
         Face nearestFace = DCGBase.NearestFace(position, 0.07f);
         if (nearestFace != null && !nearestFace.isLocked)
         {
-            nearestFace.material = newDCGMat.mat;
-
             // remove the nearestFace from any pre-existing DCGMat lists.
             bool doublebreak = false;
             foreach (DCGMaterial dcgm in DCGBase.matList)
