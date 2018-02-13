@@ -26,16 +26,12 @@ public class DoodleTool : Tool {
         GameObject go = new GameObject();
         currLineRend = go.AddComponent<LineRenderer>();
         go.AddComponent<Doodle>();
+        ItemBase.items.Add(go.GetComponent<Doodle>());
         currLineRend.material = material;
         numClicks = 0;
         //Makes a thinner line
         currLineRend.startWidth = .01f;
         currLineRend.endWidth = .01f;
-        return true;
-    }
-    public override bool TriggerUp()
-    {
-        ItemBase.items.Add(currLineRend.gameObject.GetComponent<Doodle>());
         return true;
     }
 }

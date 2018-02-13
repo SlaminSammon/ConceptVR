@@ -21,6 +21,7 @@ public abstract class Item: MonoBehaviour  {
     public virtual void DeSelect() { }
     public virtual void Push() { }
     public virtual void changeColor(Color color) { }
+    public virtual Vector3 Position(Vector3 contPos) { return new Vector3(); }
     public static void Pop()
     {
         HUD.Pop();

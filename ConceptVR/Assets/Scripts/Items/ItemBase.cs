@@ -22,14 +22,6 @@ public class ItemBase : MonoBehaviour {
 		
 	}
 
-    public void addItem(Item item)
-    {
-        items.Add(item);
-    }
-    public void removeItem(Item item)
-    {
-        items.Remove(item);
-    }
     public Item findNearestItem(Vector3 position)
     {
         Item nearestItem = null;
@@ -38,7 +30,7 @@ public class ItemBase : MonoBehaviour {
 
         foreach (Item item in items)
         {
-            float distance = Vector3.Distance(position, item.gameObject.transform.position);
+            float distance = Vector3.Distance(position, item.Position(position));
             if (distance < nearestDistance && distance < maxDistance)
             {
                 nearestItem = item;

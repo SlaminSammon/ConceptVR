@@ -32,6 +32,7 @@ public class SelectItemsTool : Tool {
         Item item = itemBase.findNearestItem(position);
         if(item != null && !item.isLocked)
         {
+            Debug.Log("Jew poopy bitch fuck mcgee");
             Select(item);
             return true;
         }
