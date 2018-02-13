@@ -23,6 +23,7 @@ public class DestroyButton : HUDButton {
             Destroy(item.gameObject);
         }
         ItemBase.sItems.Clear();
+        Item.Pop();
         /*
         GameObject selectedItem = GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().selected;
         GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().Deselect();

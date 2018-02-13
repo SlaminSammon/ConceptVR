@@ -21,7 +21,8 @@ public class LightTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
-        GameObject obj = Instantiate(ItemBase.LightPrefab);
+        Debug.Log("Generate Light");
+        GameObject obj = Instantiate(itemBase.LightPrefab);
         obj.AddComponent<LightItem>();
         obj.transform.position = position;
         ItemBase.items.Add(obj.GetComponent<LightItem>());

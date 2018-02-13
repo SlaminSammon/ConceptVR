@@ -25,6 +25,7 @@ public class DoodleTool : Tool {
     {
         GameObject go = new GameObject();
         currLineRend = go.AddComponent<LineRenderer>();
+        go.AddComponent<Doodle>();
         currLineRend.material = material;
         numClicks = 0;
         //Makes a thinner line
@@ -32,11 +33,9 @@ public class DoodleTool : Tool {
         currLineRend.endWidth = .01f;
         return true;
     }
-    public Color changeColor()
+    public override bool TriggerUp()
     {
-        if (colors.Count - 1 == colorIndex)
-            colorIndex = -1;
-        material.SetColor("_SpecColor", colors[++colorIndex]);
-        return colors[colorIndex];
+        ItemBase.items.Add(currLineRend.gameObject.GetComponent<Doodle>());
+        return true;
     }
 }

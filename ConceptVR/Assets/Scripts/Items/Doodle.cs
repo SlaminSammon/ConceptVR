@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Doodle : MonoBehaviour {
+public class Doodle : Item {
 
 	// Use this for initialization
 	void Start () {

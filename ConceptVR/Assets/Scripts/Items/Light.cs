@@ -27,6 +27,9 @@ public class LightItem : Item
     }
     public override void Push()
     {
-        HUD.Push(GameObject.Find("ItemsFrame").GetComponent<HUDFrame>());
+        Debug.Log("Pushing Frame");
+        GameObject frame = GameObject.Find("Frames");
+        if (HUD != null && frame != null)
+            HUD.Push(frame.transform.Find("LightFrame").gameObject.GetComponent<HUDFrame>());
     }
 }

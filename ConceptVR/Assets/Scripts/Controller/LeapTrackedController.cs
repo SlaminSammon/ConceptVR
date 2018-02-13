@@ -175,7 +175,7 @@ public class LeapTrackedController : MonoBehaviour
         swipe = false;
         if (!grab)
         {
-            Debug.Log("Not Grabbing");
+            //Debug.Log("Not Grabbing");
             OnGrabGone();
             pinch = checkPinch();
             //if pinch is false, chyeck recent frames to determine if its a leap motion hiccup

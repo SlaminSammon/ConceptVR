@@ -20,6 +20,7 @@ public abstract class Item: MonoBehaviour  {
     public virtual void Select() { }
     public virtual void DeSelect() { }
     public virtual void Push() { }
+    public virtual void changeColor(Color color) { }
     public static void Pop()
     {
         HUD.Pop();

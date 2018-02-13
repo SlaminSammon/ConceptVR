@@ -6,13 +6,15 @@ public class ItemBase : MonoBehaviour {
 
     public static List<Item> items;
     public static List<Item> sItems;
-    public static GameObject LightPrefab;
+    public GameObject LightPrefab;
     public string firstType;
     public bool isHUD = false;
 
     // Use this for initialization
     void Start () {
         firstType = "";
+        items = new List<Item>();
+        sItems = new List<Item>();
 	}
 	
 	// Update is called once per frame
