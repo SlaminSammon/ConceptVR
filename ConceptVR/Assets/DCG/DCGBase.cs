@@ -11,7 +11,7 @@ public class DCGBase : MonoBehaviour {
     public Material edgeMat;
     public Material faceMat;
     public Material solidMat;
-
+    public static List<DCGMaterial> matList = new List<DCGMaterial>();
     public static List<Point> points = new List<Point>();
     public static List<Edge> edges = new List<Edge>();
     public static List<Face> faces = new List<Face>();
@@ -46,6 +46,20 @@ public class DCGBase : MonoBehaviour {
         foreach (Face f in faces)
             if (f.solids.Count == 0 && !f.isSelected)
                 f.Render();
+
+
+        foreach (DCGMaterial DCGMat in matList) {
+            // dip the brush
+            DCGMat.mat.SetPass(0);
+            foreach (Face f in DCGMat.facesUsingMat)
+            {
+                //if (f.solids.Count == 0 && !f.isSelected)
+                    f.Render();
+            }
+            // clean the brush
+            solidMat.SetPass(0);
+        }
+
         foreach (Edge e in edges)
             if (e.faces.Count == 0 && !e.isSelected)
                 e.Render();

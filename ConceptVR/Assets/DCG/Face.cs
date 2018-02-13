@@ -9,7 +9,6 @@ public class Face : DCGElement
     public List<Solid> solids; //Any solids that this face is a part of.  Since we're in 3D, this should logically only ever be 1.
     public List<Vector3> subTriangles;  //The triangles this face is made up of
     public Mesh mesh;
-    public Material material;
 
     public bool isAwful;
     bool normalConfident;
@@ -64,10 +63,6 @@ public class Face : DCGElement
 
     public override void Render()
     {
-        if (material != null)
-        {
-            material.SetPass(0);
-        }
         Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
     }
 

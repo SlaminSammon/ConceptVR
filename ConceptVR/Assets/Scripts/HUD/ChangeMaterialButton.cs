@@ -21,7 +21,7 @@ public class ChangeMaterialButton : HUDButton {
 
     public override void OnPress()
     {
-        materialTool.GetComponent<MaterialTool>().changeMaterial(DCGMat.mat);
+        materialTool.GetComponent<MaterialTool>().changeMaterial(DCGMat);
         base.OnPress();
     }
 }
