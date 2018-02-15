@@ -42,4 +42,9 @@ public class LightItem : Item
     {
         return Vector3.Distance(pos, this.Position(pos));
     }
+    public override void changeColor(Color color)
+    {
+        this.GetComponent<Light>().color = color;
+        selectedLightColor = color;
+    }
 }
