@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class DCGSynchronizer : NetworkBehaviour {
+public class DCGSynchronizer : NetworkBehaviour
+{
     public struct ExpectedElement
     {
         public int id;
@@ -27,13 +28,14 @@ public class DCGSynchronizer : NetworkBehaviour {
     Dictionary<int, ElementPacket> waiting;
 
 
-	void Start () {
+    void Start()
+    {
         expectations = new Dictionary<int, ExpectedElement>();
         waiting = new Dictionary<int, ElementPacket>();
 
         if (isLocalPlayer)
             DCGBase.synch = this;
-	}
+    }
 
     void Receive(ElementPacket e)
     {
@@ -64,7 +66,7 @@ public class DCGSynchronizer : NetworkBehaviour {
 
     void Create(ElementPacket packet)
     {
-        switch(packet.type)
+        switch (packet.type)
         {
             case ElementType.point:
                 PointPacket p = packet as PointPacket;
@@ -89,31 +91,39 @@ public class DCGSynchronizer : NetworkBehaviour {
                 new Solid(faces, packet.id);
                 break;
             default:
-                Debug.LogError("Received element with unfamiliar type: " + packet.type);
-                break;
+                Debug.LogError("Network sent unfamiliar item type!");
         }
-        
+
         if (waiting.ContainsKey(packet.id)) //if this item is in the waitlist, remove it.
             waiting.Remove(packet.id);
-        
-        //TODO: check if this element was expected, and if so check if we can create any elements it was expected by, recursively call create on each.
+
+        if (expectations.ContainsKey(packet.id))
+        {
+            foreach (int reqer in expectations[packet.id].requirers)
+            {
+                bool hasAll = true;
+                foreach (int req in waiting[reqer].requirements)
+                    hasAll = hasAll && DCGBase.all.ContainsKey(req);
+                if (hasAll)
+                    Create(waiting[reqer]);
+            }
+            expectations.Remove(packet.id);
+        }
     }
 
+    #region Addition
 
     [Command]
     public void CmdAddPoint(int id, Vector3 position, int senderID)
     {
         RpcAddPoint(id, position, senderID);
-        Debug.Log("Server Added Point");
     }
 
     [ClientRpc]
     public void RpcAddPoint(int id, Vector3 position, int senderID)
     {
-        Debug.Log("Client Got Point");
         if (NetPlayer.local.playerID == senderID)
         {
-            Debug.Log("But Client also made that point so fuckever I guess");
             return;
         }
         else
@@ -131,13 +141,11 @@ public class DCGSynchronizer : NetworkBehaviour {
     public void CmdAddElement(int id, int[] requirements, ElementType type, int senderID)
     {
         RpcAddElement(id, requirements, type, senderID);
-        Debug.Log("Server Added Element");
     }
 
     [ClientRpc]
     public void RpcAddElement(int id, int[] requirements, ElementType type, int senderID)
     {
-        Debug.Log("Client Got Element");
         if (NetPlayer.local.playerID == senderID)
             return;
         else
@@ -149,4 +157,38 @@ public class DCGSynchronizer : NetworkBehaviour {
             Receive(ep);
         }
     }
+    #endregion
+    #region Movation
+    [Command]
+    public void CmdMovePoint(int id, Vector3 position, int senderID)
+    {
+        RpcMovePoint(id, position, senderID);
+    }
+
+    [ClientRpc]
+    public void RpcMovePoint(int id, Vector3 position, int senderID)
+    {
+        if (NetPlayer.local.playerID == senderID)
+            return;
+        else
+            (DCGBase.all[id] as Point).setPosition(position);
+    }
+    #endregion
+    #region Removtion
+    [Command]
+    public void CmdRemoveElement(int id, int senderID)
+    {
+        RpcRemoveElement(id, senderID);
+    }
+
+    [ClientRpc]
+    public void RpcRemoveElement(int id, int senderID)
+    {
+        if (NetPlayer.local.playerID == senderID)
+            return;
+        else
+            DCGBase.all[id].Remove();
+    }
+    #endregion
+
 }
