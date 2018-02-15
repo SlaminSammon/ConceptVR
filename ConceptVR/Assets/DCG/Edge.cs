@@ -7,12 +7,14 @@ public class Edge : DCGElement
     public List<Point> points;
     public List<Face> faces;
 
-    public Vector3[] smoothPoints;
-
     public bool isLoop;
-    public bool smooth;
 
-    public Mesh mesh;
+    public Edge()
+    {
+        this.isLoop = false;
+        this.points = new List<Point>();
+        this.faces = new List<Face>();
+    }
 
     public Edge(List<Point> points, bool isLoop)
     {
@@ -72,25 +74,23 @@ public class Edge : DCGElement
         }
     }
 
+    public virtual void updateMesh()
+    {
+        return;
+    }
+
     public override void Render()
     {
-        if (smooth)
+        Vector3 edgeVec;
+        for (int i = 0; i < points.Count - 1; ++i)
         {
-            Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
+            edgeVec = points[i].position - points[i + 1].position;
+            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
-        else
+        if (isLoop)
         {
-            Vector3 edgeVec;
-            for (int i = 0; i < points.Count - 1; ++i)
-            {
-                edgeVec = points[i].position - points[i + 1].position;
-                Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
-            }
-            if (isLoop)
-            {
-                edgeVec = points[points.Count - 1].position - points[0].position;
-                Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
-            }
+            edgeVec = points[points.Count - 1].position - points[0].position;
+            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
     }
 
@@ -146,14 +146,7 @@ public class Edge : DCGElement
 
         return eElem;
     }
-
-    public void setSmooth(bool smooth)
-    {
-        this.smooth = smooth;
-        if (smooth)
-            updateMesh();
-    }
-
+    
     public Vector3[] smoothVerts(int res)
     {
         Vector3[] verts = new Vector3[res + 1];
@@ -167,50 +160,7 @@ public class Edge : DCGElement
 
         return verts;
     }
-
-    static int curveRes = 50;
-    static int roundRes = 10;
-    static float roundRad = .005f;
-    public void updateMesh()
-    {
-        smoothPoints = this.smoothVerts(curveRes);
-
-        List<Vector3> verts = new List<Vector3>();
-        List<Vector3> normals = new List<Vector3>();
-        int[] tris = new int[3 * (curveRes - 1) * roundRes * 2];
-
-        for (int i = 0; i < smoothPoints.Length; ++i)
-        {
-            Vector3 forward = smoothPoints[Mathf.Min(i + 1, curveRes)] - smoothPoints[Mathf.Max(i - 1, 0)];
-            Vector3 left = Vector3.Cross(forward, Vector3.up).normalized;
-            Vector3 up = Vector3.Cross(left, forward).normalized;
-
-            for (int j = 0; j < roundRes; ++j)
-            {
-                Vector3 v = Mathf.Cos(2 * Mathf.PI * j / roundRes) * left + Mathf.Sin(2 * Mathf.PI * j / roundRes) * up;
-                verts.Add(smoothPoints[i] + v * roundRad);
-                normals.Add(v);
-            }
-        }
-
-        for (int i = 0; i < (curveRes - 1) * roundRes; ++i)
-        {
-            int tb = i * 6;
-            tris[tb++] = i;
-            tris[tb++] = i + roundRes;
-            tris[tb++] = i + 1;
-
-            tris[tb++] = i + roundRes;
-            tris[tb++] = i + roundRes + 1;
-            tris[tb++] = i + 1;
-        }
-
-        mesh = new Mesh();
-        mesh.SetVertices(verts);
-        mesh.SetTriangles(tris, 0);
-        mesh.SetNormals(normals);
-    }
-
+    
     public override void Lock()
     {
         foreach (Point p in points)

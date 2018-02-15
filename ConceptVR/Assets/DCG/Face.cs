@@ -228,7 +228,7 @@ public class Face : DCGElement
         isAwful = false;
     }
 
-    public void updateMesh()
+    public virtual void updateMesh()
     {
         mesh = new Mesh();
         subTriangles = new List<Vector3>();

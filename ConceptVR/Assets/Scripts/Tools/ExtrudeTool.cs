@@ -12,6 +12,8 @@ public class ExtrudeTool : MoveTool {
         foreach(DCGElement e in sElements){
             e.Extrude();
         }
+
+        sElements = eElements;
         base.TriggerDown();
         return true;
     }

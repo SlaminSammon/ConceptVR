@@ -32,4 +32,8 @@ public class LightItem : Item
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("LightFrame").gameObject.GetComponent<HUDFrame>());
     }
+    public override Vector3 Position(Vector3 contPos)
+    {
+        return this.gameObject.transform.position;
+    }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class BezierTool : Tool
 {
     List<Point> currentPoints;
-    Edge currentEdge;
+    SmoothEdge currentEdge;
 
     // Use this for initialization
     void Start()
@@ -31,8 +31,7 @@ public class BezierTool : Tool
             currentPoints = new List<Point>();
             currentPoints.Add(new Point(controllerPosition));
             currentPoints.Add(new Point(controllerPosition));
-            currentEdge = new Edge(currentPoints[0], currentPoints[1]);
-            currentEdge.setSmooth(true);
+            currentEdge = new SmoothEdge(currentPoints);
         } else
         {
             currentPoints = null;

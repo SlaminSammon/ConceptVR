@@ -11,7 +11,7 @@ public class MoveTool : SelectTool {
     new void Update () {
         base.Update();
 
-        if (triggerInput)
+        if (triggerInput && sPoints != null)
         {
             for(int i = 0; i < sPoints.Count; ++i)
                 sPoints[i].setPosition(startPositions[i] + controllerPosition - grabPosition);

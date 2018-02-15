@@ -88,6 +88,9 @@ public class DCGSynchronizer : NetworkBehaviour {
                     faces.Add(DCGBase.all[reqid] as Face);
                 new Solid(faces, packet.id);
                 break;
+            default:
+                Debug.LogError("Received element with unfamiliar type: " + packet.type);
+                break;
         }
         
         if (waiting.ContainsKey(packet.id)) //if this item is in the waitlist, remove it.

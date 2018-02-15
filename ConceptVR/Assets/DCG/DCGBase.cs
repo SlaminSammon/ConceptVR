@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ElementType { point, edge, face, solid }
+public enum ElementType { point, edge, face, solid, smoothEdge, smoothFace, smoothQuad }
 
 public class DCGBase : MonoBehaviour {
     public Mesh pointMesh;

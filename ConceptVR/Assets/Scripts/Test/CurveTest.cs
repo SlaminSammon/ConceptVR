@@ -14,7 +14,6 @@ public class CurveTest : MonoBehaviour {
         points.Add(new Point(Random.onUnitSphere * 5f));
 
         Edge e = new Edge(points, false);
-        e.setSmooth(true);
 	}
 	
 	// Update is called once per frame
