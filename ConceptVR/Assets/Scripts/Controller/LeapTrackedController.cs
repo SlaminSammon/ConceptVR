@@ -98,14 +98,18 @@ public class LeapTrackedController : MonoBehaviour
     #endregion
     public int heldFrames = 75;
     public int playerID;
+    #region Thumbs Up 
     public ThumbStatus thumbStatusR;
     public ThumbStatus thumbStatusL;
     public DetectorLogicGate thumbUpR;
     public DetectorLogicGate thumbDownR;
     public DetectorLogicGate thumbUpL;
     public DetectorLogicGate thumbDownL;
-
-
+    #endregion
+    #region Pinch Detector
+    public PinchDetector rightPinchDetect;
+    public PinchDetector leftPinchDetect;
+    #endregion
     // Use this for initialization
     void Start()
     {
@@ -121,6 +125,13 @@ public class LeapTrackedController : MonoBehaviour
             palmDirectorLeft.OnActivate.AddListener(freeFormLeft);
             palmDirectorRightUp.OnActivate.AddListener(freeFormEndRight);
             palmDirectorLeftUp.OnActivate.AddListener(freeFormEndLeft);
+            rightPinchDetect.OnActivate.AddListener(OnPinchHeld);
+            rightPinchDetect.OnDeactivate.AddListener(OnPinchGone);
+        }
+        else if(handedness == "Left")
+        {
+            leftPinchDetect.OnActivate.AddListener(OnPinchHeld);
+            leftPinchDetect.OnDeactivate.AddListener(OnPinchGone);
         }
     }
 
@@ -161,9 +172,9 @@ public class LeapTrackedController : MonoBehaviour
             }
         }
         #endregion
-
+        swipe = false;
         #region Pinch and Grab Logic
-        bool grab = checkGrab();
+        /*bool grab = checkGrab();
         if (!grab)
         {
             grab = checkRecentGrabData();
@@ -196,7 +207,7 @@ public class LeapTrackedController : MonoBehaviour
         else if (pinch && !pinchHeld && !flippedPinch)
         {
             OnPinchHeld();
-        }
+        }*/
         #endregion
 
         #region Swipe and Tap Logic
@@ -217,7 +228,7 @@ public class LeapTrackedController : MonoBehaviour
         {
             if (Time.time > tapCooldownTime)
             {
-                Debug.Log(tapMade);
+                Debug.Log("Tap");
                 tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
                 tapCooldownTime = Time.time + tapCooldown;
             }
@@ -256,15 +267,12 @@ public class LeapTrackedController : MonoBehaviour
     public void OnPinchHeld()
     {
         pinchHeld = true;
-        if (pinchMade != null)
-            pinchMade();
+        pinchMade();
     }
     public void OnPinchGone()
-    {
-
+    { 
         pinchHeld = false;
-        if (pinchGone != null)
-            pinchGone();
+        pinchGone();
     }
     public void OnGrabHeld()
     {
