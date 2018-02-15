@@ -38,13 +38,11 @@ public class LightItem : Item
     {
         return this.gameObject.transform.position;
     }
-    public override float Distance(Vector3 pos)
-    {
-        return Vector3.Distance(pos, this.Position(pos));
-    }
+
     public override void changeColor(Color color)
     {
-        this.GetComponent<Light>().color = color;
+        this.gameObject.GetComponent<Light>().color = color;
         selectedLightColor = color;
+        base.changeColor(color);
     }
 }
