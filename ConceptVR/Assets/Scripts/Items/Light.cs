@@ -38,4 +38,11 @@ public class LightItem : Item
     {
         return this.gameObject.transform.position;
     }
+
+    public override void changeColor(Color color)
+    {
+        this.gameObject.GetComponent<Light>().color = color;
+        selectedLightColor = color;
+        base.changeColor(color);
+    }
 }
