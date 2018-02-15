@@ -6,7 +6,8 @@ public class LightItem : Item
 {
     Material newMat;
     Material selectedMaterial;
-    Color selectedLightColor;
+    public Color selectedLightColor;
+
     public void Start()
     {
         base.Start();
@@ -18,7 +19,8 @@ public class LightItem : Item
     public override void Select()
     {
         this.gameObject.GetComponent<MeshRenderer>().material = newMat;
-        this.gameObject.GetComponent<Light>().color = Color.blue;
+        //this.gameObject.GetComponent<Light>().color = Color.blue;
+
     }
     public override void DeSelect()
     {
