@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Doodle : Item {
 
+    Bounds boundingBox;
     LineRenderer lr;
     Color oldColor;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
+        boundingBox = new Bounds();
     }
 	
 	// Update is called once per frame
@@ -40,6 +42,20 @@ public class Doodle : Item {
     public override void DeSelect()
     {
         lr.material.color = oldColor;
+    }
+    public void Encapsulate(Vector3 point)
+    {
+        boundingBox.Encapsulate(point);
+    }
+    public void finalBounds()
+    {
+        boundingBox.SetMinMax(boundingBox.min - new Vector3(.1f, .1f, .1f), boundingBox.max + new Vector3(.1f, .1f, .1f));
+    }
+    public override float Distance(Vector3 pos)
+    {
+        if (boundingBox.Contains(pos))
+            return Vector3.Distance(pos, this.Position(pos));
+        return 100000f;
     }
 
 }

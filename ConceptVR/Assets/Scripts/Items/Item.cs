@@ -16,7 +16,7 @@ public abstract class Item: MonoBehaviour  {
 		
 	}
 
-    public virtual Vector3 Distance() { return new Vector3(); }
+    public virtual float Distance(Vector3 pos) { return -1f; }
     public virtual void Select() { }
     public virtual void DeSelect() { }
     public virtual void Push() { }

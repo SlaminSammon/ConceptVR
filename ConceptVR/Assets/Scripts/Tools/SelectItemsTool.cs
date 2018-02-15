@@ -29,6 +29,7 @@ public class SelectItemsTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
+
         Item item = itemBase.findNearestItem(position);
         if(item != null && !item.isLocked)
         {

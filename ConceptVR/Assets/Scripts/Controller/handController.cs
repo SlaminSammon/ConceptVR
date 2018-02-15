@@ -33,11 +33,8 @@ public class handController: Controller {
             else
                 currentTool.formInput = false;
         }
-        if(!leapControl.pinchHeld && leapControl.pinchInput)
-            currentTool.triggerInput = leapControl.pinchInput;
         else
             currentTool.triggerInput = leapControl.pinchHeld;
-        currentTool.gripInput = leapControl.gripInput;
 
     }
     protected void TriggerDown()

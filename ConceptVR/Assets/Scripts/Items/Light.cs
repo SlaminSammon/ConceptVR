@@ -36,4 +36,8 @@ public class LightItem : Item
     {
         return this.gameObject.transform.position;
     }
+    public override float Distance(Vector3 pos)
+    {
+        return Vector3.Distance(pos, this.Position(pos));
+    }
 }
