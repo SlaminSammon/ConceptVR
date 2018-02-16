@@ -92,6 +92,7 @@ public class DCGSynchronizer : NetworkBehaviour
                 break;
             default:
                 Debug.LogError("Network sent unfamiliar item type!");
+                break;
         }
 
         if (waiting.ContainsKey(packet.id)) //if this item is in the waitlist, remove it.
