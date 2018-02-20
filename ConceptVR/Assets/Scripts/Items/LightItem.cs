@@ -46,6 +46,7 @@ public class LightItem : Item
         selectedLightColor = color;
         base.changeColor(color);
     }
+
     public void changeIntensity(float intensity)
     {
         this.gameObject.GetComponent<Light>().intensity = intensity * INTENSITY_SCALE;

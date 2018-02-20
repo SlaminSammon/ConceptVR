@@ -9,18 +9,24 @@ public class ItemBase : MonoBehaviour {
     public GameObject LightPrefab;
     public string firstType;
     public bool isHUD = false;
+    public GameObject Managers;
+    public GameObject LMHeadMountedRig;
 
     // Use this for initialization
     void Start () {
         firstType = "";
         items = new List<Item>();
         sItems = new List<Item>();
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        float playerScale = Managers.GetComponent<SettingsManager>().playerScale;
+        foreach (Item item in items)
+        {
+            item.transform.localScale = new Vector3(playerScale, playerScale, playerScale) / 50;
+        }
+    }
 
     public Item findNearestItem(Vector3 position)
     {

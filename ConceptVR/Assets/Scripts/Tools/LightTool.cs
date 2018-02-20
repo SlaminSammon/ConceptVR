@@ -25,6 +25,8 @@ public class LightTool : Tool {
         GameObject obj = Instantiate(itemBase.LightPrefab);
         obj.AddComponent<LightItem>();
         obj.transform.position = position;
+        //Debug.Log(transform.Find("LMHeadMountedRig").transform.localScale);
+        //obj.transform.localScale = transform.Find("LMHeadMountedRig").transform.localScale;
         ItemBase.items.Add(obj.GetComponent<LightItem>());
         return true;
     }
