@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public abstract class Item: NetworkBehaviour  {
+    [SyncVar]
     public bool isSelected;
+    [SyncVar]
     public bool isLocked;
     protected static HUDManager HUD;
     // Use this for initialization
@@ -18,8 +20,10 @@ public abstract class Item: NetworkBehaviour  {
 	}
 
     public virtual float Distance(Vector3 pos) { return -1f; }
-    public virtual void Select() { }
-    public virtual void DeSelect() { }
+    [Command]
+    public virtual void CmdSelect() { }
+    [Command]
+    public virtual void CmdDeSelect() { }
     public virtual void Push() { }
     public virtual void changeColor(Color color) { }
     public virtual Vector3 Position(Vector3 contPos) { return new Vector3(); }

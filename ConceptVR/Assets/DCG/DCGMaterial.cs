@@ -9,13 +9,15 @@ public class DCGMaterial : ScriptableObject {
     public new Material mat;
     public List<Face> facesUsingMat = new List<Face>();
 
-	// Use this for initialization
-	void Start () {
-
+    public void AddFace(Face f)
+    {
+        facesUsingMat.Add(f);
+        f.mat = this;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    public void RemoveFace(Face f)
+    {
+        facesUsingMat.Remove(f);
+        f.mat = null;
+    }
 }
