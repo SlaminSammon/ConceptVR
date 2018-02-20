@@ -234,7 +234,11 @@ public class Face : DCGElement
         subTriangles = new List<Vector3>();
         List<Vector3> verts = new List<Vector3>();
         List<Vector3> normals = new List<Vector3>();
+        List<Vector2> uvs = new List<Vector2>();
+
         Vector3 avgNormal = getNormal();
+        Vector3 u = Vector3.Cross(avgNormal, edges[1].points[1].position - edges[1].points[0].position);
+        Vector3 v = Vector3.Cross(u, avgNormal);
 
         Vector3 lpos = edges[edges.Count - 1].points[edges[edges.Count - 1].points.Count - 1].position; //Gomenasai
         foreach (Edge e in edges)
@@ -244,6 +248,7 @@ public class Face : DCGElement
                 {
                     verts.Add(p.position);
                     normals.Add(avgNormal);
+                    uvs.Add(new Vector2(Vector3.Project(p.position, u).magnitude, Vector3.Project(p.position, v).magnitude));
                 }
                 lpos = p.position;
             }
@@ -258,6 +263,7 @@ public class Face : DCGElement
         {
             verts.Add(verts[i]);
             normals.Add(-avgNormal);
+            uvs.Add(uvs[i]);
         }
 
         //mirror triangles
@@ -275,6 +281,7 @@ public class Face : DCGElement
         mesh.SetVertices(verts);
         mesh.SetNormals(normals);
         mesh.SetTriangles(tris, 0);
+        mesh.SetUVs(0, uvs);
         //mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
