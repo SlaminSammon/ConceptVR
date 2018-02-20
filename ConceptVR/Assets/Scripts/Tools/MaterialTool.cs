@@ -24,6 +24,21 @@ public class MaterialTool : Tool {
         Face nearestFace = DCGBase.NearestFace(position, 0.07f);
         if (nearestFace != null && !nearestFace.isLocked)
         {
+            if (!DCGBase.matList.Contains(newDCGMat))   //make sure mat is in the list
+                DCGBase.matList.Add(newDCGMat);
+
+            nearestFace.mat.RemoveFace(nearestFace);    //unset previous mat
+            newDCGMat.AddFace(nearestFace); //set new mat
+            return true;
+        }
+        return false;
+    }
+
+    /*public override bool Tap(Vector3 position)
+    {
+        Face nearestFace = DCGBase.NearestFace(position, 0.07f);
+        if (nearestFace != null && !nearestFace.isLocked)
+        {
             // remove the nearestFace from any pre-existing DCGMat lists.
             bool doublebreak = false;
             foreach (DCGMaterial dcgm in DCGBase.matList)
@@ -70,7 +85,7 @@ public class MaterialTool : Tool {
         {
             return false;
         }
-    }
+    }*/
 
     public void changeMaterial(DCGMaterial DCGMat)
     {
