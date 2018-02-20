@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LightFrame : HUDFrame {
 
-    const float INTENSITY_SCALE = 15;
     HUDSlider intensitySlider;
     HUDSlider colorSlider;
 
@@ -18,12 +17,11 @@ public class LightFrame : HUDFrame {
 
     // Update is called once per frame
     void Update () {
-
         foreach (LightItem light in ItemBase.sItems)
         {
             Color lightColor = kelvinToRGB((1-colorSlider.value) * 40000f);
-            Debug.Log(lightColor);
             light.changeColor(lightColor);
+            light.changeIntensity(intensitySlider.value);
         }
     }
 
