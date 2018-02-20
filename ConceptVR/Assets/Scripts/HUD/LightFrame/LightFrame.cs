@@ -21,7 +21,6 @@ public class LightFrame : HUDFrame {
         {
             Color lightColor = kelvinToRGB((1-colorSlider.value) * 40000f);
             light.changeColor(lightColor);
-            Debug.Log(lightColor);
             light.changeIntensity(intensitySlider.value);
         }
     }
