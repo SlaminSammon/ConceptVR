@@ -57,5 +57,5 @@ public class Doodle : Item {
             return Vector3.Distance(pos, this.Position(pos));
         return 100000f;
     }
-
+    //public void changeWidth(float)
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class DoodleTool : Tool {
     private LineRenderer currLineRend;//Line Renderer
@@ -9,6 +10,7 @@ public class DoodleTool : Tool {
     private List<Color> colors = new List<Color>(new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta });
     Doodle doodle;
     private int colorIndex;
+    Object doodPrefab;
     void Start () {
         colorIndex = 0;
 	}
@@ -25,10 +27,9 @@ public class DoodleTool : Tool {
 	}
     public override bool TriggerDown()
     {
-        GameObject go = new GameObject();
-        currLineRend = go.AddComponent<LineRenderer>();
-        doodle = go.AddComponent<Doodle>();
+        GameObject go = (GameObject) Network.Instantiate(GameObject.Find("DoodlePrefab"),controllerPosition,new Quaternion(0,0,0,0),0);
         ItemBase.items.Add(go.GetComponent<Doodle>());
+        currLineRend = go.GetComponent<LineRenderer>();
         currLineRend.material = material;
         numClicks = 0;
         //Makes a thinner line

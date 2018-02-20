@@ -267,6 +267,7 @@ public class LeapTrackedController : MonoBehaviour
     public void OnPinchHeld()
     {
         pinchHeld = true;
+        Debug.Log("THIS NIGGER CUNT FUCK ASS JEW MC NIGGER FUCK ASS");
         pinchMade();
     }
     public void OnPinchGone()
