@@ -16,13 +16,13 @@ public class LightItem : Item
         selectedLightColor = gameObject.GetComponent<Light>().color;
     }
 
-    public override void Select()
+    public override void CmdSelect()
     {
         this.gameObject.GetComponent<MeshRenderer>().material = newMat;
         //this.gameObject.GetComponent<Light>().color = Color.blue;
 
     }
-    public override void DeSelect()
+    public override void CmdDeSelect()
     {
         this.gameObject.GetComponent<MeshRenderer>().material = selectedMaterial;
         this.gameObject.GetComponent<Light>().color = selectedLightColor;

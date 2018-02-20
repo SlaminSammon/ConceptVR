@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class Doodle : Item {
-
+    [SyncVar]
     Bounds boundingBox;
     LineRenderer lr;
     Color oldColor;
@@ -34,14 +35,18 @@ public class Doodle : Item {
         }
         return lr.GetPosition(lowestPos);
     }
-    public override void Select()
+    public override void CmdSelect()
     {
         oldColor = lr.material.color;
         lr.material.color = Color.white;
+        isLocked = true;
+        isSelected = true;
     }
-    public override void DeSelect()
+    public override void CmdDeSelect()
     {
         lr.material.color = oldColor;
+        isLocked = false;
+        isSelected = false;
     }
     public void Encapsulate(Vector3 point)
     {
@@ -57,5 +62,10 @@ public class Doodle : Item {
             return Vector3.Distance(pos, this.Position(pos));
         return 100000f;
     }
-    //public void changeWidth(float)
+    [ClientRpc]
+    public void RpcChangeWidth(float width)
+    {
+        lr.startWidth = width;
+        lr.endWidth = width;
+    }
 }
