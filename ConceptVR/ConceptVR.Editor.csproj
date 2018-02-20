@@ -123,6 +123,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ExportImport Package\Editor\EditorObjExporter.cs" />
+    <Compile Include="Assets\ExportImport Package\Editor\ObjImporter.cs" />
     <Compile Include="Assets\LeapMotion\Core\Editor\CorePreferences.cs" />
     <Compile Include="Assets\LeapMotion\Core\Editor\CustomEditorBase.cs" />
     <Compile Include="Assets\LeapMotion\Core\Editor\CustomPropertyDrawerBase.cs" />
@@ -157,9 +159,6 @@
     <Compile Include="Assets\LeapMotion\Core\Scripts\Utils\Editor\TransformUtilTests.cs" />
     <Compile Include="Assets\LeapMotion\Core\Scripts\VR\Editor\EyeTypeEditor.cs" />
     <Compile Include="Assets\LeapMotion\Core\Scripts\VR\Editor\LeapTemporalWarpingEditor.cs" />
-    <Compile Include="Assets\MixCast\Editor\ScriptDefineManager.cs" />
-    <Compile Include="Assets\MixCast\Editor\SdkAnalytics.cs" />
-    <Compile Include="Assets\MixCast\Editor\UpdateChecker.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Editor.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Preferences.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_RenderModelEditor.cs" />
@@ -168,6 +167,8 @@
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Update.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Diaglow.shader" />
+    <None Include="Assets\ExportImport Package\OBJImport\readme.txt" />
     <None Include="Assets\LeapMotion\Core\Dependencies.txt" />
     <None Include="Assets\LeapMotion\Core\README_BEFORE_UPDATING.txt" />
     <None Include="Assets\LeapMotion\Core\Resources\LeapCG.cginc" />
@@ -178,31 +179,6 @@
     <None Include="Assets\LeapMotion\Core\Resources\VertexOffsetShader.shader" />
     <None Include="Assets\LeapMotion\Core\Version.txt" />
     <None Include="Assets\LeapMotion\Core\readme.txt" />
-    <None Include="Assets\MixCast\Extras\Shaders\ProjectorLight.shader" />
-    <None Include="Assets\MixCast\Extras\Shaders\ProjectorMultiply.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - AlphaOut.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - AlphaTransfer.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - AlphaWrite.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - BackgroundBlit.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - DepthWrite.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - ForegroundBlit PMA.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - ForegroundBlit.shader" />
-    <None Include="Assets\MixCast\Resources\Hidden - ScreenSpaceShadows NoFade.shader" />
-    <None Include="Assets\MixCast\Shaders\BPR_ShaderHelpers.cginc" />
-    <None Include="Assets\MixCast\Shaders\Includes\MixCastBGRemoval.cginc" />
-    <None Include="Assets\MixCast\Shaders\Includes\MixCastCropping.cginc" />
-    <None Include="Assets\MixCast\Shaders\Includes\MixCastLighting.cginc" />
-    <None Include="Assets\MixCast\Shaders\MixCast-CameraFeed-HSVModify.shader" />
-    <None Include="Assets\MixCast\Shaders\MixCast-CameraFeed-Posterize.shader" />
-    <None Include="Assets\MixCast\Shaders\MixCast-CameraFeed.shader" />
-    <None Include="Assets\MixCast\Shaders\Particle-Additive-WriteAlpha PMA.shader" />
-    <None Include="Assets\MixCast\Shaders\Particle-Additive-WriteAlpha.shader" />
-    <None Include="Assets\MixCast\Shaders\Particle-Alpha Blend Detail-WriteAlpha.shader" />
-    <None Include="Assets\MixCast\Shaders\Particle-Alpha Blend-WriteAlpha PMA.shader" />
-    <None Include="Assets\MixCast\Shaders\Particle-Alpha Blend-WriteAlpha.shader" />
-    <None Include="Assets\MixCast\Shaders\Particles-Multiply-NoSoft.shader" />
-    <None Include="Assets\MixCast\Shaders\Unlit-Texture NoAlpha.shader" />
-    <None Include="Assets\MixCast\readme.txt" />
     <None Include="Assets\Proxglow.shader" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\SeeThru.shader" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\Silhouette.shader" />
