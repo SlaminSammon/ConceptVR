@@ -9,8 +9,6 @@ public class ItemBase : MonoBehaviour {
     public GameObject LightPrefab;
     public string firstType;
     public bool isHUD = false;
-    public GameObject Managers;
-    public GameObject LMHeadMountedRig;
 
     // Use this for initialization
     void Start () {
@@ -21,18 +19,15 @@ public class ItemBase : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        float playerScale = Managers.GetComponent<SettingsManager>().playerScale;
-        foreach (Item item in items)
-        {
-            item.transform.localScale = new Vector3(playerScale, playerScale, playerScale) / 50;
-        }
+
     }
 
     public Item findNearestItem(Vector3 position)
     {
         Item nearestItem = null;
         float nearestDistance = 99999;
-        float maxDistance = 0.1f; // maximum distance to consider an object as being intended to be selected
+        float maxDistance = 0.1f;
+        Debug.Log(maxDistance + " is maxdistance");
 
         foreach (Item item in items)
         {

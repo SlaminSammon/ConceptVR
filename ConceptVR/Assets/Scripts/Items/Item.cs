@@ -20,9 +20,7 @@ public abstract class Item: NetworkBehaviour  {
 	}
 
     public virtual float Distance(Vector3 pos) { return -1f; }
-    [Command]
     public virtual void CmdSelect() { }
-    [Command]
     public virtual void CmdDeSelect() { }
     public virtual void Push() { }
     public virtual void changeColor(Color color) { }

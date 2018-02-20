@@ -8,6 +8,9 @@ public class Point : DCGElement
     public List<Edge> edges;
     public List<DCGElement> elements;   //elements this point is a part of
     public Vector3 position;
+    Vector3 defaultScale = new Vector3(0.007f, 0.007f, 0.007f);
+    public GameObject Managers;
+
 
     public Point(Vector3 position)
     {
@@ -37,7 +40,9 @@ public class Point : DCGElement
 
     public override void Render()
     {
-        Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, new Vector3(.007f, .007f, .007f)));
+        float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
+        Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, defaultScale*playerScale));
+        //Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, new Vector3(.007f, .007f, .007f)));
     }
 
     public override void Remove()

@@ -7,9 +7,10 @@ public class LightTool : Tool {
     public GameObject LightPrefab;
 
     ItemBase itemBase;
+    public GameObject Managers;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
         //LightPrefab.GetComponent<Light>().color = LightPrefab.GetComponent<Material>().color;
     }
@@ -25,8 +26,8 @@ public class LightTool : Tool {
         GameObject obj = Instantiate(itemBase.LightPrefab);
         obj.AddComponent<LightItem>();
         obj.transform.position = position;
-        //Debug.Log(transform.Find("LMHeadMountedRig").transform.localScale);
-        //obj.transform.localScale = transform.Find("LMHeadMountedRig").transform.localScale;
+        float playerScale = Managers.GetComponent<SettingsManager>().playerScale;
+        obj.transform.localScale = new Vector3(playerScale, playerScale, playerScale)/50;
         ItemBase.items.Add(obj.GetComponent<LightItem>());
         return true;
     }

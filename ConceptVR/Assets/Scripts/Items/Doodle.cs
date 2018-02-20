@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class Doodle : Item {
-    [SyncVar]
+    //[SyncVar]
     Bounds boundingBox;
     LineRenderer lr;
     Color oldColor;
