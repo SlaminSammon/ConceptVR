@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LightItem : Item
 {
+    const float INTENSITY_SCALE = 10;
     Material newMat;
     Material selectedMaterial;
     public Color selectedLightColor;
@@ -44,5 +45,9 @@ public class LightItem : Item
         this.gameObject.GetComponent<Light>().color = color;
         selectedLightColor = color;
         base.changeColor(color);
+    }
+    public void changeIntensity(float intensity)
+    {
+        this.gameObject.GetComponent<Light>().intensity = intensity * INTENSITY_SCALE;
     }
 }

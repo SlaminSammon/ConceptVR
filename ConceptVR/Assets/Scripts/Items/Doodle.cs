@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class Doodle : Item {
-    [SyncVar]
     Bounds boundingBox;
     LineRenderer lr;
     Color oldColor;
@@ -62,8 +61,8 @@ public class Doodle : Item {
             return Vector3.Distance(pos, this.Position(pos));
         return 100000f;
     }
-    [ClientRpc]
-    public void RpcChangeWidth(float width)
+    [Command]
+    public void CmdChangeWidth(float width)
     {
         lr.startWidth = width;
         lr.endWidth = width;
