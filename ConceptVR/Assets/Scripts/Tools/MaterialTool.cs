@@ -27,7 +27,8 @@ public class MaterialTool : Tool {
             if (!DCGBase.matList.Contains(newDCGMat))   //make sure mat is in the list
                 DCGBase.matList.Add(newDCGMat);
 
-            //nearestFace.mat.RemoveFace(nearestFace);    //unset previous mat
+            if (nearestFace.mat != null)
+                nearestFace.mat.RemoveFace(nearestFace);    //unset previous mat
             newDCGMat.AddFace(nearestFace); //set new mat
             return true;
         }
