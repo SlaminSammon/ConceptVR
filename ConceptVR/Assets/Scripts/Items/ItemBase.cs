@@ -15,18 +15,19 @@ public class ItemBase : MonoBehaviour {
         firstType = "";
         items = new List<Item>();
         sItems = new List<Item>();
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+
+    }
 
     public Item findNearestItem(Vector3 position)
     {
         Item nearestItem = null;
         float nearestDistance = 99999;
-        float maxDistance = 0.1f; // maximum distance to consider an object as being intended to be selected
+        float maxDistance = 0.1f;
+        Debug.Log(maxDistance + " is maxdistance");
 
         foreach (Item item in items)
         {

@@ -9,6 +9,7 @@ public class DestroyTool : Tool {
 
 	// Use this for initialization
 	void Start () {
+
 	}
 
     new private void Update()
@@ -18,7 +19,8 @@ public class DestroyTool : Tool {
             Point nPoint;
             while (true)
             {
-                nPoint = DCGBase.NearestPoint(controllerPosition, delDist);
+                float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
+                nPoint = DCGBase.NearestPoint(controllerPosition, delDist*playerScale);
                 if (nPoint == null)
                     break;
                 else
@@ -29,10 +31,11 @@ public class DestroyTool : Tool {
 
     private void OnRenderObject()
     {
+        float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
         if (triggerInput)
         {
             destMat.SetPass(0);
-            Graphics.DrawMeshNow(GeometryUtil.icoSphere4, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(delDist, delDist, delDist)));
+            Graphics.DrawMeshNow(GeometryUtil.icoSphere4, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(delDist, delDist, delDist)*playerScale));
         }
     }
 }
