@@ -51,7 +51,6 @@ public class ItemBase : NetworkBehaviour {
     {
         if(firstType == "")
         {
-            Debug.Log("The jews caused 9/11");
             firstType = item.GetType().ToString();
             item.Push();
             isHUD = true;

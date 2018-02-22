@@ -44,6 +44,51 @@ public class Doodle : Item {
         }
         return lr.GetPosition(lowestPos);
     }
+
+    public void erasePoint(Vector3 p)
+    {
+        Vector3[] verts = new Vector3[lr.positionCount];
+        lr.GetPositions(verts);
+
+        int index = -1;
+        for (int i = 0; i < lr.positionCount; ++i)
+        {
+            if (verts[i] == p)
+            {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1)
+            Debug.LogError("Attempted to erase non-existent point " + p);
+        else if (index <= 1)    //front end
+        {
+            for (int i = index; i < lr.positionCount - index - 1; ++i)
+                verts[i] = verts[i + index + 1];
+            lr.positionCount -= (index + 1);
+        }
+        else if (index >= lr.positionCount - 1) //back end
+        {
+            lr.positionCount = index;
+        }
+        else //somewhere in the middle
+        {
+            List<Vector3> newDoodPositions = new List<Vector3>();
+            for (int i = index; i < lr.positionCount - 1; ++i)
+            {
+                newDoodPositions.Add(verts[i]);
+            }
+            lr.positionCount = index - 1;
+
+            //TODO: create new doodle and set its points to newDoodPositions
+        }
+    }
+
+    public void setPoints(List<Vector3> points)
+    {
+        //TODO: Set all points at once
+    }
+
     public override void CmdSelect()
     {
         isLocked = true;
