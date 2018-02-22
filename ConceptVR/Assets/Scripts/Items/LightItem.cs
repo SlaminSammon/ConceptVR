@@ -30,7 +30,7 @@ public class LightItem : Item
     {
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
-            HUD.Push(frame.transform.Find("LightFrame").gameObject.GetComponent<HUDFrame>());
+            HUD.Push(frame.transform.Find("ItemsFrame").gameObject.GetComponent<HUDFrame>());
     }
     public override Vector3 Position(Vector3 contPos)
     {

@@ -4,26 +4,31 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class DoodleTool : Tool {
-    private LineRenderer currLineRend;//Line Renderer
-    private int numClicks = 0;
+    LineRenderer currLineRend;//Line Renderer
     public Material material;
     Doodle doodle;
-    private int colorIndex;
     public GameObject doodPrefab;
+    int frameCount = 0;
     void Start () {
-        colorIndex = 0;
 	}
 	
 	// Update is called once per frame
 	new void Update () {
         if (triggerInput && currLineRend != null && doodle != null && controllerPosition != new Vector3(0,0,0))
         {
-            doodle.CmdUpdateLineRenderer(controllerPosition);
+            if (frameCount == 0)
+            {
+                doodle.CmdUpdateLineRenderer(controllerPosition);
+                frameCount = 3;
+            }
+            else
+                frameCount--;
             /*currLineRend.positionCount = numClicks + 1;
             currLineRend.SetPosition(numClicks, controllerPosition);
             doodle.latestPoint = controllerPosition;
             numClicks++;*/
         }
+        
 	}
     public override bool TriggerDown()
     {
@@ -33,7 +38,6 @@ public class DoodleTool : Tool {
         doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
         currLineRend.material = material;
-        numClicks = 0;
         //Makes a thinner line
         currLineRend.startWidth = .01f;
         currLineRend.endWidth = .01f;
