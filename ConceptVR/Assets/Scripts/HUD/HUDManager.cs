@@ -171,14 +171,22 @@ public class HUDManager : MonoBehaviour
     {
         LeapTrackedController ltc = GameObject.Find("LoPoly_Rigged_Hand_Right").GetComponent<LeapTrackedController>();
         if (placed) {
-            GameObject parent = GameObject.Find("RigidRoundHand_L").transform.Find("palm").gameObject;
-            GameObject HUD = GameObject.Find("HandsUpDisplay");
-            HUD.transform.SetParent(parent.transform);
-            HUD.transform.localPosition = new Vector3(0, 0, 0);
-            HUD.transform.localRotation = new Quaternion(180, 0, 0, 0);
-            placed = false;
-            HUDObject.SetActive(false);
-            ltc.hudAnchor = true;
+            GameObject lHand = GameObject.Find("RigidRoundHand_L");
+            if (lHand != null)
+            {
+                GameObject parent = lHand.transform.Find("palm").gameObject;
+                GameObject HUD = GameObject.Find("HandsUpDisplay");
+                HUD.transform.SetParent(parent.transform);
+                HUD.transform.localPosition = new Vector3(0, 0, 0);
+                HUD.transform.localRotation = new Quaternion(180, 0, 0, 0);
+                placed = false;
+                HUDObject.SetActive(false);
+                ltc.hudAnchor = true;
+            }
+            else
+            {
+                //TODO: signal to the player they need to have their left hand visible
+            }
         }
         else {
             GameObject.Find("HandsUpDisplay").transform.parent = null;

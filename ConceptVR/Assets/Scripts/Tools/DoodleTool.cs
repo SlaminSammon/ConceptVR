@@ -21,7 +21,7 @@ public class DoodleTool : Tool {
         {
             currLineRend.positionCount = numClicks + 1;
             currLineRend.SetPosition(numClicks, controllerPosition);
-            doodle.Encapsulate(controllerPosition);
+            doodle.latestPoint = controllerPosition;
             numClicks++;
         }
 	}
@@ -39,7 +39,7 @@ public class DoodleTool : Tool {
     }
     public override bool TriggerUp()
     {
-        doodle.finalBounds();
+        doodle.isFinished = true;
         return true;
     }
 }

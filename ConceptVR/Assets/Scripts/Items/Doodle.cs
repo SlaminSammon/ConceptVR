@@ -7,10 +7,15 @@ public class Doodle : Item {
     Bounds boundingBox;
     LineRenderer lr;
     Color oldColor;
+    [SyncVar (hook = "Encapsulate")]
+    public Vector3 latestPoint;
+    [SyncVar(hook = "finalBounds")]
+    public bool isFinished;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
         boundingBox = new Bounds();
+        isFinished = false;
     }
 	
 	// Update is called once per frame
@@ -47,9 +52,9 @@ public class Doodle : Item {
         isLocked = false;
         isSelected = false;
     }
-    public void Encapsulate(Vector3 point)
+    public void Encapsulate()
     {
-        boundingBox.Encapsulate(point);
+        boundingBox.Encapsulate(latestPoint);
     }
     public void finalBounds()
     {
