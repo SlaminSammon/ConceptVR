@@ -17,7 +17,7 @@ public class DoodleTool : Tool {
 	
 	// Update is called once per frame
 	new void Update () {
-        if (triggerInput && currLineRend != null)
+        if (triggerInput && currLineRend != null && doodle != null)
         {
             currLineRend.positionCount = numClicks + 1;
             currLineRend.SetPosition(numClicks, controllerPosition);
@@ -27,7 +27,10 @@ public class DoodleTool : Tool {
 	}
     public override bool TriggerDown()
     {
-        GameObject go = (GameObject) Network.Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0),0);
+        GameObject go = Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0));
+        go.SetActive(true);
+        NetworkServer.Spawn(go);
+        doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
         currLineRend.material = material;
         numClicks = 0;
@@ -38,6 +41,10 @@ public class DoodleTool : Tool {
     }
     public override bool TriggerUp()
     {
+        if(doodle == false)
+        {
+            Debug.Log("Wut");
+        }
         doodle.isFinished = true;
         return true;
     }

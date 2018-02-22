@@ -70,18 +70,6 @@ public class SelectItemsTool : Tool {
             Item.Pop();
             itemBase.firstType = "";
         }
-        /*
-        if (selected)
-        {
-            if (selected.tag == "Light")
-            {
-                selected.gameObject.GetComponent<MeshRenderer>().material = selectedMaterial;
-                selected.gameObject.GetComponent<Light>().color = selectedLightColor;
-            }
-            HUD.Pop();
-            selected = null;
-        }
-        */
     }
     public void Select(Item item)
     {

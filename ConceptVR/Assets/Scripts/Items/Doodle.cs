@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class Doodle : Item {
-    Bounds boundingBox;
+    public Bounds boundingBox;
     LineRenderer lr;
     Color oldColor;
     [SyncVar (hook = "Encapsulate")]
@@ -16,6 +16,7 @@ public class Doodle : Item {
         lr = this.gameObject.GetComponent<LineRenderer>();
         boundingBox = new Bounds();
         isFinished = false;
+        base.Start();
     }
 	
 	// Update is called once per frame
@@ -54,7 +55,7 @@ public class Doodle : Item {
     }
     public void Encapsulate(Vector3 pos)
     {
-        boundingBox.Encapsulate(pos);
+        boundingBox.Encapsulate(latestPoint);
     }
     public void finalBounds(bool boolean)
     {
