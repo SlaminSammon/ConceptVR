@@ -22,11 +22,10 @@ public class ItemBase : NetworkBehaviour {
 	void Update () {
 
     }
+    //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
     public static void Spawn(GameObject go)
     {
         NetworkServer.Spawn(go);
-        foreach (KeyValuePair<UnityEngine.Networking.NetworkInstanceId, UnityEngine.Networking.NetworkIdentity> kvp in NetworkServer.objects)
-            Debug.Log(kvp);
     }
     public Item findNearestItem(Vector3 position)
     {
@@ -47,6 +46,7 @@ public class ItemBase : NetworkBehaviour {
 
         return nearestItem;
     }
+    //Not gonna lie this is pretty ghetto. It works though so i dunno
     public void itemHudManager(Item item)
     {
         if(firstType == "")
@@ -61,7 +61,6 @@ public class ItemBase : NetworkBehaviour {
             Item.Pop();
             isHUD = false;
         }
-        
     }
 
 }

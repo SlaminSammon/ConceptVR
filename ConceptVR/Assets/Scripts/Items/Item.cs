@@ -19,15 +19,15 @@ public abstract class Item : NetworkBehaviour {
     void Update() {
 
     }
-
+    #region Override Functions
     public virtual float Distance(Vector3 pos) { return -1f; }
     public virtual void CmdSelect() { }
     public virtual void CmdDeSelect() { }
     public virtual void Push() { }
     public virtual void changeColor(Color color) { }
     public virtual Vector3 Position(Vector3 contPos) { return new Vector3(); }
-    public void OnSelected(bool boolean) { this.SelectUtil(); }
     public virtual void SelectUtil() { }
+    #endregion
     public static void Pop()
     {
         HUD.Pop();
@@ -36,4 +36,5 @@ public abstract class Item : NetworkBehaviour {
     {
         ItemBase.items.Remove(this);
     }
+    public void OnSelected(bool boolean) { this.SelectUtil(); }
 }

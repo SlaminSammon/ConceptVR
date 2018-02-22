@@ -13,6 +13,8 @@ public class Doodle : Item {
     //public Vector3 latestPoint;
     [SyncVar(hook = "finalBounds")]
     public bool isFinished;
+    [SyncVar(hook = "changeWidth")]
+    public float lineWidth;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
@@ -29,7 +31,6 @@ public class Doodle : Item {
 
     public override Vector3 Position(Vector3 contPos)
     {
-        lr = this.gameObject.GetComponent<LineRenderer>();
         int lowestPos = 0;
         float lowDist = Mathf.Abs(Vector3.Distance(lr.GetPosition(0), contPos));
         for (int i = 1; i < lr.positionCount; ++i)
@@ -67,8 +68,7 @@ public class Doodle : Item {
             return Vector3.Distance(pos, this.Position(pos));
         return 100000f;
     }
-    [Command]
-    public void CmdChangeWidth(float width)
+    public void changeWidth(float width)
     {
         lr.startWidth = width;
         lr.endWidth = width;

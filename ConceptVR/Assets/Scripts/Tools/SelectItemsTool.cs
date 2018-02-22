@@ -26,10 +26,8 @@ public class SelectItemsTool : Tool {
         }
         return false;
     }
-
     public override bool Tap(Vector3 position)
     {
-
         Item item = itemBase.findNearestItem(position);
         if(item != null && !item.isLocked)
         {
@@ -38,24 +36,6 @@ public class SelectItemsTool : Tool {
         }
         else
             return false;
-        /*
-        bool wasSelected = selected != null;
-        Deselect();
-        selected = findNearestItem();
-        if (selected)
-        {
-            if (selected.tag == "Light")
-            {
-                selected.gameObject.GetComponent<MeshRenderer>().material = newMat;
-                selected.gameObject.GetComponent<Light>().color = Color.blue;
-            }
-        }
-        if (selected != null || wasSelected)
-            return true;
-        else
-            return false;
-            */
-
     }
 
     public void Deselect()
