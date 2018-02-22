@@ -4,28 +4,33 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class Doodle : Item {
-    Bounds boundingBox;
+    public Bounds boundingBox;
     LineRenderer lr;
+    int numClicks = 0;
+    [SyncVar]
     Color oldColor;
-    [SyncVar (hook = "Encapsulate")]
-    public Vector3 latestPoint;
+    //[SyncVar (hook = "Encapsulate")]
+    //public Vector3 latestPoint;
     [SyncVar(hook = "finalBounds")]
     public bool isFinished;
+    [SyncVar(hook = "changeWidth")]
+    public float lineWidth;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
-        boundingBox = new Bounds();
         isFinished = false;
+        base.Start();
+        oldColor = Color.red;
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (this.gameObject.GetComponent<NetworkIdentity>().isServer)
+            Debug.Log("Butts");
 	}
 
     public override Vector3 Position(Vector3 contPos)
     {
-        lr = this.gameObject.GetComponent<LineRenderer>();
         int lowestPos = 0;
         float lowDist = Mathf.Abs(Vector3.Distance(lr.GetPosition(0), contPos));
         for (int i = 1; i < lr.positionCount; ++i)
@@ -41,14 +46,11 @@ public class Doodle : Item {
     }
     public override void CmdSelect()
     {
-        oldColor = lr.material.color;
-        lr.material.color = Color.white;
         isLocked = true;
         isSelected = true;
     }
     public override void CmdDeSelect()
     {
-        lr.material.color = oldColor;
         isLocked = false;
         isSelected = false;
     }
@@ -66,10 +68,28 @@ public class Doodle : Item {
             return Vector3.Distance(pos, this.Position(pos));
         return 100000f;
     }
-    [Command]
-    public void CmdChangeWidth(float width)
+    public void changeWidth(float width)
     {
         lr.startWidth = width;
         lr.endWidth = width;
+    }
+    [Command]
+    public void CmdUpdateLineRenderer(Vector3 pos)
+    {
+        if (lr == null) return;
+        lr.positionCount = numClicks + 1;
+        lr.SetPosition(numClicks, pos);
+        Encapsulate(pos);
+        numClicks++;
+    }
+    public override void SelectUtil()
+    {
+        if (!isSelected)
+        {
+            oldColor = lr.material.color;
+            lr.material.color = Color.white;
+        }
+        else
+            lr.material.color = oldColor;
     }
 }

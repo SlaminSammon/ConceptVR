@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ItemBase : MonoBehaviour {
+public class ItemBase : NetworkBehaviour {
 
     public static List<Item> items;
     public static List<Item> sItems;
@@ -21,17 +22,20 @@ public class ItemBase : MonoBehaviour {
 	void Update () {
 
     }
-
+    //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
+    public static void Spawn(GameObject go)
+    {
+        NetworkServer.Spawn(go);
+    }
     public Item findNearestItem(Vector3 position)
     {
         Item nearestItem = null;
         float nearestDistance = 99999;
         float maxDistance = 0.1f;
-        Debug.Log(maxDistance + " is maxdistance");
-
         foreach (Item item in items)
         {
             float distance = Vector3.Distance(position, item.Position(position));
+            Debug.Log(distance);
             if (distance < nearestDistance && distance < maxDistance)
             {
                 nearestItem = item;
@@ -42,10 +46,12 @@ public class ItemBase : MonoBehaviour {
 
         return nearestItem;
     }
+    //Not gonna lie this is pretty ghetto. It works though so i dunno
     public void itemHudManager(Item item)
     {
         if(firstType == "")
         {
+            Debug.Log("The jews caused 9/11");
             firstType = item.GetType().ToString();
             item.Push();
             isHUD = true;
@@ -56,7 +62,6 @@ public class ItemBase : MonoBehaviour {
             Item.Pop();
             isHUD = false;
         }
-        
     }
 
 }

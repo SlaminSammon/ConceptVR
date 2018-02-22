@@ -4,33 +4,40 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class DoodleTool : Tool {
-    private LineRenderer currLineRend;//Line Renderer
-    private int numClicks = 0;
+    LineRenderer currLineRend;//Line Renderer
     public Material material;
-    private List<Color> colors = new List<Color>(new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta });
     Doodle doodle;
-    private int colorIndex;
     public GameObject doodPrefab;
+    int frameCount = 0;
     void Start () {
-        colorIndex = 0;
 	}
 	
 	// Update is called once per frame
 	new void Update () {
-        if (triggerInput && currLineRend != null)
+        if (triggerInput && currLineRend != null && doodle != null && controllerPosition != new Vector3(0,0,0))
         {
-            currLineRend.positionCount = numClicks + 1;
+            if (frameCount == 0)
+            {
+                doodle.CmdUpdateLineRenderer(controllerPosition);
+                frameCount = 3;
+            }
+            else
+                frameCount--;
+            /*currLineRend.positionCount = numClicks + 1;
             currLineRend.SetPosition(numClicks, controllerPosition);
             doodle.latestPoint = controllerPosition;
-            numClicks++;
+            numClicks++;*/
         }
+        
 	}
     public override bool TriggerDown()
     {
-        GameObject go = (GameObject) Network.Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0),0);
+        GameObject go = Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0));
+        go.SetActive(true);
+        ItemBase.Spawn(go);
+        doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
         currLineRend.material = material;
-        numClicks = 0;
         //Makes a thinner line
         currLineRend.startWidth = .01f;
         currLineRend.endWidth = .01f;
@@ -38,6 +45,10 @@ public class DoodleTool : Tool {
     }
     public override bool TriggerUp()
     {
+        if(doodle == false)
+        {
+            Debug.Log("Wut");
+        }
         doodle.isFinished = true;
         return true;
     }
