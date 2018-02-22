@@ -12,6 +12,7 @@ public abstract class Item: NetworkBehaviour  {
     // Use this for initialization
     protected void Start () {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
+        ItemBase.items.Add(this);
 	}
 	
 	// Update is called once per frame

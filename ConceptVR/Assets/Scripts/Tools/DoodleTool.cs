@@ -28,7 +28,6 @@ public class DoodleTool : Tool {
     public override bool TriggerDown()
     {
         GameObject go = (GameObject) Network.Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0),0);
-        ItemBase.items.Add(go.GetComponent<Doodle>());
         currLineRend = go.GetComponent<LineRenderer>();
         currLineRend.material = material;
         numClicks = 0;

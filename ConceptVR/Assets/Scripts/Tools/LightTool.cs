@@ -28,7 +28,6 @@ public class LightTool : Tool {
         obj.transform.position = position;
         float playerScale = Managers.GetComponent<SettingsManager>().playerScale;
         obj.transform.localScale = new Vector3(playerScale, playerScale, playerScale)/50;
-        ItemBase.items.Add(obj.GetComponent<LightItem>());
         return true;
     }
 }
