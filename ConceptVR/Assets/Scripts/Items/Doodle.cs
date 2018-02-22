@@ -52,11 +52,11 @@ public class Doodle : Item {
         isLocked = false;
         isSelected = false;
     }
-    public void Encapsulate()
+    public void Encapsulate(Vector3 pos)
     {
-        boundingBox.Encapsulate(latestPoint);
+        boundingBox.Encapsulate(pos);
     }
-    public void finalBounds()
+    public void finalBounds(bool boolean)
     {
         boundingBox.SetMinMax(boundingBox.min - new Vector3(.1f, .1f, .1f), boundingBox.max + new Vector3(.1f, .1f, .1f));
     }
