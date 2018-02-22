@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public abstract class Item: NetworkBehaviour  {
-    [SyncVar]
+public abstract class Item : NetworkBehaviour {
+    [SyncVar(hook = "OnSelected")]
     public bool isSelected;
     [SyncVar]
     public bool isLocked;
     protected static HUDManager HUD;
     // Use this for initialization
-    protected void Start () {
+    protected void Start() {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
         ItemBase.items.Add(this);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+    }
 
     public virtual float Distance(Vector3 pos) { return -1f; }
     public virtual void CmdSelect() { }
@@ -26,6 +26,8 @@ public abstract class Item: NetworkBehaviour  {
     public virtual void Push() { }
     public virtual void changeColor(Color color) { }
     public virtual Vector3 Position(Vector3 contPos) { return new Vector3(); }
+    public void OnSelected(bool boolean) { this.SelectUtil(); }
+    public virtual void SelectUtil() { }
     public static void Pop()
     {
         HUD.Pop();

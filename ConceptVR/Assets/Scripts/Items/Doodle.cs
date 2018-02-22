@@ -7,6 +7,7 @@ public class Doodle : Item {
     public Bounds boundingBox;
     LineRenderer lr;
     int numClicks = 0;
+    [SyncVar]
     Color oldColor;
     //[SyncVar (hook = "Encapsulate")]
     //public Vector3 latestPoint;
@@ -17,6 +18,7 @@ public class Doodle : Item {
         lr = this.gameObject.GetComponent<LineRenderer>();
         isFinished = false;
         base.Start();
+        oldColor = Color.red;
     }
 	
 	// Update is called once per frame
@@ -43,14 +45,11 @@ public class Doodle : Item {
     }
     public override void CmdSelect()
     {
-        oldColor = lr.material.color;
-        lr.material.color = Color.white;
         isLocked = true;
         isSelected = true;
     }
     public override void CmdDeSelect()
     {
-        lr.material.color = oldColor;
         isLocked = false;
         isSelected = false;
     }
@@ -82,5 +81,15 @@ public class Doodle : Item {
         lr.SetPosition(numClicks, pos);
         Encapsulate(pos);
         numClicks++;
+    }
+    public override void SelectUtil()
+    {
+        if (!isSelected)
+        {
+            oldColor = lr.material.color;
+            lr.material.color = Color.white;
+        }
+        else
+            lr.material.color = oldColor;
     }
 }
