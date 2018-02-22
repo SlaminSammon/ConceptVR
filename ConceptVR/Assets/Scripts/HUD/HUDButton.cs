@@ -20,6 +20,7 @@ public class HUDButton : MonoBehaviour {
 
     public void Start()
     {
+        gameObject.layer = 8;
         GameObject MgrObject = GameObject.Find("Managers");
         if (MgrObject != null)
             HUD = MgrObject.GetComponent<HUDManager>();

@@ -7,6 +7,7 @@ public abstract class Tool : MonoBehaviour {
     public bool gripInput;
     public bool formInput;
     public Vector3 controllerPosition;
+    public Vector3 forward;
     public int playerID;
     public void setPos(Vector3 pos)
     {
@@ -20,6 +21,7 @@ public abstract class Tool : MonoBehaviour {
     public virtual void Update()
     {
         transform.position = controllerPosition;
+        forward = transform.forward;
     }
 
     public virtual bool TriggerDown() { return false; }
