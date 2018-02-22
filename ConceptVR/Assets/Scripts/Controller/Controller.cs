@@ -79,17 +79,6 @@ public abstract class Controller : MonoBehaviour {
         }
         //Debug.Log(currentTool.GetType());
     }
-    /*public Tool getToolByType(Type type)
-    {
-        //Debug.Log("Switching");
-        foreach (Tool t in tools)
-        {
-            if (t.GetType() == type)
-                return t;
-        }
-        //Debug.Log("Not Switching");
-        return currentTool;
-    }*/
     public Tool GetToolByName(String name)
     {
         return tools.transform.Find(name).GetComponent<Tool>();

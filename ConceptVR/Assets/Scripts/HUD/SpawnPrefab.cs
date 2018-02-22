@@ -39,7 +39,6 @@ public class SpawnPrefab : MonoBehaviour {
         if (frame.Hands.Count > 0)
         {
             lHand = frame.Hands[0];
-            // If it is the left hand, make the position of the HUD relative to the local position of the right index(bone3).
             if (lHand.IsLeft)
             {
                 // get the selected prefab from the hud manager and make it appear above the right index finger
@@ -56,22 +55,16 @@ public class SpawnPrefab : MonoBehaviour {
         {
             Leap.Unity.FingerModel finger = collision.gameObject.GetComponentInParent<Leap.Unity.FingerModel>();
 
-            if (finger && finger.fingerType.ToString() == "TYPE_INDEX")
+            if (finger && finger.fingerType.ToString() == "TYPE_INDEX" && rightIndex)
             {
-                if (rightIndex)
-                {
-                    // instantiate new prefab, set local position to be the palm position
-                    this.prefab = Instantiate(externalPrefab);
-                    //this.prefab.transform.localPosition = hUtil.getIndexPos(lHand);
-                    //Debug.Log(hUtil.getIndexPos(lHand));
-                    this.prefab.transform.localPosition = new Vector3(LeapHandController.transform.position.x, LeapHandController.transform.position.y, LeapHandController.transform.position.z) + new Vector3(0.00f, 0.00f, 0.25f) + LeapHandController.transform.rotation * (new Vector3(0.0f, 0.00f, 0.04f));
-                    //Debug.Log(this.prefab.transform.localPosition);
-                    this.prefab.transform.localScale = new Vector3(.02f, .02f, .02f);
-                    // set color of spawned prefab to the current hud color
-                    this.prefab.gameObject.GetComponent<Renderer>().material.color = HUDMgr.getHUDColor();
-                    Mesh mesh = this.prefab.GetComponent<MeshFilter>().mesh;
-                    new Solid(mesh, Matrix4x4.TRS(prefab.transform.position, prefab.transform.rotation, prefab.transform.localScale), prefab.transform.position);
-                }
+                // instantiate new prefab, set local position to be the palm position
+                this.prefab = Instantiate(externalPrefab);
+                this.prefab.transform.localPosition = new Vector3(LeapHandController.transform.position.x, LeapHandController.transform.position.y, LeapHandController.transform.position.z) + new Vector3(0.00f, 0.00f, 0.25f) + LeapHandController.transform.rotation * (new Vector3(0.0f, 0.00f, 0.04f));
+                this.prefab.transform.localScale = new Vector3(.02f, .02f, .02f);
+                // set color of spawned prefab to the current hud color
+                this.prefab.gameObject.GetComponent<Renderer>().material.color = HUDMgr.getHUDColor();
+                Mesh mesh = this.prefab.GetComponent<MeshFilter>().mesh;
+                new Solid(mesh, Matrix4x4.TRS(prefab.transform.position, prefab.transform.rotation, prefab.transform.localScale), prefab.transform.position);
             }
         }
     }
