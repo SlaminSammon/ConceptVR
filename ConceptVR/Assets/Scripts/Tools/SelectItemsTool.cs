@@ -77,6 +77,10 @@ public class SelectItemsTool : Tool {
         ItemBase.sItems.Add(item);
         itemBase.itemHudManager(item);
     }
+    private void OnDisable()
+    {
+        Deselect();
+    }
 
 
 }

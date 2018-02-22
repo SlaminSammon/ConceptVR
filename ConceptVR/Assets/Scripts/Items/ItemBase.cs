@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ItemBase : MonoBehaviour {
+public class ItemBase : NetworkBehaviour {
 
     public static List<Item> items;
     public static List<Item> sItems;
@@ -21,17 +22,21 @@ public class ItemBase : MonoBehaviour {
 	void Update () {
 
     }
-
+    public static void Spawn(GameObject go)
+    {
+        NetworkServer.Spawn(go);
+        foreach (KeyValuePair<UnityEngine.Networking.NetworkInstanceId, UnityEngine.Networking.NetworkIdentity> kvp in NetworkServer.objects)
+            Debug.Log(kvp);
+    }
     public Item findNearestItem(Vector3 position)
     {
         Item nearestItem = null;
         float nearestDistance = 99999;
         float maxDistance = 0.1f;
-        Debug.Log(maxDistance + " is maxdistance");
-
         foreach (Item item in items)
         {
             float distance = Vector3.Distance(position, item.Position(position));
+            Debug.Log(distance);
             if (distance < nearestDistance && distance < maxDistance)
             {
                 nearestItem = item;

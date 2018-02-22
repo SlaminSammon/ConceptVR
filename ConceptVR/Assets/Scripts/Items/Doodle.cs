@@ -6,22 +6,23 @@ using UnityEngine.Networking;
 public class Doodle : Item {
     public Bounds boundingBox;
     LineRenderer lr;
+    int numClicks = 0;
     Color oldColor;
-    [SyncVar (hook = "Encapsulate")]
-    public Vector3 latestPoint;
+    //[SyncVar (hook = "Encapsulate")]
+    //public Vector3 latestPoint;
     [SyncVar(hook = "finalBounds")]
     public bool isFinished;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
-        boundingBox = new Bounds();
         isFinished = false;
         base.Start();
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (this.gameObject.GetComponent<NetworkIdentity>().isServer)
+            Debug.Log("Butts");
 	}
 
     public override Vector3 Position(Vector3 contPos)
@@ -55,7 +56,7 @@ public class Doodle : Item {
     }
     public void Encapsulate(Vector3 pos)
     {
-        boundingBox.Encapsulate(latestPoint);
+        boundingBox.Encapsulate(pos);
     }
     public void finalBounds(bool boolean)
     {
@@ -72,5 +73,14 @@ public class Doodle : Item {
     {
         lr.startWidth = width;
         lr.endWidth = width;
+    }
+    [Command]
+    public void CmdUpdateLineRenderer(Vector3 pos)
+    {
+        if (lr == null) return;
+        lr.positionCount = numClicks + 1;
+        lr.SetPosition(numClicks, pos);
+        Encapsulate(pos);
+        numClicks++;
     }
 }

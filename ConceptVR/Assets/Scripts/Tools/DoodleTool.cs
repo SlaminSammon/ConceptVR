@@ -7,7 +7,6 @@ public class DoodleTool : Tool {
     private LineRenderer currLineRend;//Line Renderer
     private int numClicks = 0;
     public Material material;
-    private List<Color> colors = new List<Color>(new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta });
     Doodle doodle;
     private int colorIndex;
     public GameObject doodPrefab;
@@ -17,19 +16,20 @@ public class DoodleTool : Tool {
 	
 	// Update is called once per frame
 	new void Update () {
-        if (triggerInput && currLineRend != null && doodle != null)
+        if (triggerInput && currLineRend != null && doodle != null && controllerPosition != new Vector3(0,0,0))
         {
-            currLineRend.positionCount = numClicks + 1;
+            doodle.CmdUpdateLineRenderer(controllerPosition);
+            /*currLineRend.positionCount = numClicks + 1;
             currLineRend.SetPosition(numClicks, controllerPosition);
             doodle.latestPoint = controllerPosition;
-            numClicks++;
+            numClicks++;*/
         }
 	}
     public override bool TriggerDown()
     {
         GameObject go = Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0));
         go.SetActive(true);
-        NetworkServer.Spawn(go);
+        ItemBase.Spawn(go);
         doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
         currLineRend.material = material;
