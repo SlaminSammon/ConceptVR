@@ -14,9 +14,6 @@ public class SettingsManager : MonoBehaviour {
     public float playerScale = 1f;
 
     GameObject LMHeadMountedRig;
-    float startLMx;
-    float startLMy;
-    float startLMz;
 
     
     void Start () {
@@ -24,15 +21,11 @@ public class SettingsManager : MonoBehaviour {
 
         LMHeadMountedRig = GameObject.Find("LMHeadMountedRig");
         playerScale = 1f;
-        startLMx = LMHeadMountedRig.transform.position.x;
-        startLMy = LMHeadMountedRig.transform.position.y;
-        startLMz = LMHeadMountedRig.transform.position.z;
     }
     
     void Update () {
         playerScale = scaleSlider.GetComponent<HUDSlider>().value * SCALE_FACTOR + 1f;
         LMHeadMountedRig.transform.localScale = new Vector3(playerScale,playerScale,playerScale);
-        LMHeadMountedRig.transform.position = new Vector3(playerScale*startLMx, playerScale*startLMy, playerScale);
     }
 
     public Vector3 snapToGrid(Vector3 v)

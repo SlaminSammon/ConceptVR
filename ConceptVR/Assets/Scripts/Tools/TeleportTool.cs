@@ -18,7 +18,6 @@ public class TeleportTool : Tool {
 
     // Use this for initialization
     void Start () {
-        LMHeadMountedRig.transform.position = new Vector3(10f, 10.05f, 10f);
         laser = Instantiate(laserPrefab);
         teleportCircle = Instantiate(teleportCircle);
 	}
@@ -63,12 +62,18 @@ public class TeleportTool : Tool {
         Debug.Log("Teleport to " + teleportCircle.transform.position);
     }
 
-    public override bool Tap(Vector3 position)
+    public override bool Fire()
     {
         if (canTeleport)
         {
             Teleport();
         }
-        return base.Tap(position);
+        return true;
+    }
+
+    private void OnDisable()
+    {
+        laser.SetActive(false);
+        teleportCircle.SetActive(false);
     }
 }

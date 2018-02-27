@@ -32,4 +32,5 @@ public abstract class Tool : MonoBehaviour {
     public virtual bool Swipe() { return false; }
     public virtual void FreeForm(LeapTrackedController ltc) {}
     public virtual void FreeFormEnd() {}
+    public virtual bool Fire() { return false; }
 }

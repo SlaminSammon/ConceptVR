@@ -17,6 +17,11 @@ public class SwapToolButton : ToggleButton {
 
     public override void ToggleOn()
     {
+        if (controller == null)
+        {
+            controller = GameObject.Find("LoPoly_Rigged_Hand_Right").GetComponent<handController>();
+        }
+
         controller.changeTool(tool);
         foreach (SwapToolButton b in transform.parent.GetComponentsInChildren<SwapToolButton>())
             if (b.toggled && b != this)

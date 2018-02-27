@@ -19,11 +19,13 @@ public class handController: Controller {
         leapControl.swipeMade += Swipe;
         leapControl.freeForm += freeForm;
         leapControl.freeFormEnd += freeFormEnd;
+        leapControl.fireGun += fireGun;
     }
 
     // Update is called once per frame
     void Update () {
-        currentTool.setPos(leapControl.position);
+        if(currentTool != null)
+            currentTool.setPos(leapControl.position);
         //Check to see if a pinch is being held.
         if (currentTool.GetType() == typeof(FreeFormTool))
         {
@@ -102,6 +104,14 @@ public class handController: Controller {
     {
         currentTool.formInput = false;
         changeTool(lastTool.GetType().ToString());
+    }
+    protected void fireGun()
+    {
+        if (currentTool.Fire())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.Fire())
+                return;
     }
 
 }
