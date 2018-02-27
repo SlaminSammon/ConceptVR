@@ -5,16 +5,19 @@ using UnityEngine;
 public class SettingsManager : MonoBehaviour {
 
     const float SCALE_FACTOR = 2.75f;
+
+    public float gridSnap = 1f/64f;
+    public float rotationSnap = 15f;
+    public bool snapEnabled = false;
     public GameObject scaleSlider;
-    public float playerScale;
+    public float playerScale = 1f;
 
     GameObject LMHeadMountedRig;
     float startLMx;
     float startLMy;
     float startLMz;
 
-
-    // Use this for initialization
+    
     void Start () {
         LMHeadMountedRig = GameObject.Find("LMHeadMountedRig");
         playerScale = 1f;
@@ -23,8 +26,7 @@ public class SettingsManager : MonoBehaviour {
         startLMz = LMHeadMountedRig.transform.position.z;
 
     }
-
-    // Update is called once per frame
+    
     void Update () {
         playerScale = scaleSlider.GetComponent<HUDSlider>().value * SCALE_FACTOR + 1f;
         LMHeadMountedRig.transform.localScale = new Vector3(playerScale,playerScale,playerScale);

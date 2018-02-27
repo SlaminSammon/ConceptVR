@@ -10,7 +10,7 @@ public class ExtrudeTool : MoveTool {
             return false;
         List<DCGElement> eElements = new List<DCGElement>();
         foreach(DCGElement e in sElements){
-            e.Extrude();
+            eElements.AddRange(e.Extrude());
         }
 
         sElements = eElements;
