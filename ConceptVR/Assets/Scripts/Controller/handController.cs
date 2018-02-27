@@ -19,6 +19,7 @@ public class handController: Controller {
         leapControl.swipeMade += Swipe;
         leapControl.freeForm += freeForm;
         leapControl.freeFormEnd += freeFormEnd;
+        leapControl.fireGun += fireGun;
     }
 
     // Update is called once per frame
@@ -103,6 +104,14 @@ public class handController: Controller {
     {
         currentTool.formInput = false;
         changeTool(lastTool.GetType().ToString());
+    }
+    protected void fireGun()
+    {
+        if (currentTool.Fire())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.Fire())
+                return;
     }
 
 }
