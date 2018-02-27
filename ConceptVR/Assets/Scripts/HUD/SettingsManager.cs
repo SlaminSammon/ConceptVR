@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SettingsManager : MonoBehaviour {
+    public static SettingsManager sm;
 
     const float SCALE_FACTOR = 2.75f;
 
@@ -19,17 +20,25 @@ public class SettingsManager : MonoBehaviour {
 
     
     void Start () {
+        sm = this;
+
         LMHeadMountedRig = GameObject.Find("LMHeadMountedRig");
         playerScale = 1f;
         startLMx = LMHeadMountedRig.transform.position.x;
         startLMy = LMHeadMountedRig.transform.position.y;
         startLMz = LMHeadMountedRig.transform.position.z;
-
     }
     
     void Update () {
         playerScale = scaleSlider.GetComponent<HUDSlider>().value * SCALE_FACTOR + 1f;
         LMHeadMountedRig.transform.localScale = new Vector3(playerScale,playerScale,playerScale);
         LMHeadMountedRig.transform.position = new Vector3(playerScale*startLMx, playerScale*startLMy, playerScale);
+    }
+
+    public Vector3 snapToGrid(Vector3 v)
+    {
+        return new Vector3(Mathf.Round(v.x / gridSnap) * gridSnap, 
+            Mathf.Round(v.y / gridSnap) * gridSnap, 
+            Mathf.Round(v.z / gridSnap) * gridSnap);
     }
 }
