@@ -18,7 +18,6 @@ public class TeleportTool : Tool {
 
     // Use this for initialization
     void Start () {
-        LMHeadMountedRig.transform.position = new Vector3(10f, 10.05f, 10f);
         laser = Instantiate(laserPrefab);
         teleportCircle = Instantiate(teleportCircle);
 	}

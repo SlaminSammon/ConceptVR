@@ -32,7 +32,6 @@ public class SettingsManager : MonoBehaviour {
     void Update () {
         playerScale = scaleSlider.GetComponent<HUDSlider>().value * SCALE_FACTOR + 1f;
         LMHeadMountedRig.transform.localScale = new Vector3(playerScale,playerScale,playerScale);
-        LMHeadMountedRig.transform.position = new Vector3(playerScale*startLMx, playerScale*startLMy, playerScale);
     }
 
     public Vector3 snapToGrid(Vector3 v)
