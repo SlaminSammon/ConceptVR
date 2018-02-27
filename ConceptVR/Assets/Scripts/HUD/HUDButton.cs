@@ -67,6 +67,7 @@ public class HUDButton : MonoBehaviour {
 
     public void OnSubTriggerEnter(Collider other, string triggerName)
     {
+        Debug.Log(other.gameObject.name);
         if (triggerName == "PressCollider" && Time.time - lastPressTime > coolDown)
         {
             animator.Play("Press");

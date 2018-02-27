@@ -70,8 +70,6 @@ public abstract class Controller : MonoBehaviour {
         currentTool = tools.transform.Find(toolName).GetComponent<Tool>();
         //Debug.Log(toolName);
         
-        Debug.Log("Cur " + currentTool.GetType());
-        Debug.Log("Last " + lastTool.GetType());
         if (currentTool.GetType() != lastTool.GetType())
         {
             deactivateLastTool(lastTool);

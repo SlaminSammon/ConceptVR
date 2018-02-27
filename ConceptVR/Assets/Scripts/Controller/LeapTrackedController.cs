@@ -84,6 +84,7 @@ public class LeapTrackedController : MonoBehaviour
     public event GestureEventHandler freeForm;
     public event GestureEventHandler freeFormEnd;
     public event GestureEventHandler freeFormFailure;
+    public event GestureEventHandler fireGun;
     public event GesturePositionEventHandler tapMade;
     #endregion
     #region Forming Specific Members
@@ -110,6 +111,11 @@ public class LeapTrackedController : MonoBehaviour
     public PinchDetector rightPinchDetect;
     public PinchDetector leftPinchDetect;
     #endregion
+    #region Teleport Gun Detectors
+    public DetectorLogicGate gunReady;
+    public DetectorLogicGate gunFire;
+    bool cocked = false;
+    #endregion
     // Use this for initialization
     void Start()
     {
@@ -127,6 +133,8 @@ public class LeapTrackedController : MonoBehaviour
             palmDirectorLeftUp.OnActivate.AddListener(freeFormEndLeft);
             rightPinchDetect.OnActivate.AddListener(OnPinchHeld);
             rightPinchDetect.OnDeactivate.AddListener(OnPinchGone);
+            gunReady.OnActivate.AddListener(CockGun);
+            gunFire.OnActivate.AddListener(FireGun);
         }
         else if(handedness == "Left")
         {
@@ -471,4 +479,15 @@ public class LeapTrackedController : MonoBehaviour
 
     #endregion
 
+    #region Gun Event Handlers
+    public void CockGun()
+    {
+        cocked = true;
+    }
+    public void FireGun()
+    {
+        cocked = false;
+        fireGun();
+    }
+    #endregion
 }

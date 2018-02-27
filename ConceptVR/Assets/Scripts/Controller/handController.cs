@@ -23,7 +23,8 @@ public class handController: Controller {
 
     // Update is called once per frame
     void Update () {
-        currentTool.setPos(leapControl.position);
+        if(currentTool != null)
+            currentTool.setPos(leapControl.position);
         //Check to see if a pinch is being held.
         if (currentTool.GetType() == typeof(FreeFormTool))
         {
