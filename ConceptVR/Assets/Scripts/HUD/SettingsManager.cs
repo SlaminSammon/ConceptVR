@@ -24,9 +24,6 @@ public class SettingsManager : MonoBehaviour {
 
         LMHeadMountedRig = GameObject.Find("LMHeadMountedRig");
         playerScale = 1f;
-        startLMx = LMHeadMountedRig.transform.position.x;
-        startLMy = LMHeadMountedRig.transform.position.y;
-        startLMz = LMHeadMountedRig.transform.position.z;
     }
     
     void Update () {
