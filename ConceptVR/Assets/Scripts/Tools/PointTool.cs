@@ -17,7 +17,7 @@ public class PointTool : Tool {
 	new void Update () {
         base.Update();
         if (triggerInput && grabbedPoint != null)
-            grabbedPoint.setPosition(startPos + controllerPosition - grabPos);
+            grabbedPoint.setPositionSnap(startPos + controllerPosition - grabPos);
 	}
 
     public override bool TriggerDown()
