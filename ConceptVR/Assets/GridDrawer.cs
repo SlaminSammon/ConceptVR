@@ -7,9 +7,12 @@ public class GridDrawer : MonoBehaviour {
     Vector3 center;
     public GameObject target;
 
+    List<LineRenderer> lines;
+
 	// Use this for initialization
 	void Start () {
-		
+        lines = new List<LineRenderer>();
+        SetScale(SettingsManager.sm.gridSnap);
 	}
 	
 	// Update is called once per frame
@@ -18,10 +21,45 @@ public class GridDrawer : MonoBehaviour {
             SetCenter(target.transform.position);
 	}
 
+    public void SetScale(float scale)
+    {
+        foreach (LineRenderer line in lines)
+            Destroy(line.gameObject);
+        lines = new List<LineRenderer>();
+        for (float u = -.5f/scale; u <= .5f / scale; ++u)
+            for (float v = -.5f/scale; v <= .5f / scale; ++v)
+            {
+                float a = u * scale;
+                float b = v * scale;
+                float c = .5f / scale;
+                addGridLine(new Vector3(a, b, c), new Vector3(a, b, -c));
+                addGridLine(new Vector3(a, c, b), new Vector3(a, -c, b));
+                addGridLine(new Vector3(c, a, b), new Vector3(-c, a, b));
+            }
+    }
+
+    GameObject addGridLine(Vector3 pos1, Vector3 pos2)
+    {
+        GameObject lrg = new GameObject();
+        lrg.transform.parent = transform;
+        LineRenderer lr = lrg.AddComponent<LineRenderer>();
+        Vector3[] pArr = new Vector3[2];
+        pArr[0] = pos1;
+        pArr[1] = pos2;
+        lr.positionCount = 2;
+        lr.SetPositions(pArr);
+        lr.material = glowMat;
+        lr.startWidth = SettingsManager.sm.gridSnap/20f;
+        lr.endWidth = SettingsManager.sm.gridSnap/20f;
+
+        lines.Add(lr);
+        return lrg;
+    }
+
     public void SetCenter(Vector3 pos)
     {
         center = pos;
-        transform.position = new Vector3(Mathf.Floor(pos.x*5f)/5f, Mathf.Floor(pos.y*5f)/5f, Mathf.Floor(pos.z*5f)/5f);
+        transform.position = SettingsManager.sm.snapToGrid(pos);
         glowMat.SetVector("_Center", new Vector4(center.x, center.y, center.z, 0));
     }
 }
