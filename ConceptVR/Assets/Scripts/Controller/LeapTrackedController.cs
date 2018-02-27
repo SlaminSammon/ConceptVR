@@ -266,6 +266,7 @@ public class LeapTrackedController : MonoBehaviour
     #region Pinch and Grab Event Handlers
     public void OnPinchHeld()
     {
+        position = util.weightedPos(hand);
         pinchHeld = true;
         pinchMade();
     }
