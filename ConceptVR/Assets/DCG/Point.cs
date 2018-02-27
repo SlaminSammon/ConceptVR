@@ -109,6 +109,14 @@ public class Point : DCGElement
             }
     }
 
+    public void setPositionSnap(Vector3 value)
+    {
+        if (SettingsManager.sm.snapEnabled)
+            setPosition(SettingsManager.sm.snapToGrid(value));
+        else
+            setPosition(value);
+    }
+
     public void Merge(Point that)
     {
         foreach (Edge e in that.edges)
