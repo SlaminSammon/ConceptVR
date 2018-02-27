@@ -14,9 +14,6 @@ public class SettingsManager : MonoBehaviour {
     public float playerScale = 1f;
 
     GameObject LMHeadMountedRig;
-    float startLMx;
-    float startLMy;
-    float startLMz;
 
     
     void Start () {
