@@ -96,6 +96,7 @@ public class Doodle : Item {
     }
     public override void CmdDeSelect()
     {
+        base.CmdDeSelect();
         isLocked = false;
         isSelected = false;
     }
