@@ -17,12 +17,15 @@ public class PlaceTextButton : HUDButton {
 
     public override void OnPress()
     {
-        GameObject generatedText = GameObject.Instantiate(textBox);
-        generatedText.name = "GeneratedText - " + generatedText.GetComponent<TextMesh>().text;
-        generatedText.transform.position = textBox.transform.position;
-        generatedText.transform.rotation = textBox.transform.rotation;
-        // clear the current text in the textbox
-        textBox.GetComponent<TextMesh>().text = "";
+        if (textBox.GetComponent<TextMesh>().text != null)
+        {
+            GameObject generatedText = GameObject.Instantiate(textBox);
+            generatedText.name = "GeneratedText - " + generatedText.GetComponent<TextMesh>().text;
+            generatedText.transform.position = textBox.transform.position;
+            generatedText.transform.rotation = textBox.transform.rotation;
+            // clear the current text in the textbox
+            textBox.GetComponent<TextMesh>().text = "";
+        }
 
         base.OnPress();
     }
