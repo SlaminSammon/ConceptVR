@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SmoothQuadFace : Face
 {
-    public int resolution = 32;
+    public int resolution = 20;
 
     Point[,] control;
 
@@ -95,18 +95,26 @@ public class SmoothQuadFace : Face
                 tris.Add(c3); tris.Add(c2); tris.Add(c1);
             }
 
+        int vertCount = verts.Count;
+        mesh.SetVertices(verts);
+        mesh.SetTriangles(tris, 0);
+        mesh.RecalculateNormals();
+        normals = new List<Vector3>(mesh.normals);
+
         //generate backface
         for (int i = 0; i < 6 * resolution * resolution; i += 3)
         {
-            //tris.Add(tris[i]);
-            //tris.Add(tris[i+2]);
-            //tris.Add(tris[i+1]);
+            tris.Add(tris[i] + vertCount);
+            tris.Add(tris[i+2] + vertCount);
+            tris.Add(tris[i+1] + vertCount);
+            verts.Add(verts[i/3]);
+            normals.Add(-normals[i/3]);
         }
 
 
         mesh.SetVertices(verts);
         mesh.SetTriangles(tris, 0);
-        mesh.RecalculateNormals();
+        mesh.SetNormals(normals);
         mesh.RecalculateBounds();
     }
     

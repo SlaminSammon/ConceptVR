@@ -55,7 +55,7 @@ public class SmoothEdge : Edge {
         return eElem;
     }
 
-    static int curveRes = 50;
+    static int curveRes = 20;
     static int roundRes = 10;
     static float roundRad = .005f;
     public new void updateMesh()
