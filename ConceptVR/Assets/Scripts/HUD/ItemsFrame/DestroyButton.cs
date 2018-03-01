@@ -18,11 +18,11 @@ public class DestroyButton : HUDButton {
 
     public override void OnPress()
     {
-        foreach(Item item in ItemBase.sItems)
+        ItemBase.sItems.Clear();
+        foreach (Item item in ItemBase.sItems)
         {
             Destroy(item.gameObject);
         }
-        ItemBase.sItems.Clear();
         Item.Pop();
         /*
         GameObject selectedItem = GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().selected;
