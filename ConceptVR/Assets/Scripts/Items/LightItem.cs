@@ -19,10 +19,15 @@ public class LightItem : Item
 
     public override void CmdSelect()
     {
+        isLocked = true;
+        isSelected = true;
         this.gameObject.GetComponent<MeshRenderer>().material = newMat;
     }
     public override void CmdDeSelect()
     {
+        base.CmdDeSelect();
+        isLocked = false;
+        isSelected = false;
         this.gameObject.GetComponent<MeshRenderer>().material = selectedMaterial;
         this.gameObject.GetComponent<Light>().color = selectedLightColor;
     }
