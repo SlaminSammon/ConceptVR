@@ -35,7 +35,6 @@ public class ItemBase : NetworkBehaviour {
         foreach (Item item in items)
         {
             float distance = Vector3.Distance(position, item.Position(position));
-            Debug.Log(distance);
             if (distance < nearestDistance && distance < maxDistance)
             {
                 nearestItem = item;

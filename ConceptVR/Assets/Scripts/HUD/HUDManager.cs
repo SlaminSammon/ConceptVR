@@ -18,6 +18,10 @@ public class HUDManager : MonoBehaviour
     List<HUDView> viewList;
     HandsUtil util;
     public HUDFrame mainFrame;
+    public GameObject frames;
+
+    [HideInInspector]
+    public List<HUDFrame> framesList;
 
     Leap.Controller leapcontroller;
     Leap.Frame frame;
@@ -50,6 +54,11 @@ public class HUDManager : MonoBehaviour
         placed = false;
 
         hudManager = this;
+
+        framesList.Add(frames.transform.Find("ToolsFrame").GetComponent<HUDFrame>());
+        framesList.Add(frames.transform.Find("PrefabsFrame").GetComponent<HUDFrame>());
+        framesList.Add(frames.transform.Find("SettingsFrame").GetComponent<HUDFrame>());
+
     }
 
     // Update is called once per frame

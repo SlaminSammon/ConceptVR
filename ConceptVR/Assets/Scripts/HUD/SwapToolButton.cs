@@ -23,11 +23,14 @@ public class SwapToolButton : ToggleButton {
         }
 
         controller.changeTool(tool);
+        ToggleOffAllOtherTools();
+        /*
         foreach (SwapToolButton b in transform.parent.GetComponentsInChildren<SwapToolButton>())
             if (b.toggled && b != this)
             {
                 b.OnPress();
             }
+            */
     }
     public override void OnPress()
     {
@@ -35,5 +38,19 @@ public class SwapToolButton : ToggleButton {
         if (go.transform.Find(tool).gameObject.activeSelf)
             return;
         base.OnPress();
+    }
+
+    private void ToggleOffAllOtherTools()
+    {
+        foreach (HUDFrame frame in GameObject.Find("Managers").GetComponent<HUDManager>().framesList)
+        {
+            foreach(SwapToolButton b in frame.GetComponentsInChildren<SwapToolButton>())
+            {
+                if (b.toggled && b != this)
+                {
+                    b.OnPress();
+                }
+            }
+        }
     }
 }
