@@ -8,7 +8,7 @@ public class DestroyButton : HUDButton {
     SelectItemsTool selectTool;
 	// Use this for initialization
 	void Start () {
-		
+        itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
 	}
 	
 	// Update is called once per frame
@@ -25,6 +25,7 @@ public class DestroyButton : HUDButton {
         }
         ItemBase.sItems.Clear();
         Item.Pop();
+        itemBase.firstType = "";
         /*
         GameObject selectedItem = GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().selected;
         GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().Deselect();
