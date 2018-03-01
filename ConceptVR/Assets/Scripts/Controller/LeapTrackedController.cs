@@ -236,7 +236,6 @@ public class LeapTrackedController : MonoBehaviour
         {
             if (Time.time > tapCooldownTime)
             {
-                Debug.Log("Tap");
                 tapMade(frameQueue.ToArray()[frameQueue.Count - 2].index.tipPosition);
                 tapCooldownTime = Time.time + tapCooldown;
             }
@@ -451,10 +450,12 @@ public class LeapTrackedController : MonoBehaviour
     #region FreeForm Event Handlers
     public void freeFormRight()
     {
+        Debug.Log("Right Hand Start");
         rightStart = true;
     }
     public void freeFormLeft()
     {
+        Debug.Log("Left Hand Start");
         leftStart = true;
     }
 

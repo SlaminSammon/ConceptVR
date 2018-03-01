@@ -19,16 +19,18 @@ public class FreeFormTool : Tool {
     private List<Point> frontFacePoints;
     private LeapTrackedController leapControl;
     private List<Face> faces;
+    public bool type;
     #endregion
 
     // Use this for initialization
-    new void Start () {
+    void Start () {
 		rightPoints = new List<Vector3> ();
 		leftPoints = new List<Vector3> ();
         util = new HandsUtil();
         finalPoints = new List<Vector3>();
         backFacePoints = new List<Point>();
         frontFacePoints = new List<Point>();
+        type = false;
     }
 	
 	// Update is called once per frame
@@ -94,7 +96,10 @@ public class FreeFormTool : Tool {
         leftPoints.RemoveAt(leftPoints.Count-1);
         #endregion
         Bezerp();
-        generateFreeFormSolidCubic();
+        if (type)
+            generateFreeFormSolid();
+        else
+            generateFreeFormQuad();
         #region Clean up
         Destroy(freeFormLine.gameObject);
         Destroy(rightFreeFormLine.gameObject);
@@ -136,18 +141,15 @@ public class FreeFormTool : Tool {
 
     }
     /*  generateFreeFormSolidCubic
-     *  Input - none
+     *  Input -
      *  Output - Generated Solid
      *  Takes the drawn line made by the user, and turns it into a cubic solid
      */
-    public void generateFreeFormSolidCubic()
+    public void generateFreeFormSolid()
     {
         Vector3 midPoint = findCenter(finalPoints);
         Vector3 backMid = normalize(finalPoints)/4;
-        Debug.Log("mid " + midPoint);
         Vector3 backDiff = midPoint - backMid;
-        Debug.Log("midb " + backMid);
-        Debug.Log("backF " + backDiff);
         Vector3 frontMid = midPoint + backDiff;
         #region Back Face Generation
         foreach (Vector3 v in finalPoints)
@@ -191,11 +193,24 @@ public class FreeFormTool : Tool {
                 tempList = new List<Edge>() {  frontEdges[i], backEdges[i],sideEdges[i+1], sideEdges[i] };
             }
             new Face(tempList);
-                
+
         }
         //new Solid(faces);
         #endregion
         
+    }
+    public void generateFreeFormQuad()
+    {
+        Vector3 midPoint = findCenter(finalPoints);
+        Vector3 backMid = normalize(finalPoints) / 4;
+        Vector3 backDiff = midPoint - backMid;
+        Vector3 frontMid = midPoint + backDiff;
+        Debug.Log("BackMid = " + midPoint + "  FrontMid = " + frontMid); 
+        List<Point> points = new List<Point>();
+        foreach (Vector3 v in finalPoints)
+            points.Add(new Point(v));
+        generateQuads(points, backMid);
+        generateQuads(points, frontMid);
     }
     public Vector3 findCenter(List<Vector3> vecs)
     {
@@ -224,5 +239,23 @@ public class FreeFormTool : Tool {
         sum += Vector3.Cross(diffA,(vecs[vecs.Count-1]-vecs[0])).normalized;
         return sum.normalized;
 
+    }
+
+    public void generateQuads(List<Point> points, Vector3 center)
+    {
+        Point cent = new Point(center);
+        for (int p = 0; p < points.Count - 2; ++p)
+            new SmoothQuadFace(genQuad(points[p], points[p + 1], cent));
+        new SmoothQuadFace(genQuad(points[points.Count - 1], points[0], cent));
+        //cent.Remove();
+    }
+    public List<Edge> genQuad(Point p, Point pn, Point center)
+    {
+        List<Edge> quad = new List<Edge>();
+        quad.Add(new Edge(p, pn));
+        quad.Add(new Edge(pn, center));
+        quad.Add(new Edge(center, center));
+        quad.Add(new Edge(center, p));
+        return quad;
     }
 }

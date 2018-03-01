@@ -19,6 +19,7 @@ public abstract class Controller : MonoBehaviour {
             ToolQueue.Add(new BaseTool());
         }
         currentTool = ToolQueue[0];
+        tools = this.gameObject.transform.parent.gameObject.transform.Find("Tools").gameObject;
     }
 	
 	// Update is called once per frame
