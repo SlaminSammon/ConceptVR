@@ -151,6 +151,7 @@ public class FreeFormTool : Tool {
         Vector3 backMid = normalize(finalPoints)/4;
         Vector3 backDiff = midPoint - backMid;
         Vector3 frontMid = midPoint + backDiff;
+        Debug.Log("BackMid = " + backMid + "  FrontMid = " + frontMid);
         #region Back Face Generation
         foreach (Vector3 v in finalPoints)
             backFacePoints.Add(new Point(v - backMid));
@@ -204,13 +205,13 @@ public class FreeFormTool : Tool {
         Vector3 midPoint = findCenter(finalPoints);
         Vector3 backMid = normalize(finalPoints) / 4;
         Vector3 backDiff = midPoint - backMid;
-        Vector3 frontMid = midPoint + backDiff;
-        Debug.Log("BackMid = " + midPoint + "  FrontMid = " + frontMid); 
+        Vector3 frontDiff = midPoint + backMid;
+        //Debug.Log("BackMid = " + backMid + "  FrontMid = " + frontMid); 
         List<Point> points = new List<Point>();
         foreach (Vector3 v in finalPoints)
             points.Add(new Point(v));
-        generateQuads(points, backMid);
-        generateQuads(points, frontMid);
+        generateQuads(points, backDiff,midPoint);
+        generateQuads(points, frontDiff, midPoint);
     }
     public Vector3 findCenter(List<Vector3> vecs)
     {
@@ -241,21 +242,33 @@ public class FreeFormTool : Tool {
 
     }
 
-    public void generateQuads(List<Point> points, Vector3 center)
+    public void generateQuads(List<Point> points, Vector3 center, Vector3 mid)
     {
         Point cent = new Point(center);
-        for (int p = 0; p < points.Count - 2; ++p)
-            new SmoothQuadFace(genQuad(points[p], points[p + 1], cent));
-        new SmoothQuadFace(genQuad(points[points.Count - 1], points[0], cent));
+        for (int p = 0; p <= points.Count - 2; ++p)
+            genQuad(points[p], points[p + 1], cent,mid);
+        genQuad(points[points.Count - 1], points[0], cent,mid);
         //cent.Remove();
     }
-    public List<Edge> genQuad(Point p, Point pn, Point center)
+    public void genQuad(Point p, Point pn, Point center, Vector3 mid)
     {
-        List<Edge> quad = new List<Edge>();
-        quad.Add(new Edge(p, pn));
-        quad.Add(new Edge(pn, center));
-        quad.Add(new Edge(center, center));
-        quad.Add(new Edge(center, p));
-        return quad;
+        List<Edge> edges = new List<Edge>();
+        edges.Add(controlPointCent(p, center, mid));
+        edges.Add(new SmoothEdge(new List<Point> { p, pn }));
+        edges.Add(controlPointCent(pn, center, mid));
+        edges.Add(new SmoothEdge(new List<Point> { center, center }));
+        new SmoothQuadFace(edges);
+    }
+    public SmoothEdge controlPointCent(Point p, Point cent, Vector3 mid)
+    {
+        Vector3 a = cent.position - mid;
+        Vector3 b = p.position - mid;
+        Vector3 c = Vector3.Cross(p.position, a).normalized;
+        Vector3 d = Vector3.Cross(c, a).normalized;
+        Vector3 e = Vector3.Lerp(mid, cent.position, .5f);
+        Vector3 f = Vector3.Lerp(mid, p.position, .5f);
+        Point ca = new Point(p.position + e);
+        Point cb = new Point(cent.position + f);
+        return new SmoothEdge(new List<Point> { p, ca, cb, cent });
     }
 }

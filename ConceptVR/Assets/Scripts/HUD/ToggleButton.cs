@@ -13,6 +13,7 @@ public class ToggleButton : HUDButton {
 
     public override void OnPress()
     {
+        Debug.Log(this.name);
         if (toggled)
         {
             toggled = false;
