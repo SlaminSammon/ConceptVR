@@ -43,7 +43,7 @@ public class FreeFormTool : Tool {
                 Destroy(rightFreeFormLine.gameObject);
                 leapControl.freeFormFailureHandler();
             }
-            if (frameCount >=17)
+            if (frameCount >=10)
             {
                 Debug.Log(frameCount);
                 //Add points to the line renderer and the point lists
@@ -122,9 +122,9 @@ public class FreeFormTool : Tool {
         Vector3 virtL = leftPoints[1] + (leftPoints[1] - leftPoints[2]);
         Vector3 virtR = rightPoints[0] + (rightPoints[0] - rightPoints[1]);
         Vector3[] startVerts = { leftPoints[0], virtL, virtR, rightPoints[0] };
-        rightPoints.Insert(0,GeometryUtil.Bezerp(startVerts,.75f));
-        rightPoints.Insert(0, GeometryUtil.Bezerp(startVerts, .5f));
-        rightPoints.Insert(0, GeometryUtil.Bezerp(startVerts, .25f));
+        for(float f = .9f; f>=.1f; f -= .1f){
+            rightPoints.Insert(0,GeometryUtil.Bezerp(startVerts,f));
+        }
         #endregion
 
         #region End Curve Bezier
@@ -132,9 +132,9 @@ public class FreeFormTool : Tool {
         virtR = rightPoints[rightPoints.Count - 1] + (rightPoints[rightPoints.Count - 1] - rightPoints[rightPoints.Count - 2]);
         Vector3[] endVerts = { leftPoints[leftPoints.Count - 1], virtL, virtR, rightPoints[rightPoints.Count - 1] };
 
-        rightPoints.Add(GeometryUtil.Bezerp(endVerts, .75f));
-        rightPoints.Add(GeometryUtil.Bezerp(endVerts, .5f));
-        rightPoints.Add(GeometryUtil.Bezerp(endVerts, .25f));
+        for(float f = .9f; f>=.1f; f -= .1f){
+            rightPoints.Insert(0,GeometryUtil.Bezerp(endVerts,f));
+        }
         #endregion
         finalPoints.AddRange(rightPoints);
         finalPoints.AddRange(Enumerable.Reverse(leftPoints));
@@ -253,22 +253,22 @@ public class FreeFormTool : Tool {
     public void genQuad(Point p, Point pn, Point center, Vector3 mid)
     {
         List<Edge> edges = new List<Edge>();
-        edges.Add(controlPointCent(p, center, mid));
         edges.Add(new SmoothEdge(new List<Point> { p, pn }));
         edges.Add(controlPointCent(pn, center, mid));
         edges.Add(new SmoothEdge(new List<Point> { center, center }));
+        edges.Add(controlPointCent(center,p, mid));
         new SmoothQuadFace(edges);
     }
     public SmoothEdge controlPointCent(Point p, Point cent, Vector3 mid)
     {
         Vector3 a = cent.position - mid;
         Vector3 b = p.position - mid;
-        Vector3 c = Vector3.Cross(p.position, a).normalized;
-        Vector3 d = Vector3.Cross(c, a).normalized;
-        Vector3 e = Vector3.Lerp(mid, cent.position, .5f);
-        Vector3 f = Vector3.Lerp(mid, p.position, .5f);
-        Point ca = new Point(p.position + e);
-        Point cb = new Point(cent.position + f);
-        return new SmoothEdge(new List<Point> { p, ca, cb, cent });
+        Vector3 e = a/2;
+        Vector3 f = b/2;
+        Debug.Log(e +" "+ f);
+        Point ca = new Point(e + p.position);
+        Point cb = new Point(f + cent.position);
+        return new SmoothEdge(new List<Point> { p,ca,cb,cent});
     }
+    
 }
