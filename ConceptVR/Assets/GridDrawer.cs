@@ -12,7 +12,10 @@ public class GridDrawer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         lines = new List<LineRenderer>();
-        SetScale(SettingsManager.sm.gridSnap);
+        if (SettingsManager.sm != null)
+            SetScale(SettingsManager.sm.gridSnap);
+        else
+            SetScale(1f / 16f);
 	}
 	
 	// Update is called once per frame
@@ -26,19 +29,19 @@ public class GridDrawer : MonoBehaviour {
         foreach (LineRenderer line in lines)
             Destroy(line.gameObject);
         lines = new List<LineRenderer>();
-        for (float u = -.5f/scale; u <= .5f / scale; ++u)
-            for (float v = -.5f/scale; v <= .5f / scale; ++v)
+        for (float u = -.075f/scale; u <= .075f / scale; ++u)
+            for (float v = -.075f / scale; v <= .075f / scale; ++v)
             {
                 float a = u * scale;
                 float b = v * scale;
-                float c = .5f / scale;
-                addGridLine(new Vector3(a, b, c), new Vector3(a, b, -c));
-                addGridLine(new Vector3(a, c, b), new Vector3(a, -c, b));
-                addGridLine(new Vector3(c, a, b), new Vector3(-c, a, b));
+                float c = .075f;
+                addGridLine(new Vector3(a, b, c), new Vector3(a, b, -c), scale);
+                addGridLine(new Vector3(a, c, b), new Vector3(a, -c, b), scale);
+                addGridLine(new Vector3(c, a, b), new Vector3(-c, a, b), scale);
             }
     }
 
-    GameObject addGridLine(Vector3 pos1, Vector3 pos2)
+    GameObject addGridLine(Vector3 pos1, Vector3 pos2, float scale)
     {
         GameObject lrg = new GameObject();
         lrg.transform.parent = transform;
@@ -49,8 +52,9 @@ public class GridDrawer : MonoBehaviour {
         lr.positionCount = 2;
         lr.SetPositions(pArr);
         lr.material = glowMat;
-        lr.startWidth = SettingsManager.sm.gridSnap/20f;
-        lr.endWidth = SettingsManager.sm.gridSnap/20f;
+        lr.startWidth = scale/20f;
+        lr.endWidth = scale/20f;
+        lr.useWorldSpace = false;
 
         lines.Add(lr);
         return lrg;

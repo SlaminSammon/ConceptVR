@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class ItemBase : NetworkBehaviour {
+    public static ItemBase itemBase;
 
     public static List<Item> items;
     public static List<Item> sItems;
     public GameObject LightPrefab;
+    public GameObject DoodlePrefab;
     public string firstType;
     public bool isHUD = false;
 
@@ -16,6 +18,8 @@ public class ItemBase : NetworkBehaviour {
         firstType = "";
         items = new List<Item>();
         sItems = new List<Item>();
+
+        itemBase = this;
     }
 	
 	// Update is called once per frame

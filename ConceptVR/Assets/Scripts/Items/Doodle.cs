@@ -25,8 +25,6 @@ public class Doodle : Item {
 	
 	// Update is called once per frame
 	void Update () {
-        if (this.gameObject.GetComponent<NetworkIdentity>().isServer)
-            Debug.Log("Butts");
 	}
 
     public override Vector3 Position(Vector3 contPos)
@@ -80,13 +78,67 @@ public class Doodle : Item {
             }
             lr.positionCount = index - 1;
 
-            //TODO: create new doodle and set its points to newDoodPositions
+            Doodle newDood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
+            newDood.setPoints(newDoodPositions);
         }
+    }
+
+    public List<Doodle> eraseSphere(Vector3 center, float radius)
+    {
+        List<List<Vector3>> segs = new List<List<Vector3>>();
+        Vector3[] positions = new Vector3[lr.positionCount];
+        lr.GetPositions(positions);
+
+        bool pErase = Vector3.Distance(positions[0], center) < radius;
+        bool initErase = pErase;
+        segs.Add(new List<Vector3>());
+        segs[segs.Count - 1].Add(positions[0]);
+
+        for (int i = 1; i < positions.Length; ++i)
+        {
+            bool iErase = Vector3.Distance(positions[i], center) < radius;
+            if (iErase == pErase)
+                segs[segs.Count - 1].Add(positions[i]);
+            else
+            {
+                Vector3 orig = pErase ? positions[i - 1] : positions[i];
+                Vector3 dir = pErase ? positions[i] - positions[i - 1] : positions[i-1] - positions[i];
+                Vector3 hit = GeometryUtil.raySphereHit(orig, dir, center, radius);
+                segs[segs.Count - 1].Add(hit);
+                segs.Add(new List<Vector3>());
+                segs[segs.Count - 1].Add(hit);
+                segs[segs.Count - 1].Add(positions[i]);
+            }
+
+            pErase = iErase;
+        }
+
+        List<Doodle> doods = new List<Doodle>();
+        
+        foreach (List<Vector3> seg in segs)
+        {
+            if (!initErase)
+            {
+                Doodle dood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
+                dood.gameObject.SetActive(true);
+                dood.lr = dood.GetComponent<LineRenderer>();
+                dood.setPoints(seg);
+                doods.Add(dood);
+                //ItemBase.items.Add(dood);
+            }
+            initErase = !initErase;
+        }
+
+        destroyed = true;
+        gameObject.SetActive(false);    //TODO: Destroy for real
+
+        return doods;
     }
 
     public void setPoints(List<Vector3> points)
     {
-        //TODO: Set all points at once
+        lr.positionCount = points.Count;
+        lr.SetPositions(points.ToArray());
     }
 
     public override void CmdSelect()

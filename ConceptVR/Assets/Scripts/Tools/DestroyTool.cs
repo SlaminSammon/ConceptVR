@@ -26,6 +26,16 @@ public class DestroyTool : Tool {
                 else
                     nPoint.Remove();
             }
+
+            List<Doodle> newDoods = new List<Doodle>();
+            foreach (Doodle d in ItemBase.items)
+            {
+                if (!d.destroyed)
+                    newDoods.AddRange(d.eraseSphere(controllerPosition, delDist));
+            }=
+            
+            foreach (Doodle d in newDoods)
+                ItemBase.items.Add(d);
         }
     }
 

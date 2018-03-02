@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class DoodleTool : Tool {
-    LineRenderer currLineRend;//Line Renderer
+    LineRenderer currLineRend; //Line Renderer
     public Material material;
     Doodle doodle;
     public GameObject doodPrefab;
@@ -33,14 +33,9 @@ public class DoodleTool : Tool {
     public override bool TriggerDown()
     {
         GameObject go = Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0));
-        go.SetActive(true);
         ItemBase.Spawn(go);
         doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
-        currLineRend.material = material;
-        //Makes a thinner line
-        currLineRend.startWidth = .01f;
-        currLineRend.endWidth = .01f;
         return true;
     }
     public override bool TriggerUp()

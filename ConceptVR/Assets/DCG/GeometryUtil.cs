@@ -346,6 +346,17 @@ public static class GeometryUtil
         return Bezerp(ycon, y);
     }
 
+    public static Vector3 raySphereHit(Vector3 origin, Vector3 direction, Vector3 center, float radius)
+    {
+        direction = direction.normalized;
+
+        float dot = Vector3.Dot(direction, origin - center);
+        float sq = dot * dot - (origin - center).sqrMagnitude + radius * radius;
+        float d = -dot + Mathf.Sqrt(sq);
+
+        return origin + direction * d;
+    }
+
     /*public static Vector3[] ReControlBezier(Vector3[] control, int count)
     {
 
