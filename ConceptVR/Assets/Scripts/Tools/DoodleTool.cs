@@ -32,7 +32,7 @@ public class DoodleTool : Tool {
 	}
     public override bool TriggerDown()
     {
-        GameObject go = Instantiate(doodPrefab,controllerPosition,new Quaternion(0,0,0,0));
+        GameObject go = Instantiate(ItemBase.itemBase.DoodlePrefab,controllerPosition,new Quaternion(0,0,0,0));
         ItemBase.Spawn(go);
         doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();

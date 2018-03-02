@@ -32,7 +32,7 @@ public class DestroyTool : Tool {
             {
                 if (!d.destroyed)
                     newDoods.AddRange(d.eraseSphere(controllerPosition, delDist));
-            }=
+            }
             
             foreach (Doodle d in newDoods)
                 ItemBase.items.Add(d);

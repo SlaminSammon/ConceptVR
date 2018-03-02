@@ -9,7 +9,7 @@ public abstract class Controller : MonoBehaviour {
     public GameObject tools;
 
     public List<Tool> ToolQueue;
-    protected Tool currentTool;
+    public Tool currentTool;
 
 	// Use this for initialization
 	protected void Start () {
@@ -38,6 +38,7 @@ public abstract class Controller : MonoBehaviour {
 
     protected void TriggerUp(object sender, ClickedEventArgs e)
     {
+        currentTool.triggerInput = false;
         if (currentTool.TriggerUp())
             return;
         foreach (Tool tool in ToolQueue)

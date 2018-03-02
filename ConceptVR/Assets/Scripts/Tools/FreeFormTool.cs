@@ -122,10 +122,11 @@ public class FreeFormTool : Tool {
         Vector3 virtL = leftPoints[1] + (leftPoints[1] - leftPoints[2]);
         Vector3 virtR = rightPoints[0] + (rightPoints[0] - rightPoints[1]);
         Vector3[] startVerts = { leftPoints[0], virtL, virtR, rightPoints[0] };
-        for(float f = .9f; f>=.1f; f -= .1f){
-            rightPoints.Insert(0,GeometryUtil.Bezerp(startVerts,f));
+        for(float f = .75f; f> 0f; f -= .25f){
+            finalPoints.Insert(0,GeometryUtil.Bezerp(startVerts,f));
         }
         #endregion
+
 
         #region End Curve Bezier
         virtL = leftPoints[leftPoints.Count-1] + (leftPoints[leftPoints.Count - 1] - leftPoints[leftPoints.Count - 2]);
@@ -133,7 +134,7 @@ public class FreeFormTool : Tool {
         Vector3[] endVerts = { leftPoints[leftPoints.Count - 1], virtL, virtR, rightPoints[rightPoints.Count - 1] };
 
         for(float f = .9f; f>=.1f; f -= .1f){
-            rightPoints.Insert(0,GeometryUtil.Bezerp(endVerts,f));
+            finalPoints.Insert(0,GeometryUtil.Bezerp(endVerts,f));
         }
         #endregion
         finalPoints.AddRange(rightPoints);
@@ -270,5 +271,6 @@ public class FreeFormTool : Tool {
         Point cb = new Point(f + cent.position);
         return new SmoothEdge(new List<Point> { p,ca,cb,cent});
     }
+
     
 }

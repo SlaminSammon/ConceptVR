@@ -60,6 +60,8 @@ public class LeapTrackedController : MonoBehaviour
     #endregion
     #region input booleans
     public bool pinchHeld = false;
+    public bool pinchWait = false;
+    public int pinchCounter = 5;
     bool flippedPinch = false;
     public bool pinchInput = false;
     public bool gripInput = false;
@@ -147,14 +149,23 @@ public class LeapTrackedController : MonoBehaviour
     void Update()
     {
         removeExtraHands(); //Recent test found that a third hand can enter scene. Gets that outta there
-        if (handedness == "Right")
+        if (handedness == "Right"){
             hand = Hands.Right;
+        }
         else
             hand = Hands.Left;
+        if(hand == null){
+            OnPinchGone();
+        }
         position = hand.PalmPosition.ToVector3();
         #region  FreeForm Logic
         //I really hate this logic section.
         //end case
+        if(pinchWait){
+            pinchCounter--;
+            if(pinchCounter <= 0)
+                OnPinchGone();
+        }
         if (!hudAnchor)
         {
             if (!leftStart && !rightStart && forming && util.checkHandsDist() < .1f)
@@ -273,12 +284,17 @@ public class LeapTrackedController : MonoBehaviour
     #region Pinch and Grab Event Handlers
     public void OnPinchHeld()
     {
+        pinchCounter = 5;
         position = util.weightedPos(hand);
         pinchHeld = true;
         pinchMade();
     }
+    public void PinchWaiter(){
+        pinchWait = true;
+    }
     public void OnPinchGone()
     { 
+        pinchWait = false;
         pinchHeld = false;
         pinchGone();
     }

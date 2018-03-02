@@ -37,15 +37,18 @@ public class handController: Controller {
                 else
                     currentTool.formInput = false;
             }
-            else
+            else{
+                Debug.Log("leapControl.");
                 currentTool.triggerInput = leapControl.pinchHeld;
+            }
 
         }
 
     }
     protected void TriggerDown()
     {
-        if (currentTool.TriggerDown())
+        Debug.Log("gfhka");
+        if (currentTool != null && currentTool.TriggerDown())
             return;
         foreach (Tool tool in ToolQueue)
             if (tool.TriggerDown())
@@ -54,8 +57,11 @@ public class handController: Controller {
 
     protected void TriggerUp()
     {
-        if (currentTool.TriggerUp())
+        Debug.Log("hell");
+        if (currentTool != null && currentTool.TriggerUp())
             return;
+        else
+            Debug.Log("Failure");
         foreach (Tool tool in ToolQueue)
             if (tool.TriggerUp())
                 return;
@@ -116,6 +122,9 @@ public class handController: Controller {
         foreach (Tool tool in ToolQueue)
             if (tool.Fire())
                 return;
+    }
+    void OnEnable(){
+        
     }
 
 }
