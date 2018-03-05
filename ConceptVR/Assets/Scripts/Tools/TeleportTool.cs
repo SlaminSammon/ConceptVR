@@ -73,7 +73,11 @@ public class TeleportTool : Tool {
 
     private void OnDisable()
     {
-        laser.SetActive(false);
-        teleportCircle.SetActive(false);
+        if (laser != null){
+            laser.SetActive(false);
+        }
+        if (teleportCircle != null){
+            teleportCircle.SetActive(false);
+        }
     }
 }
