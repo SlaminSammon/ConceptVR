@@ -18,7 +18,9 @@ public class HUDManager : MonoBehaviour
     List<HUDView> viewList;
     HandsUtil util;
     public GameObject frames;
-    private HUDFrame mainFrame;
+
+    [HideInInspector]
+    public HUDFrame mainFrame;
 
     [HideInInspector]
     public List<HUDFrame> framesList;
