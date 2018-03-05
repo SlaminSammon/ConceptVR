@@ -17,8 +17,8 @@ public class HUDManager : MonoBehaviour
     public Stack<HUDFrame> frameStack;
     List<HUDView> viewList;
     HandsUtil util;
-    public HUDFrame mainFrame;
     public GameObject frames;
+    private HUDFrame mainFrame;
 
     [HideInInspector]
     public List<HUDFrame> framesList;
@@ -40,6 +40,8 @@ public class HUDManager : MonoBehaviour
         frame = leapcontroller.Frame();
 
         util = new HandsUtil();
+
+        mainFrame = frames.transform.Find("MainFrame").GetComponent<HUDFrame>();
 
         // create the frameStack and initialize it with the mainFrame
         frameStack = new Stack<HUDFrame>();
