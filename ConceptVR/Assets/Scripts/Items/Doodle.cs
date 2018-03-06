@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class Doodle : Item {
     public Bounds boundingBox;
-    LineRenderer lr;
+    public LineRenderer lr;
     int numClicks = 0;
     [SyncVar]
     Color oldColor;
@@ -15,12 +15,14 @@ public class Doodle : Item {
     public bool isFinished;
     [SyncVar(hook = "changeWidth")]
     public float lineWidth;
+    List<Vector3> startPos;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
+        lr.material = ItemBase.itemBase.material;
         isFinished = false;
         base.Start();
-        oldColor = Color.red;
+        startPos = new List<Vector3>();
     }
 	
 	// Update is called once per frame
@@ -197,9 +199,24 @@ public class Doodle : Item {
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
     }
-    public override void changeColor(Color color)
+    public void changeColor(Material mat)
     {
         Debug.Log("Changing Color");
-        lr.material.color = color;
+        lr.material = mat;
+    }
+    public override void changePosition(Vector3 start, Vector3 contr, Vector3 hold)
+    {
+        Debug.Log("boos");
+        List<Vector3> newP = new List<Vector3>();
+        for (int i = 0; i < lr.positionCount; ++i)
+            newP.Add(startPos[i] + contr - hold);
+        lr.SetPositions(newP.ToArray());
+    }
+    public override Vector3 Position()
+    {
+        startPos.Clear();
+        for (int i = 0; i < lr.positionCount; ++i)
+            startPos.Add(lr.GetPosition(i));
+        return base.Position();
     }
 }

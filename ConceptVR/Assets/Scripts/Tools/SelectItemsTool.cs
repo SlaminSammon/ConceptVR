@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-public enum ListContains { lights, doodles } // this will be expanded as we gain more items
+public enum ListContains { lights, doodles } // this will be expanded as we gain more items, lol nvm, not using this, but keeping for laughs
 public class SelectItemsTool : Tool {
 
     ItemBase itemBase;
+    Vector3 holdPos;
+    List<Vector3> startPos;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        base.Update();
-	}
+        if (triggerInput && ItemBase.sItems != null)
+            for (int i = 0; i < ItemBase.sItems.Count; ++i)
+                ItemBase.sItems[i].changePosition(startPos[i], controllerPosition, holdPos);
+    }
 
     public override bool Swipe()
     {
@@ -36,6 +40,16 @@ public class SelectItemsTool : Tool {
         }
         else
             return false;
+    }
+    public override bool TriggerDown()
+    {
+        if (ItemBase.sItems.Count == 0)
+            return false;
+        startPos = new List<Vector3>();
+        foreach (Item v in ItemBase.sItems)
+            startPos.Add(v.Position());
+        holdPos = controllerPosition;
+        return true;
     }
 
     public void Deselect()

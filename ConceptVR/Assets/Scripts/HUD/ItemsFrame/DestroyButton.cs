@@ -21,21 +21,11 @@ public class DestroyButton : HUDButton {
         foreach (Item item in ItemBase.sItems)
         {
             item.destroyed = true;
-            Destroy(item.gameObject);
+            ItemBase.DeSpawn(item.gameObject);
         }
         ItemBase.sItems.Clear();
         Item.Pop();
         itemBase.firstType = "";
-        /*
-        GameObject selectedItem = GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().selected;
-        GameObject.Find("SelectItemsTool").GetComponent<SelectItemsTool>().Deselect();
-
-        if (selectedItem.tag == "Light")
-        {
-            GameObject.Find("ItemBase").GetComponent<ItemBase>().removeLight(selectedItem);
-        }
-        Destroy(selectedItem);
-        */
         base.OnPress();
     }
 

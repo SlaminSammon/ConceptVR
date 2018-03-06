@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class DoodColorBtn : HUDButton {
 
-    public Color color;
+    public Material mat;
+    ItemBase itembase;
+    public bool newDood = true; 
 	// Use this for initialization
 	void Start () {
-        base.Start();	
+        base.Start();
+        itembase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
 	}
 	
 	// Update is called once per frame
@@ -16,9 +19,12 @@ public class DoodColorBtn : HUDButton {
 	}
     public override void OnPress()
     {
-        foreach(Doodle d in ItemBase.sItems)
+        if (ItemBase.sItems.Count == 0)
+            ItemBase.itemBase.material = mat;
+        else
         {
-            d.changeColor(color);
+            foreach (Doodle d in ItemBase.sItems)
+                d.changeColor(mat);
         }
     }
 }

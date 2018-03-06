@@ -28,6 +28,11 @@ public abstract class Item : NetworkBehaviour {
     public virtual void changeColor(Color color) { }
     public virtual Vector3 Position(Vector3 contPos) { return new Vector3(); }
     public virtual void SelectUtil() { }
+    public virtual Vector3 Position() { return this.gameObject.transform.position; }
+    public virtual void changePosition(Vector3 start, Vector3 contr, Vector3 hold)
+    {
+        this.gameObject.transform.position = (start + contr - hold);
+    }
     #endregion
     public static void Pop()
     {

@@ -9,6 +9,7 @@ public class TextItem : Item {
 	// Use this for initialization
 	void Start () {
         textBounds = this.gameObject.GetComponent<Renderer>().bounds;
+        base.Start();
 	}
 	
 	// Update is called once per frame
@@ -26,9 +27,11 @@ public class TextItem : Item {
     public void finalBounds()
     {
         textBounds.SetMinMax(textBounds.min - new Vector3(.1f, .1f, .1f), textBounds.max + new Vector3(.1f, .1f, .1f));
+        Debug.Log(textBounds);
     }
     public override float Distance(Vector3 pos)
     {
+        Debug.Log(pos);
         if (textBounds.Contains(pos))
             return Vector3.Distance(pos, this.Position(pos));
         return 100000f;
@@ -49,5 +52,9 @@ public class TextItem : Item {
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
+    }
+    public override Vector3 Position(Vector3 pos)
+    {
+        return base.Position();
     }
 }

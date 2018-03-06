@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlaceTextButton : HUDButton {
 
     public GameObject textBox;
+    
 	// Use this for initialization
 	void Start () {
         base.Start();

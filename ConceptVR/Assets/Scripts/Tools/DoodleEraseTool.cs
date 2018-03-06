@@ -5,7 +5,7 @@ using UnityEngine;
 public class DoodleEraseTool : Tool {
     public Material destMat;
 
-    float delDist = 0.07f;
+    float delDist = 0.03f;
 
     // Use this for initialization
     void Start()
@@ -17,10 +17,15 @@ public class DoodleEraseTool : Tool {
     {
         if (triggerInput)
         {
+            List<Doodle> newDoods = new List<Doodle>();
             foreach (Doodle d in ItemBase.items)
             {
-                d.eraseSphere(controllerPosition, delDist);
+                if (!d.destroyed)
+                    newDoods.AddRange(d.eraseSphere(controllerPosition, delDist));
             }
+
+            foreach (Doodle d in newDoods)
+                ItemBase.items.Add(d);
         }
     }
 

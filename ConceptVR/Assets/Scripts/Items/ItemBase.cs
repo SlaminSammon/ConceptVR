@@ -11,6 +11,7 @@ public class ItemBase : NetworkBehaviour {
     public GameObject LightPrefab;
     public GameObject DoodlePrefab;
     public GameObject TextPrefab;
+    public Material material;
     public string firstType;
     public bool isHUD = false;
 
@@ -24,9 +25,8 @@ public class ItemBase : NetworkBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
-
-    }
+	void Update () { }
+    
     //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
     public static void Spawn(GameObject go)
     {
@@ -41,6 +41,7 @@ public class ItemBase : NetworkBehaviour {
         Item nearestItem = null;
         float nearestDistance = 99999;
         float maxDistance = 0.1f;
+        Debug.Log(items.Count);
         foreach (Item item in items)
         {
             float distance = Vector3.Distance(position, item.Position(position));
