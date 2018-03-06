@@ -10,6 +10,7 @@ public class ItemBase : NetworkBehaviour {
     public static List<Item> sItems;
     public GameObject LightPrefab;
     public GameObject DoodlePrefab;
+    public GameObject TextPrefab;
     public string firstType;
     public bool isHUD = false;
 
@@ -30,6 +31,10 @@ public class ItemBase : NetworkBehaviour {
     public static void Spawn(GameObject go)
     {
         NetworkServer.Spawn(go);
+    }
+    public static void DeSpawn(GameObject go)
+    {
+        NetworkServer.Destroy(go);
     }
     public Item findNearestItem(Vector3 position)
     {

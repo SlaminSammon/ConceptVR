@@ -130,7 +130,7 @@ public class Doodle : Item {
         }
 
         destroyed = true;
-        gameObject.SetActive(false);    //TODO: Destroy for real
+        ItemBase.DeSpawn(this.gameObject);
 
         return doods;
     }
@@ -182,12 +182,24 @@ public class Doodle : Item {
     }
     public override void SelectUtil()
     {
-        if (!isSelected)
+        /*if (!isSelected)
         {
             oldColor = lr.material.color;
             lr.material.color = Color.white;
         }
         else
-            lr.material.color = oldColor;
+            lr.material.color = oldColor;*/
+    }
+    public override void Push()
+    {
+        Debug.Log("Pushing Doodle Frame");
+        GameObject frame = GameObject.Find("Frames");
+        if (HUD != null && frame != null)
+            HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
+    }
+    public override void changeColor(Color color)
+    {
+        Debug.Log("Changing Color");
+        lr.material.color = color;
     }
 }

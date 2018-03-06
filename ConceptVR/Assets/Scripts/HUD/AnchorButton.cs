@@ -14,6 +14,7 @@ public class AnchorButton : ToggleButton {
 		active = false;
 		base.Start ();
 	}
+    
 	
 	public override void OnPress(){
 		if (active) {

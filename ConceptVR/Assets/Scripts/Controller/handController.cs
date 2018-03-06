@@ -38,7 +38,7 @@ public class handController: Controller {
                     currentTool.formInput = false;
             }
             else{
-                Debug.Log("leapControl.");
+               
                 currentTool.triggerInput = leapControl.pinchHeld;
             }
 

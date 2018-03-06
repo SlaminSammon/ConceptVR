@@ -23,10 +23,7 @@ public class DoodleTool : Tool {
             }
             else
                 frameCount--;
-            /*currLineRend.positionCount = numClicks + 1;
-            currLineRend.SetPosition(numClicks, controllerPosition);
-            doodle.latestPoint = controllerPosition;
-            numClicks++;*/
+
         }
         
 	}
