@@ -16,7 +16,8 @@ public abstract class Controller : MonoBehaviour {
         if (ToolQueue.Count == 0)
         {
             ToolQueue = new List<Tool>();
-            ToolQueue.Add(new BaseTool());
+            BaseTool bt = gameObject.AddComponent<BaseTool>();
+            ToolQueue.Add(bt);
         }
         currentTool = ToolQueue[0];
         tools = this.gameObject.transform.parent.gameObject.transform.Find("Tools").gameObject;

@@ -23,7 +23,14 @@ public class handController: Controller {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
+        foreach (Tool tool in ToolQueue)
+        {
+            tool.setPos(leapControl.position);
+            currentTool.triggerInput = leapControl.pinchHeld;
+        }
+
         if (currentTool != null)
         {
             currentTool.setPos(leapControl.position);
@@ -47,7 +54,6 @@ public class handController: Controller {
     }
     protected void TriggerDown()
     {
-        Debug.Log("gfhka");
         if (currentTool != null && currentTool.TriggerDown())
             return;
         foreach (Tool tool in ToolQueue)
@@ -57,11 +63,9 @@ public class handController: Controller {
 
     protected void TriggerUp()
     {
-        Debug.Log("hell");
         if (currentTool != null && currentTool.TriggerUp())
             return;
         else
-            Debug.Log("Failure");
         foreach (Tool tool in ToolQueue)
             if (tool.TriggerUp())
                 return;
