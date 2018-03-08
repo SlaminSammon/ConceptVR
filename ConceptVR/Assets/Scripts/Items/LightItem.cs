@@ -12,16 +12,15 @@ public class LightItem : Item
     public void Start()
     {
         base.Start();
-        newMat = Resources.Load("Material/DCGMats/Select.mat", typeof(Material)) as Material;
         selectedMaterial = gameObject.GetComponent<MeshRenderer>().material;
         selectedLightColor = gameObject.GetComponent<Light>().color;
     }
 
     public override void CmdSelect()
     {
+        base.CmdSelect();
         isLocked = true;
         isSelected = true;
-        this.gameObject.GetComponent<MeshRenderer>().material = newMat;
     }
     public override void CmdDeSelect()
     {

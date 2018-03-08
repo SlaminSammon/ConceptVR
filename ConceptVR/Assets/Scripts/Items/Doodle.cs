@@ -145,11 +145,14 @@ public class Doodle : Item {
 
     public override void CmdSelect()
     {
+        oldMat = this.gameObject.GetComponent<LineRenderer>().material;
+        this.gameObject.GetComponent<LineRenderer>().material = ItemBase.itemBase.selectMat;
         isLocked = true;
         isSelected = true;
     }
     public override void CmdDeSelect()
     {
+        this.gameObject.GetComponent<LineRenderer>().material = oldMat;
         base.CmdDeSelect();
         isLocked = false;
         isSelected = false;

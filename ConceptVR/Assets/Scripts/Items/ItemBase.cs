@@ -14,6 +14,7 @@ public class ItemBase : NetworkBehaviour {
     public Material material;
     public string firstType;
     public bool isHUD = false;
+    public Material selectMat;
 
     // Use this for initialization
     void Start () {
