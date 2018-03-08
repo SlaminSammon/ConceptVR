@@ -26,7 +26,12 @@ public class ItemBase : NetworkBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () { }
+	void Update () {
+        selectMat.SetFloat("_Offset", Time.time / 6f);
+        Debug.Log(firstType);
+        if (sItems.Count == 0 && firstType != "")
+            firstType = "";
+    }
     
     //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
     public static void Spawn(GameObject go)
