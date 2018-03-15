@@ -79,12 +79,13 @@ public class SelectTool : Tool {
     }
     public void Deselect()
     {
+        Debug.Log(Item.popped);
         foreach (Item item in ItemBase.sItems)
         {
             item.CmdDeSelect();
         }
         ItemBase.sItems.Clear();
-        if (itemBase.isHUD)
+        if (!Item.popped)
         {
             Item.Pop();
             itemBase.firstType = "";
@@ -103,6 +104,8 @@ public class SelectTool : Tool {
     void OnDisable()
     {
         ClearSelection();
+        if (ItemBase.sItems.Count != 0)
+            Deselect();
     }
     public bool TapDCG(DCGElement nearestElement)
     {

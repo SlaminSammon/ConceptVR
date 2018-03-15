@@ -197,6 +197,7 @@ public class Doodle : Item {
     }
     public override void Push()
     {
+        base.Push();
         Debug.Log("Pushing Doodle Frame");
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
