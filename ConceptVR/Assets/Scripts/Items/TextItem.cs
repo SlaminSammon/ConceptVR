@@ -49,6 +49,7 @@ public class TextItem : Item {
     }
     public override void Push()
     {
+        base.Push();
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
