@@ -73,7 +73,8 @@ public class SelectItemsTool : Tool {
     }
     private void OnDisable()
     {
-        Deselect();
+        if(ItemBase.sItems.Count != 0)
+            Deselect();
     }
 
 
