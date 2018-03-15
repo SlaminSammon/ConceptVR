@@ -9,11 +9,14 @@ public class DoodleTool : Tool {
     Doodle doodle;
     public GameObject doodPrefab;
     int frameCount = 0;
+    float width;
     void Start () {
+        width = .5f;
 	}
 	
 	// Update is called once per frame
 	new void Update () {
+        //if(transform.Find("CurrentDoodleFrame").)
         if (triggerInput && currLineRend != null && doodle != null && controllerPosition != new Vector3(0,0,0))
         {
             if (frameCount == 0)

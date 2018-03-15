@@ -19,11 +19,17 @@ public class KeyboardButton : HUDButton {
 
     public override void OnPress()
     {
+        // remove current red underscore marker before editing the text
+        string textBoxText = transform.parent.Find("Textbox").GetComponent<TextMesh>().text;
+        textBoxText = textBoxText.Substring(0, (textBoxText.Length - 20));
+        transform.parent.Find("Textbox").GetComponent<TextMesh>().text = textBoxText;
+        string redUnderscore = "<color=red>_</color>";
+
         if (text == "backspace")
         {
-            string textBoxText = transform.parent.Find("Textbox").GetComponent<TextMesh>().text;
             if (textBoxText != "")
             {
+                Debug.Log(textBoxText + " is text");
                 // remove last character from string
                 textBoxText = textBoxText.Substring(0, (textBoxText.Length - 1));
                 transform.parent.Find("Textbox").GetComponent<TextMesh>().text = textBoxText;
@@ -36,6 +42,9 @@ public class KeyboardButton : HUDButton {
         {
             transform.parent.Find("Textbox").GetComponent<TextMesh>().text += text;
         }
+
+        // re-add the red underscore market to the text after editing it.
+        transform.parent.Find("Textbox").GetComponent<TextMesh>().text += redUnderscore;
         base.OnPress();
     }
 
