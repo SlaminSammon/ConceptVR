@@ -127,6 +127,40 @@ public class Edge : DCGElement
         return Mathf.Sqrt(nDist2);
     }
 
+    public override DCGConstraint NearestConstraint(Vector3 pos)
+    {
+        float nd2 = Mathf.Infinity;
+        float nx = 0;
+        int ni = 0;
+        for (int i = 0; i < points.Count-1; ++i)
+        {
+            Vector3 dir = points[i + 1].position - points[i].position;
+            Vector3 diff = pos - points[i].position;
+
+            Vector3 x = Vector3.Project(diff, dir);
+            float dist2 = (diff - x).sqrMagnitude;
+            
+            if (dist2 < nd2)
+            {
+                nd2 = dist2;
+                nx = x.magnitude/dir.magnitude;
+                ni = i;
+            }
+        }
+
+        DCGConstraint con = new DCGConstraint();
+        con.constrainerID = elementID;
+        con.constraintData = new float[] {ni, nx};
+
+        return con;
+    }
+
+    public override Vector3 ConstraintPosition(float[] constraintData)
+    {
+        int i = Mathf.FloorToInt(constraintData[0]);
+        return points[i].position + constraintData[1] * (points[i + 1].position - points[i].position);
+    }
+
     public override List<Point> GetPoints() { return points; }
 
     public override List<DCGElement> Extrude()
