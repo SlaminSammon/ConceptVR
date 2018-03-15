@@ -44,7 +44,46 @@ public class PointTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
-        new Point(position);
+        Point p = new Point(position);
+
+        Edge nE = DCGBase.NearestEdge(position, maxDist);
+        Face nF = DCGBase.NearestFace(position, maxDist);
+
+        if (nE != null && nF != null)
+        {
+            DCGConstraint cE = nE.NearestConstraint(position);
+            cE.pointID = p.elementID;
+            DCGConstraint cF = nF.NearestConstraint(position);
+            cF.pointID = p.elementID;
+            Vector3 pE = nE.ConstraintPosition(cE.constraintData);
+            Vector3 pF = nF.ConstraintPosition(cF.constraintData);
+
+            if (Vector3.Distance(position, pE) < Vector3.Distance(position, pF))
+            {
+                DCGBase.instance.AddConstraint(cE);
+                p.position = nE.ConstraintPosition(cE.constraintData);
+            }
+            else
+            {
+                DCGBase.instance.AddConstraint(cF);
+                p.position = nF.ConstraintPosition(cF.constraintData);
+            }
+        }
+        else if (nE != null)
+        {
+            DCGConstraint cE = nE.NearestConstraint(position);
+            cE.pointID = p.elementID;
+            DCGBase.instance.AddConstraint(cE);
+            p.position = nE.ConstraintPosition(cE.constraintData);
+        }
+        else if (nF != null)
+        {
+            DCGConstraint cF = nF.NearestConstraint(position);
+            cF.pointID = p.elementID;
+            DCGBase.instance.AddConstraint(cF);
+            p.position = nF.ConstraintPosition(cF.constraintData);
+        }
+
         return true;
     }
 }

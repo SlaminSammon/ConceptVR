@@ -10,6 +10,7 @@ public class DoodleTool : Tool {
     public GameObject doodPrefab;
     int frameCount = 0;
     float width;
+    int doodleNum = 1;
     void Start () {
         width = .5f;
 	}
@@ -33,7 +34,9 @@ public class DoodleTool : Tool {
     public override bool TriggerDown()
     {
         GameObject go = Instantiate(ItemBase.itemBase.DoodlePrefab,controllerPosition,new Quaternion(0,0,0,0));
+        go.name = "Doodle " + doodleNum;
         ItemBase.Spawn(go);
+        doodleNum++;
         doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
         return true;

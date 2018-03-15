@@ -32,6 +32,7 @@ public class LightItem : Item
     }
     public override void Push()
     {
+        base.Push();
         Debug.Log("Pushing Light Frame");
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
@@ -49,5 +50,9 @@ public class LightItem : Item
     public void changeIntensity(float intensity)
     {
         this.gameObject.GetComponent<Light>().intensity = intensity * INTENSITY_SCALE;
+    }
+    public override float Distance(Vector3 pos)
+    {
+        return Vector3.Distance(pos, this.gameObject.transform.position);
     }
 }

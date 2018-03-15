@@ -10,7 +10,8 @@ public abstract class Item : NetworkBehaviour {
     public bool isLocked;
     public bool destroyed = false;
     protected static HUDManager HUD;
-    protected Material oldMat;
+    public Material oldMat;
+    public static bool popped = true;
     // Use this for initialization
     protected void Start() {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();
@@ -22,7 +23,7 @@ public abstract class Item : NetworkBehaviour {
 
     }
     #region Override Functions
-    public virtual float Distance(Vector3 pos) { return -1f; }
+    public virtual float Distance(Vector3 pos) { return Mathf.Infinity; }
     public virtual void CmdSelect()
     {
         oldMat = this.gameObject.GetComponent<Renderer>().material;
@@ -33,7 +34,7 @@ public abstract class Item : NetworkBehaviour {
         this.gameObject.GetComponent<Renderer>().material = oldMat;
         if (destroyed) return;
     }
-    public virtual void Push() { }
+    public virtual void Push() { popped = false; }
     public virtual void changeColor(Color color) { }
     public virtual Vector3 Position(Vector3 contPos) { return new Vector3(); }
     public virtual void SelectUtil() { }
@@ -45,7 +46,11 @@ public abstract class Item : NetworkBehaviour {
     #endregion
     public static void Pop()
     {
-        HUD.Pop();
+        if (!popped)
+        {
+            popped = !popped;
+            HUD.Pop();
+        }
     }
     public void OnDestroy()
     {

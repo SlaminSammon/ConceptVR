@@ -128,12 +128,16 @@ public class Face : DCGElement
         else return Mathf.Infinity;
     }
 
-    public override Vector3 NearestPosition(Vector3 pos)
+    //Constraints are index of subtriangle, and proportions of axes (b-a) and (c-a)
+    public override DCGConstraint NearestConstraint(Vector3 pos)
     {
         float nz = Mathf.Infinity;
+        float ni = 0;
+        float nx = 0;
+        float ny = 0;
         Vector3 nPos = Vector3.zero;
 
-        for (int i = 0; i < subTriangles.Count; ++i)
+        for (int i = 0; i < subTriangles.Count; i += 3)
         {
             Vector3 a = subTriangles[i];        //Fetch vertices
             Vector3 b = subTriangles[i + 1];
@@ -151,10 +155,26 @@ public class Face : DCGElement
             {
                 nz = Z;
                 nPos = a + tx * pX + ty * pY;
+                nx = pX;
+                ny = pY;
+                ni = i;
             }
         }
+        
+        DCGConstraint con = new DCGConstraint();
+        con.constrainerID = elementID;
+        con.constraintData = new float[] {ni, nx, ny};
 
-        return nPos;
+        return con;
+    }
+
+    public override Vector3 ConstraintPosition(float[] constraintData)
+    {
+        int i = Mathf.FloorToInt(constraintData[0]);
+        Vector3 a = subTriangles[i];        //Fetch vertices
+        Vector3 b = subTriangles[i + 1];
+        Vector3 c = subTriangles[i + 2];
+        return (a + constraintData[1] * (b - a) + constraintData[2] * (c - a));
     }
 
     public override List<DCGElement> Extrude()

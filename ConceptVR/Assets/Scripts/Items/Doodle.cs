@@ -7,8 +7,6 @@ public class Doodle : Item {
     public Bounds boundingBox;
     public LineRenderer lr;
     int numClicks = 0;
-    [SyncVar]
-    Color oldColor;
     //[SyncVar (hook = "Encapsulate")]
     //public Vector3 latestPoint;
     [SyncVar(hook = "finalBounds")]
@@ -16,10 +14,12 @@ public class Doodle : Item {
     [SyncVar(hook = "changeWidth")]
     public float lineWidth;
     List<Vector3> startPos;
+    public int colorIndex = 0;
 	// Use this for initialization
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
-        lr.material = ItemBase.itemBase.material;
+        colorIndex = ItemBase.defaultIndex;
+        changeColor(colorIndex);
         isFinished = false;
         base.Start();
         startPos = new List<Vector3>();
@@ -114,9 +114,9 @@ public class Doodle : Item {
 
             pErase = iErase;
         }
-
+        if (segs.Count == 1) return new List<Doodle>();
         List<Doodle> doods = new List<Doodle>();
-        
+        ItemBase.changeIndex(this.colorIndex);
         foreach (List<Vector3> seg in segs)
         {
             if (!initErase)
@@ -125,12 +125,12 @@ public class Doodle : Item {
                 dood.gameObject.SetActive(true);
                 dood.lr = dood.GetComponent<LineRenderer>();
                 dood.setPoints(seg);
+                ItemBase.Spawn(dood.gameObject);
                 doods.Add(dood);
                 //ItemBase.items.Add(dood);
             }
             initErase = !initErase;
         }
-
         destroyed = true;
         ItemBase.DeSpawn(this.gameObject);
 
@@ -197,15 +197,18 @@ public class Doodle : Item {
     }
     public override void Push()
     {
+        base.Push();
         Debug.Log("Pushing Doodle Frame");
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
     }
-    public void changeColor(Material mat)
+    public void changeColor(int index)
     {
-        Debug.Log("Changing Color");
-        lr.material = mat;
+        lr.material = ItemBase.itemBase.materials[index];
+        oldMat = ItemBase.itemBase.materials[index];
+        Debug.Log("Changing to " + oldMat);
+        colorIndex = index;
     }
     public override void changePosition(Vector3 start, Vector3 contr, Vector3 hold)
     {

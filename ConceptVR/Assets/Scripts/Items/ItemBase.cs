@@ -11,7 +11,8 @@ public class ItemBase : NetworkBehaviour {
     public GameObject LightPrefab;
     public GameObject DoodlePrefab;
     public GameObject TextPrefab;
-    public Material material;
+    public List<Material> materials;
+    public static int defaultIndex = 0;
     public string firstType;
     public bool isHUD = false;
     public Material selectMat;
@@ -41,6 +42,11 @@ public class ItemBase : NetworkBehaviour {
     public static void DeSpawn(GameObject go)
     {
         NetworkServer.Destroy(go);
+    }
+    public static void Remove(Item item)
+    {
+        items.Remove(item);
+        DeSpawn(item.gameObject);
     }
     public Item findNearestItem(Vector3 position)
     {
@@ -76,6 +82,27 @@ public class ItemBase : NetworkBehaviour {
             Item.Pop();
             isHUD = false;
         }
+    }
+    public static void changeIndex(int index)
+    {
+        ItemBase.defaultIndex = index;
+    }
+    public static Item NearestItem(Vector3 pos, float maxDist)
+    {
+        Item nItem = null;
+        foreach (Item item in ItemBase.items)
+        {
+            if (item.GetType() == typeof(Doodle))
+                continue;
+            float dist = item.Distance(pos);
+            if (dist < maxDist)
+            {
+                maxDist = dist;
+                nItem = item;
+            }
+        }
+
+        return nItem;
     }
 
 }
