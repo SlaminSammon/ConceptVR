@@ -16,14 +16,20 @@ public class DCGBase : MonoBehaviour {
     public static List<Edge> edges = new List<Edge>();
     public static List<Face> faces = new List<Face>();
     public static List<Solid> solids = new List<Solid>();
+    public static List<DCGConstraint> constraints = new List<DCGConstraint>();
 
     public static Dictionary<int, DCGElement> all = new Dictionary<int, DCGElement>();
     public static DCGSynchronizer synch;
 
     private static int moveID = 0;
 
+    public static DCGBase instance;
+
 	// Use this for initialization
 	void Start () {
+        instance = this;
+
+
         Transform starter = transform.Find("Starter");
         //Mesh starterMesh = starter.gameObject.GetComponent<MeshFilter>().mesh;
         
@@ -180,5 +186,11 @@ public class DCGBase : MonoBehaviour {
             if (s.ContainsPoint(pos))
                 return s;
         return null;
+    }
+
+    public void AddConstraint(DCGConstraint con)
+    {
+        //TODO: Network it
+        constraints.Add(con);
     }
 }
