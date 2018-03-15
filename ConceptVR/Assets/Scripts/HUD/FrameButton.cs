@@ -8,6 +8,7 @@ public class FrameButton : HUDButton {
 
     public override void OnPress()
     {
+        HUD.Pop();
         HUD.Push(targetFrame);
     }
 }
