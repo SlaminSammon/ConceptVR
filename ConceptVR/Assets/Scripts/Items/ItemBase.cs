@@ -11,7 +11,8 @@ public class ItemBase : NetworkBehaviour {
     public GameObject LightPrefab;
     public GameObject DoodlePrefab;
     public GameObject TextPrefab;
-    public Material material;
+    public List<Material> materials;
+    public static int defaultIndex = 0;
     public string firstType;
     public bool isHUD = false;
     public Material selectMat;
@@ -76,6 +77,10 @@ public class ItemBase : NetworkBehaviour {
             Item.Pop();
             isHUD = false;
         }
+    }
+    public static void changeIndex(int index)
+    {
+        ItemBase.defaultIndex = index;
     }
 
 }

@@ -10,7 +10,7 @@ public abstract class Item : NetworkBehaviour {
     public bool isLocked;
     public bool destroyed = false;
     protected static HUDManager HUD;
-    protected Material oldMat;
+    public Material oldMat;
     // Use this for initialization
     protected void Start() {
         HUD = GameObject.Find("Managers").GetComponent<HUDManager>();

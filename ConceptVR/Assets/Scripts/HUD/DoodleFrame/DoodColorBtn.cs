@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DoodColorBtn : HUDButton {
 
-    public Material mat;
+    public int index;
     ItemBase itembase;
     public bool newDood = true; 
 	// Use this for initialization
@@ -19,12 +19,10 @@ public class DoodColorBtn : HUDButton {
 	}
     public override void OnPress()
     {
-        if (ItemBase.sItems.Count == 0)
-            ItemBase.itemBase.material = mat;
-        else
-        {
+        ItemBase.changeIndex(index);
+        if (ItemBase.sItems.Count != 0)
             foreach (Doodle d in ItemBase.sItems)
-                d.changeColor(mat);
-        }
+                d.changeColor(index);
+
     }
 }

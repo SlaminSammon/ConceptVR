@@ -5,7 +5,7 @@ using UnityEngine;
 public class DoodleEraseTool : Tool {
     public Material destMat;
 
-    float delDist = 0.03f;
+    float delDist = 0.031456284f;
 
     // Use this for initialization
     void Start()
