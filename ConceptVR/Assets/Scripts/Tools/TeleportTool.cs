@@ -38,7 +38,7 @@ public class TeleportTool : Tool {
             hitPoint = hit.point;
             laser.SetActive(true);
             teleportCircle.SetActive(true);
-            laser.transform.position = Vector3.Lerp(rightfinger.transform.position, hitPoint, 0.55f);
+            laser.transform.position = Vector3.Lerp(rightfinger.transform.position, hitPoint, 0.50f);
             laser.transform.LookAt(hitPoint);
             laser.transform.localScale = new Vector3(laser.transform.localScale.x, laser.transform.localScale.y, hit.distance);
             laser.transform.rotation = rightfinger.transform.rotation;
