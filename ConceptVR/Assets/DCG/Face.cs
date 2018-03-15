@@ -128,6 +128,35 @@ public class Face : DCGElement
         else return Mathf.Infinity;
     }
 
+    public override Vector3 NearestPosition(Vector3 pos)
+    {
+        float nz = Mathf.Infinity;
+        Vector3 nPos = Vector3.zero;
+
+        for (int i = 0; i < subTriangles.Count; ++i)
+        {
+            Vector3 a = subTriangles[i];        //Fetch vertices
+            Vector3 b = subTriangles[i + 1];
+            Vector3 c = subTriangles[i + 2];
+
+            Vector3 diff = pos - a;     //position of pos relative to this triangle
+            Vector3 tx = (b - a);       //X vector of this triangle's subspace
+            Vector3 ty = (c - a);       //Y vector of this triangle's subspace
+            Vector3 tz = Vector3.Cross(tx, ty).normalized;  //Normal of this triangle
+
+            float Z = Vector3.Dot(diff, tz);
+            float pX = Vector3.Dot(diff, tx) / tx.sqrMagnitude;
+            float pY = Vector3.Dot(diff, ty) / ty.sqrMagnitude;
+            if (Z < nz && pX > 0 && pY > 0 && pX+pY <= 1)
+            {
+                nz = Z;
+                nPos = a + tx * pX + ty * pY;
+            }
+        }
+
+        return nPos;
+    }
+
     public override List<DCGElement> Extrude()
     {
         List<Point> corners = new List<Point>();

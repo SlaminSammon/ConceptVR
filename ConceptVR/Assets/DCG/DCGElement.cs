@@ -16,6 +16,7 @@ public abstract class DCGElement
     public virtual void Remove() { }    //Called when this element is removed, should remove other elements that rely on this one
     public virtual bool ChildrenSelected() { return false; }    //Returns true iff all children of this element are selected
     public virtual float Distance(Vector3 position) { return Mathf.Infinity; }
+    public virtual Vector3 NearestPosition(Vector3 position) { return Vector3.zero; }
     public virtual List<Point> GetPoints() { return new List<Point>(); }
     public virtual List<DCGElement> Extrude() { return new List<DCGElement>(); }
     public virtual void Lock() { } //Is used to lock all elements below this element in the hierarchy.
