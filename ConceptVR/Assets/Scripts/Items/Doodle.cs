@@ -124,8 +124,9 @@ public class Doodle : Item {
                 Doodle dood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
                 dood.gameObject.SetActive(true);
                 dood.lr = dood.GetComponent<LineRenderer>();
-                dood.CmdSetPoints(seg.ToArray());
+                Debug.Log("Error");             
                 ItemBase.Spawn(dood.gameObject);
+                dood.CmdSetPoints(seg.ToArray());
                 doods.Add(dood);
                 //ItemBase.items.Add(dood);
             }
@@ -140,11 +141,13 @@ public class Doodle : Item {
     public void RpcSetPoints(Vector3[] points)
     {
         lr.positionCount = points.Length;
+        Debug.Log(points.Length);
         lr.SetPositions(points);
     }
     [Command]
     public void CmdSetPoints(Vector3[] points)
     {
+        Debug.Log("Jew");
         RpcSetPoints(points);
     }
 
