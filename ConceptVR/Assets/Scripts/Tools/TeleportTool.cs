@@ -9,7 +9,7 @@ public class TeleportTool : Tool {
     private Vector3 hitPoint;
     public GameObject rightfinger;
 
-    public GameObject LMHeadMountedRig;
+    GameObject LMHeadMountedRig;
     public GameObject teleportCircle;
     Vector3 teleportCircleOffset = new Vector3(0f, 0.05f, 0f);
     public LayerMask teleportMask;
@@ -18,6 +18,8 @@ public class TeleportTool : Tool {
 
     // Use this for initialization
     void Start () {
+        //Because we can. teehee
+        LMHeadMountedRig = true ? GameObject.Find("LMHeadMountedRig").transform.gameObject.transform.gameObject.transform.gameObject.transform.gameObject : GameObject.Find("LMHeadMountedRig").transform.gameObject.transform.gameObject.transform.gameObject.transform.gameObject;
         laser = Instantiate(laserPrefab);
         teleportCircle = Instantiate(teleportCircle);
 	}
