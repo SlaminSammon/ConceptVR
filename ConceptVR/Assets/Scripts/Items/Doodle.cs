@@ -19,7 +19,7 @@ public class Doodle : Item {
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
         colorIndex = ItemBase.defaultIndex;
-        changeColor(colorIndex);
+        CmdChangeColor(colorIndex);
         isFinished = false;
         base.Start();
         startPos = new List<Vector3>();
@@ -123,8 +123,7 @@ public class Doodle : Item {
             {
                 Doodle dood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
                 dood.gameObject.SetActive(true);
-                dood.lr = dood.GetComponent<LineRenderer>();
-                Debug.Log("Error");             
+                dood.lr = dood.GetComponent<LineRenderer>();           
                 ItemBase.Spawn(dood.gameObject);
                 dood.CmdSetPoints(seg.ToArray());
                 doods.Add(dood);
@@ -141,13 +140,11 @@ public class Doodle : Item {
     public void RpcSetPoints(Vector3[] points)
     {
         lr.positionCount = points.Length;
-        Debug.Log(points.Length);
         lr.SetPositions(points);
     }
     [Command]
     public void CmdSetPoints(Vector3[] points)
     {
-        Debug.Log("Jew");
         RpcSetPoints(points);
     }
 
@@ -216,12 +213,18 @@ public class Doodle : Item {
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
     }
-    public void changeColor(int index)
+    [ClientRpc]
+    public void RpcChangeColor(int index)
     {
         lr.material = ItemBase.itemBase.materials[index];
         oldMat = ItemBase.itemBase.materials[index];
         Debug.Log("Changing to " + oldMat);
         colorIndex = index;
+    }
+    [Command]
+    public void CmdChangeColor(int index)
+    {
+        RpcChangeColor(index);
     }
     public override void changePosition(Vector3 start, Vector3 contr, Vector3 hold)
     {
