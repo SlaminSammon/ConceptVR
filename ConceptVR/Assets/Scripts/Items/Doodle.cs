@@ -179,6 +179,11 @@ public class Doodle : Item {
     [Command]
     public void CmdUpdateLineRenderer(Vector3 pos)
     {
+        RpcUpdateLR(pos);
+    }
+    [ClientRpc]
+    public void RpcUpdateLR(Vector3 pos)
+    {
         if (lr == null) return;
         lr.positionCount = numClicks + 1;
         lr.SetPosition(numClicks, pos);
