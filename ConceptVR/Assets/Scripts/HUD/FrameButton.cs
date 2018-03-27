@@ -6,9 +6,14 @@ public class FrameButton : HUDButton {
     
     public HUDFrame targetFrame;
 
+    public bool isSubFrameButton = true;
+
     public override void OnPress()
     {
-        HUD.Pop();
+        if (!this.isSubFrameButton)
+        {
+            HUD.popAll();
+        }
         HUD.Push(targetFrame);
     }
 }

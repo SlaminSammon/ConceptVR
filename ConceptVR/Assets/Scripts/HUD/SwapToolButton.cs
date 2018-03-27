@@ -40,18 +40,4 @@ public class SwapToolButton : ToggleButton {
             return;
         base.OnPress();
     }
-
-    private void ToggleOffAllOtherTools()
-    {
-        foreach (HUDFrame frame in GameObject.Find("Managers").GetComponent<HUDManager>().framesList)
-        {
-            foreach(SwapToolButton b in frame.GetComponentsInChildren<SwapToolButton>())
-            {
-                if (b.toggled && b != this)
-                {
-                    b.OnPress();
-                }
-            }
-        }
-    }
 }
