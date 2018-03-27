@@ -12,6 +12,7 @@ public class SettingsManager : MonoBehaviour {
     public bool snapEnabled = false;
     public GameObject scaleSlider;
     public float playerScale = 1f;
+    public bool anchored = true;
 
     GameObject LMHeadMountedRig;
 
@@ -24,8 +25,11 @@ public class SettingsManager : MonoBehaviour {
     }
     
     void Update () {
-        playerScale = scaleSlider.GetComponent<HUDSlider>().value * SCALE_FACTOR + 1f;
-        LMHeadMountedRig.transform.localScale = new Vector3(playerScale,playerScale,playerScale);
+        if (anchored)
+        {
+            playerScale = scaleSlider.GetComponent<HUDSlider>().value * SCALE_FACTOR + 1f;
+            LMHeadMountedRig.transform.localScale = new Vector3(playerScale, playerScale, playerScale);
+        }
     }
 
     public Vector3 snapToGrid(Vector3 v)

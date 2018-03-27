@@ -179,6 +179,7 @@ public class HUDManager : MonoBehaviour
                 placed = false;
                 HUDObject.SetActive(false);
                 ltc.hudAnchor = true;
+                this.gameObject.GetComponent<SettingsManager>().anchored = true;
             }
             else
             {
@@ -190,6 +191,7 @@ public class HUDManager : MonoBehaviour
             placed = true;
             HUDObject.SetActive(true);
             ltc.hudAnchor = false;
+            this.gameObject.GetComponent<SettingsManager>().anchored = false;
         }
     }
 }
