@@ -9,7 +9,7 @@ public class SelectTool : Tool {
     protected List<Point> sPoints;
     ItemBase itemBase;
 
-    protected float selectDistance = .07f;
+    protected float selectDistance = .045f;
     public void Start()
     {
         sElements = new List<DCGElement>();
