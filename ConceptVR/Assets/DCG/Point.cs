@@ -75,9 +75,9 @@ public class Point : DCGElement
     public override List<DCGElement> Extrude()
     {
         Point p = new Point(position);
-        new Edge(this, p);
         List<DCGElement> list = new List<DCGElement>();
         list.Add(p);
+        list.Add(new Edge(this, p));
         return list;
     }
 

@@ -26,7 +26,7 @@ public class SelectTool : Tool {
     public override bool Tap(Vector3 position)
     {
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
-        Item item = itemBase.findNearestItem(position);
+        Item item = ItemBase.itemBase.findNearestItem(position);
 
         return (item == null && nearestElement == null) ? false : 
             (item == null ? TapDCG(nearestElement) : 

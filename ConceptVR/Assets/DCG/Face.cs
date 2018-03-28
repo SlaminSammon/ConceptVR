@@ -192,6 +192,7 @@ public class Face : DCGElement
         foreach (Edge e in edges)
         {
             corners.Add(e.points[0]);
+            eElems.Add(e.points[0]);
             eCorners.Add(new Point(e.points[0].position));
         }
 
