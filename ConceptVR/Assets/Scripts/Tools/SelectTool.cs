@@ -9,7 +9,8 @@ public class SelectTool : Tool {
     protected List<Point> sPoints;
     ItemBase itemBase;
 
-    protected float selectDistance = .045f;
+    protected float defaultSelectDistance = .045f;
+    protected float selectDistance = 0.45f;
     public void Start()
     {
         sElements = new List<DCGElement>();
@@ -25,6 +26,9 @@ public class SelectTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
+        float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
+        selectDistance = defaultSelectDistance * playerScale * 0.50f;
+
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
         Item item = ItemBase.itemBase.findNearestItem(position);
 
