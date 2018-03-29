@@ -6,36 +6,50 @@ using UnityEngine.Networking;
 public class NetworkStarter : MonoBehaviour {
     public bool startHost;
     private NetworkManager netManager;
-    bool connecting = false;
+    private string netAddress;
+    private string netPort;
 	// Use this for initialization
 	void Start () {
         netManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-        if (startHost)
-        {
-            netManager.StartHost();
-            GameObject.Find("NetworkManager").GetComponent<NetworkManagerHUD>().showGUI = false;
-        }
+        netManager.StartHost();
+        netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
+
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (!netManager.isNetworkActive && !connecting && startHost)
+        if (!netManager.isNetworkActive)
         {
-            Debug.Log("Starting new Host");
+            netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
             netManager.networkAddress = "localhost";
+            netManager.networkPort = 53535;
             netManager.StartHost();
         }
-        if(netManager.isNetworkActive && connecting && Network.isClient)
-        {
-            connecting = false;
-        }
     }
-    public void connectToHost(string netAddress, int netPort)
+    public void connectToHost()
     {
+        if (netAddress == null || netPort == null)
+            return;
         netManager.StopHost();
         netManager.networkAddress = netAddress;
-        netManager.networkPort = netPort;
+        netManager.networkPort = int.Parse(netPort);
         netManager.StartClient();
-        connecting = true;
+        netManager.GetComponent<NetworkManagerHUD>().showGUI = true;
+        startHost = false;
+        netAddress = null;
+        netPort = null;
+    }
+    public void setNetAddress(string addr)
+    {
+        netAddress = addr;
+    }
+    public void setPort(string port)
+    {
+        netPort = port;
+    }
+    public void OnFailedToConnect()
+    {
+        Debug.Log("Failed to connect to Host");
+        startHost = true;
     }
 }

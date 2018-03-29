@@ -8,7 +8,6 @@ public class KeyboardButton : HUDButton {
 
 	// Use this for initialization
 	void Start () {
-        text = this.gameObject.transform.Find("Text").gameObject.GetComponent<TextMesh>().text;
         base.Start();
 	}
     // Update is called once per frame
