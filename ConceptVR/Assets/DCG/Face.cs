@@ -234,7 +234,7 @@ public class Face : DCGElement
         Face gFace = new Face(eEdges);
         eFaces.Add(gFace);
         new Solid(eFaces);
-        eElems.Add(this);
+        eElems.Add(gFace);
 
         return eElems;
     }

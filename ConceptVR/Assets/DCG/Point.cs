@@ -77,7 +77,7 @@ public class Point : DCGElement
         Point p = new Point(position);
         List<DCGElement> list = new List<DCGElement>();
         list.Add(new Edge(this, p));
-        list.Add(this);
+        list.Add(p);
         return list;
     }
 
