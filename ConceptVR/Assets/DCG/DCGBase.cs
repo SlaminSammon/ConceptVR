@@ -193,4 +193,9 @@ public class DCGBase : MonoBehaviour {
         //TODO: Network it
         constraints.Add(con);
     }
+    public static void RemoveAll()
+    {
+        foreach (KeyValuePair<int, DCGElement> elem in all)
+            elem.Value.Remove();
+    }
 }
