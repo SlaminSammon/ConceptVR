@@ -8,11 +8,11 @@ public class RectangleTool : Tool {
     Vector3 startPosition;
     List<Vector3> verts;
     float time;
-    public GameObject ghost;
+    GameObject ghost;
 
     private void Start()
     {
-        ghost = Instantiate(ghost);
+        ghost = Instantiate(this.gameObject.transform.Find("RectangleGhost").gameObject);
         ghost.gameObject.SetActive(true);
         ghost.transform.position = controllerPosition;
         ghost.gameObject.SetActive(false);
