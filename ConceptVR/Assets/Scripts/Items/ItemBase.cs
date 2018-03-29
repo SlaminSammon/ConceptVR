@@ -29,7 +29,6 @@ public class ItemBase : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
         selectMat.SetFloat("_Offset", Time.time / 6f);
-        Debug.Log(firstType);
         if (sItems.Count == 0 && firstType != "")
             firstType = "";
     }

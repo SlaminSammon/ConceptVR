@@ -86,6 +86,13 @@ public class HUDManager : MonoBehaviour
 
     public void Push(HUDFrame hudframe) {
 
+        // Super hackey solution to minor problem.
+        if (this.frameStack.Peek().gameObject.name == "MaterialsFrame" && hudframe.gameObject.name == "DoodleFrame" ||
+            this.frameStack.Peek().gameObject.name == "DoodleFrame" && hudframe.gameObject.name == "MaterialsFrame")
+        {
+            this.Pop();
+        }
+
         if (this.frameStack.Count >= 4)
         {
             this.Pop();

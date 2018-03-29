@@ -31,7 +31,9 @@ public class ExtrudeTool : MoveTool {
         }
         extrudedUndo.Add(eElements);
         Debug.Log(extrudedUndo.Count);
-        sElements = newSElement;
+        ClearSelection();
+        foreach (DCGElement elem in newSElement)
+            TapDCG(elem);//It's ghetto dont care.
         base.TriggerDown();
         return true;
     }

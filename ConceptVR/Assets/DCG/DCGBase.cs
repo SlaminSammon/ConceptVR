@@ -193,4 +193,11 @@ public class DCGBase : MonoBehaviour {
         //TODO: Network it
         constraints.Add(con);
     }
+    public static void RemoveAll()
+    {
+        points.Clear();
+        edges.Clear();
+        faces.Clear();
+        all.Clear();
+    }
 }

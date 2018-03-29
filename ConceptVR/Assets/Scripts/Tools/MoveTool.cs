@@ -14,8 +14,10 @@ public class MoveTool : SelectTool {
 
         if (triggerInput && sPoints != null)
         {
-            for(int i = 0; i < sPoints.Count; ++i)
+            for (int i = 0; i < sPoints.Count; ++i)
+            {
                 sPoints[i].setPosition(startPositions[i] + controllerPosition - grabPosition);
+            }
         }
         if (triggerInput && ItemBase.sItems != null)
             for (int i = 0; i < ItemBase.sItems.Count; ++i)

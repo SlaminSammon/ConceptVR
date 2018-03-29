@@ -416,4 +416,11 @@ public class Face : DCGElement
         }
         isLocked = false;
     }
+    public override DCGElement Copy()
+    {
+        List<Edge> cEdges = new List<Edge>();
+        foreach (Edge e in edges)
+            cEdges.Add((Edge) e.Copy());
+        return new Face(cEdges);
+    }
 }

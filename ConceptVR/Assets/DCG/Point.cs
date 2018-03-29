@@ -76,8 +76,8 @@ public class Point : DCGElement
     {
         Point p = new Point(position);
         List<DCGElement> list = new List<DCGElement>();
-        list.Add(p);
         list.Add(new Edge(this, p));
+        list.Add(p);
         return list;
     }
 
@@ -170,5 +170,9 @@ public class Point : DCGElement
                 faces.Add(f);
 
         return faces.Distinct().ToList<Face>();
+    }
+    public override DCGElement Copy()
+    {
+        return new Point(this.position);
     }
 }

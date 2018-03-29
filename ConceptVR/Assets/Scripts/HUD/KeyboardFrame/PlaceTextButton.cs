@@ -7,7 +7,7 @@ public class PlaceTextButton : HUDButton {
 
     public GameObject textBox;
     public KeyType type = KeyType.TEXT;
-    bool submit = false;
+    bool submit = true;
     string addr;
     NetworkStarter netStarter;
     
@@ -56,14 +56,21 @@ public class PlaceTextButton : HUDButton {
     }
     public void NetworkConnect()
     {
-        
         string textBoxText = textBox.GetComponent<TextMesh>().text;
         textBoxText = textBoxText.Substring(0, (textBoxText.Length - 20));
-        if (!submit)
-            addr = textBoxText;
+        if (submit)
+        {
+            netStarter.setNetAddress(textBoxText);
+            textBox.GetComponent<TextMesh>().text = "<color=red>_</color>";
+        }
         else
-            netStarter.connectToHost(addr, int.Parse(textBoxText));
+        {
+            netStarter.setPort(textBoxText);
+            netStarter.connectToHost();
+            textBox.GetComponent<TextMesh>().text = "<color=red>_</color>";
+        }
         submit = !submit;
+
 
     }
 
