@@ -19,5 +19,6 @@ public class steamController : Controller {
 	void Update () {
         currentTool.triggerInput = trackedController.triggerPressed;
         currentTool.setPos(trackedController.transform.position);
+        bool bob = true ? (true ? (true ? false : true) : true) : false;
     }
 }
