@@ -26,6 +26,8 @@ public abstract class Tool : MonoBehaviour {
 
     public virtual bool TriggerDown() { return false; }
     public virtual bool TriggerUp() { return false; }
+    public virtual bool DualTriggerDown() { return false; }
+    public virtual bool DualTriggerUp() { return false; }
     public virtual bool GripDown() { return false; }
     public virtual bool GripUp() { return false; }
     public virtual bool Tap(Vector3 position) { return false; }

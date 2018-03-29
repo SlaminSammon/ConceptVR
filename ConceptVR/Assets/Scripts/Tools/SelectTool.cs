@@ -28,10 +28,9 @@ public class SelectTool : Tool {
     {
         float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
         selectDistance = defaultSelectDistance * playerScale * 0.50f;
-
+        Debug.Log(sElements.Count);
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
         Item item = ItemBase.itemBase.findNearestItem(position);
-
         return (item == null && nearestElement == null) ? false : 
             (item == null ? TapDCG(nearestElement) : 
             (nearestElement == null ? TapItem(item) : 
@@ -47,6 +46,18 @@ public class SelectTool : Tool {
         }
         Deselect();
         return false;
+    }
+    public override bool DualTriggerDown()
+    {
+        if (sElements.Count == 0)
+            return true;
+        List<DCGElement> copiedElements = new List<DCGElement>();
+        foreach(DCGElement d in sElements)
+        {
+            copiedElements.Add(d.Copy());
+        }
+
+        return true;
     }
 
     public List<Point> Select(DCGElement elem)

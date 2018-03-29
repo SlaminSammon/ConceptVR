@@ -223,4 +223,11 @@ public class Edge : DCGElement
     {
         return (points[0] == p1 && points[points.Count-1] == p2 || points[0] == p2 && points[points.Count-1] == p1);
     }
+    public override DCGElement Copy()
+    {
+        List<Point> cPoints = new List<Point>();
+        foreach (Point p in points)
+            cPoints.Add((Point) p.Copy());
+        return new Edge(cPoints, this.isLoop);
+    }
 }

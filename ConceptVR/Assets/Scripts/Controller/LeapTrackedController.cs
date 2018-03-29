@@ -80,6 +80,8 @@ public class LeapTrackedController : MonoBehaviour
     #region Event Handlers
     public event GestureEventHandler pinchMade;
     public event GestureEventHandler pinchGone;
+    public event GestureEventHandler dualPinchMade;
+    public event GestureEventHandler dualPinchGone;
     public event GestureEventHandler grabMade;
     public event GestureEventHandler grabGone;
     public event GestureEventHandler swipeMade;
@@ -110,8 +112,12 @@ public class LeapTrackedController : MonoBehaviour
     public DetectorLogicGate thumbDownL;
     #endregion
     #region Pinch Detector
-    public PinchDetector rightPinchDetect;
-    public PinchDetector leftPinchDetect;
+    private PinchDetect rightPinchDetect;
+    private PinchDetect leftPinchDetect;
+    private DetectorLogicGate dualPinchGate;
+    private PinchDetect rightMidPinchDetect;
+    private PinchDetect rightRingPinchDetect;
+    private PinchDetect rightPinkyPinchDetect;
     #endregion
     #region Teleport Gun Detectors
     public DetectorLogicGate gunReady;
@@ -133,15 +139,9 @@ public class LeapTrackedController : MonoBehaviour
             palmDirectorLeft.OnActivate.AddListener(freeFormLeft);
             palmDirectorRightUp.OnActivate.AddListener(freeFormEndRight);
             palmDirectorLeftUp.OnActivate.AddListener(freeFormEndLeft);
-            rightPinchDetect.OnActivate.AddListener(OnPinchHeld);
-            rightPinchDetect.OnDeactivate.AddListener(OnPinchGone);
+            PinchDetectorInitRight();
             gunReady.OnActivate.AddListener(CockGun);
             gunFire.OnActivate.AddListener(FireGun);
-        }
-        else if(handedness == "Left")
-        {
-            leftPinchDetect.OnActivate.AddListener(OnPinchHeld);
-            leftPinchDetect.OnDeactivate.AddListener(OnPinchGone);
         }
     }
 
@@ -298,17 +298,14 @@ public class LeapTrackedController : MonoBehaviour
         pinchHeld = false;
         pinchGone();
     }
-    public void OnGrabHeld()
+    public void OnDualPinch()
     {
-        grabHeld = true;
-        if (grabMade != null)
-            grabMade();
+        Debug.Log("POOOOO");
+        dualPinchMade();
     }
-    public void OnGrabGone()
+    public void OffDualPinch()
     {
-        grabHeld = false;
-        if (grabGone != null)
-            grabGone();
+        dualPinchGone();
     }
     #endregion
 
@@ -507,4 +504,18 @@ public class LeapTrackedController : MonoBehaviour
         fireGun();
     }
     #endregion
+
+    public void PinchDetectorInitRight()
+    {
+        rightPinchDetect = GameObject.Find("Detectors").transform.Find("PinchDetector(R)").GetComponent<PinchDetect>();
+        rightPinchDetect.OnActivate.AddListener(OnPinchHeld);
+        rightPinchDetect.OnDeactivate.AddListener(OnPinchGone);
+        leftPinchDetect = GameObject.Find("Detectors").transform.Find("PinchDetector(L)").GetComponent<PinchDetect>();
+        leftPinchDetect.OnActivate.AddListener(OnDualPinch);
+        leftPinchDetect.OnDeactivate.AddListener(OffDualPinch);
+        /*dualPinchGate = GameObject.Find("Detectors").transform.Find("DualPinchGate").GetComponent<DetectorLogicGate>();
+        dualPinchGate.OnActivate.AddListener(OnDualPinch);
+        dualPinchGate.OnDeactivate.AddListener(OffDualPinch);*/
+    }
 }
+

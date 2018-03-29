@@ -13,6 +13,8 @@ public class handController: Controller {
         leapControl = GetComponent<LeapTrackedController>();
         leapControl.pinchMade += TriggerDown;
         leapControl.pinchGone += TriggerUp;
+        leapControl.dualPinchMade += DualTriggerUp;
+        leapControl.dualPinchGone += DualTriggerDown;
         leapControl.grabMade += GripDown;
         leapControl.grabGone += GripUp;
         leapControl.tapMade += Tap;
@@ -69,6 +71,24 @@ public class handController: Controller {
         foreach (Tool tool in ToolQueue)
             if (tool.TriggerUp())
                 return;
+    }
+    protected void DualTriggerDown()
+    {
+        if (currentTool != null && currentTool.DualTriggerDown())
+            return;
+        foreach (Tool tool in ToolQueue)
+            if (tool.DualTriggerDown())
+                return;
+    }
+
+    protected void DualTriggerUp()
+    {
+        if (currentTool != null && currentTool.DualTriggerUp())
+            return;
+        else
+            foreach (Tool tool in ToolQueue)
+                if (tool.DualTriggerUp())
+                    return;
     }
     protected void GripUp()
     {
