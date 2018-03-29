@@ -292,7 +292,7 @@ public static class GeometryUtil
     {
         int a, b, c;
     }
-    public static Mesh MergeMeshes(Mesh A, Mesh B, MergeMode mode)
+    public static Mesh ClipMeshes(Mesh A, Mesh B, MergeMode mode)
     {
         List<Vector3> verts;
 

@@ -307,7 +307,7 @@ public class Face : DCGElement
 
         List<int> tris;
 
-        tris = GeometryUtil.mediocreTriangulate(verts);
+        tris = GeometryUtil.smartTriangulate(verts, avgNormal);
 
         //mirror verts
         int vertCount = verts.Count;
