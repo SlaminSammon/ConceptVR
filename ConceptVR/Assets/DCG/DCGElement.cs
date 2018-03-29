@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class DCGElement
 {
-    private static int currentID = 0;
+    public static int currentID = 0;
     public int elementID;   //Unique identifier for this element
     public int lastMoveID;  
     public bool isSelected; 
@@ -25,6 +25,7 @@ public abstract class DCGElement
 
     public int nextElementID()
     {
-        return currentID++;
+        currentID += 32;
+        return currentID;
     }
 }

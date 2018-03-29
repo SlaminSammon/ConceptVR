@@ -15,6 +15,7 @@ public class NetPlayer : NetworkBehaviour {
             local = this;
             playerID = (int)GetComponent<NetworkIdentity>().netId.Value;
 
+            DCGElement.currentID = playerID;
             //Debug.Log("I'm the local player, and my number is " + playerID);
         }
 	}

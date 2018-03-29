@@ -167,97 +167,6 @@ public static class GeometryUtil
     }
 
 
-    //WARNING: will hang i given a self-intersecting polygon
-    public static List<int> triangulate(List<Vector3> points, Vector3 normal)
-    {
-        int c = points.Count;
-        int i;
-        List<int> triangles = new List<int>();
-        bool[] concave = new bool[c];
-        bool[] consumed = new bool[c];
-        int consumedCount = 0;
-        int concaveCount = 0;
-
-        for (i = 0; i < c; ++i)
-        {
-            bool isConcave = Vector3.Angle(normal, Vector3.Cross(points[(i + 2) % c] - points[(i + 1) % c], points[(i + 1) % c] - points[i])) < 90;
-            concave[(i + 1) % c] = isConcave;
-            if (isConcave)
-                ++concaveCount;
-        }
-
-        i = 0;
-        int i1 = 1;
-        int i2 = 2;
-        while (consumedCount < c - 3)
-        {
-            i1 = (i + 1) % c;
-            while (consumed[i1])
-                i1 = (i1 + 1) % c;
-
-            i2 = (i1 + 1) % c;
-            while (consumed[i2])
-                i2 = (i2 + 1) % c;
-
-            Vector3 a = points[i];
-            Vector3 b = points[i1];
-            Vector3 g = points[i2];
-
-            if (Vector3.Angle(normal, Vector3.Cross(b - a, g - b)) < 90)
-            {
-                bool bad = false;
-                for (int j = 0; j < c; ++j) if (j != i && j != i1 && j != i2 && concave[j] && !consumed[j])
-                    {
-                        float signb = Mathf.Sign(Vector3.Dot(Vector3.Cross(normal, b - a), b - points[j]));
-                        float signg = Mathf.Sign(Vector3.Dot(Vector3.Cross(normal, g - b), g - points[j]));
-                        float signa = Mathf.Sign(Vector3.Dot(Vector3.Cross(normal, a - g), a - points[j]));
-
-                        if (signa < 0 || signb < 0 || signg < 0)
-                        {
-                            bad = true;
-                            break;
-                        }
-                    }
-
-                if (!bad)
-                {
-                    triangles.Add(i); triangles.Add(i1); triangles.Add(i2);
-                    consumed[i1] = true;
-                    consumedCount++;
-                    i = i2;
-                }
-            }
-            else
-            {
-                i = i1;
-            }
-        }
-
-        i1 = (i + 1) % c;
-        while (consumed[i1])
-            i1 = (i1 + 1) % c;
-
-        i2 = (i1 + 1) % c;
-        while (consumed[i2])
-            i2 = (i2 + 1) % c;
-
-        triangles.Add(i); triangles.Add(i1); triangles.Add(i2);
-
-        return triangles;
-    }
-
-    //
-    public static List<int> dumbTriangulate(List<Vector3> points)
-    {
-        List<int> tris = new List<int>();
-        for (int i = 1; i < points.Count - 1; ++i)
-        {
-            tris.Add(0); tris.Add(i); tris.Add(i + 1);
-        }
-
-        return tris;
-    }
-
     //Not the worst I guess, 3D makes it make sense...ish
     public static List<int> mediocreTriangulate(List<Vector3> points)
     {
@@ -299,7 +208,98 @@ public static class GeometryUtil
 
         return triangles;
     }
-    
+
+    public static List<int> smartTriangulate(List<Vector3> points, Vector3 normal)
+    {
+        List<Vector2> p2 = planarize(points, normal, points[1] - points[0]);
+
+        List<int> tri = new List<int>();
+
+        List<bool> exc = new List<bool>();  //Already excluded points
+        for (int a = 0; a < points.Count; ++a)
+            exc.Add(false);
+        int excCount = 0;
+
+        int i = 0;
+        int j, k;
+        while (excCount < points.Count-3)
+        {
+            j = next(i, exc);
+            k = next(j, exc);
+
+            if (Cross2(p2[j] - p2[i], p2[k] - p2[i]) > 0)  //If this tri is widdershins
+            {
+                foreach(Vector2 v in p2)    //Verify this tri contains no other points
+                {
+                    float ci = Cross2(p2[j] - p2[i], v - p2[i]);
+                    float cj = Cross2(p2[k] - p2[j], v - p2[j]);
+                    float ck = Cross2(p2[i] - p2[k], v - p2[k]);
+
+                    if (ci > 0 && cj > 0 && ck > 0)
+                        goto STBreak;
+                }
+
+                tri.Add(i); tri.Add(j); tri.Add(k);
+                exc[j] = true;
+                ++excCount;
+            }
+            STBreak:
+            i = next(i, exc);
+        }
+
+        j = next(i, exc);
+        k = next(j, exc);
+        i = next(k, exc);
+
+        tri.Add(i); tri.Add(j); tri.Add(k);
+
+        return tri;
+    }
+
+    private static int next(int i, List<bool> exclude)
+    {
+        int start = i;
+        do
+        {
+            i = (i + 1) % exclude.Count;
+        } while (i != start && exclude[i]);
+
+        return i;
+    }
+
+    public static float Cross2(Vector2 u, Vector2 v)
+    {
+        return (u.x * v.y - u.y * v.x);
+    }
+
+    public static List<Vector2> planarize(List<Vector3> points, Vector3 normal, Vector3 up)
+    {
+        List<Vector2> planar = new List<Vector2>();
+        Vector3 pUp = Vector3.ProjectOnPlane(up, normal).normalized;
+        Vector3 pRight = Vector3.Cross(pUp, normal).normalized;
+
+        foreach(Vector3 v in points)
+        {
+            Vector3 proj = Vector3.ProjectOnPlane(v, normal);
+            planar.Add(new Vector2(Vector3.Project(proj, pUp).magnitude, Vector3.Project(proj, pRight).magnitude));
+        }
+
+        return planar;
+    }
+
+    public enum MergeMode { add, subtract, intersect }
+    struct Triangle
+    {
+        int a, b, c;
+    }
+    public static Mesh MergeMeshes(Mesh A, Mesh B, MergeMode mode)
+    {
+        List<Vector3> verts;
+
+        return new Mesh();
+
+    }
+
     public static Vector3 Bezerp(Vector3[] control, float t)
     {
         Vector3[] nControl = new Vector3[control.Length - 1];
