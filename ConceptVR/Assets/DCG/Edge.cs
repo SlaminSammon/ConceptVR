@@ -168,20 +168,21 @@ public class Edge : DCGElement
         List<Point> ep = new List<Point>();
         List<DCGElement> eElem = new List<DCGElement>();
         foreach (Point p in points)
+        {
             ep.Add(new Point(p.position));
+            eElem.Add(p);
+        }
 
         ep.Reverse();
 
         List<Edge> ee = new List<Edge>();
         Edge oppEdge = new Edge(ep, isLoop);
         ee.Add(oppEdge);
-        eElem.Add(oppEdge);
         ee.Add(new Edge(ep[ep.Count - 1], points[0]));
         ee.Add(this);
         ee.Add(new Edge(points[ep.Count - 1], ep[0]));
-
         Face ef = new Face(ee);
-
+        eElem.Add(oppEdge); // newSelement is last element
         return eElem;
     }
     

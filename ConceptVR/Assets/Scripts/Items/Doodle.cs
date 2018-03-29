@@ -19,7 +19,7 @@ public class Doodle : Item {
 	void Start () {
         lr = this.gameObject.GetComponent<LineRenderer>();
         colorIndex = ItemBase.defaultIndex;
-        changeColor(colorIndex);
+        CmdChangeColor(colorIndex);
         isFinished = false;
         base.Start();
         startPos = new List<Vector3>();
@@ -81,7 +81,7 @@ public class Doodle : Item {
             lr.positionCount = index - 1;
 
             Doodle newDood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
-            newDood.setPoints(newDoodPositions);
+            newDood.CmdSetPoints(newDoodPositions.ToArray());
         }
     }
 
@@ -123,9 +123,9 @@ public class Doodle : Item {
             {
                 Doodle dood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
                 dood.gameObject.SetActive(true);
-                dood.lr = dood.GetComponent<LineRenderer>();
-                dood.setPoints(seg);
+                dood.lr = dood.GetComponent<LineRenderer>();           
                 ItemBase.Spawn(dood.gameObject);
+                dood.CmdSetPoints(seg.ToArray());
                 doods.Add(dood);
                 //ItemBase.items.Add(dood);
             }
@@ -136,11 +136,16 @@ public class Doodle : Item {
 
         return doods;
     }
-
-    public void setPoints(List<Vector3> points)
+    [ClientRpc]
+    public void RpcSetPoints(Vector3[] points)
     {
-        lr.positionCount = points.Count;
-        lr.SetPositions(points.ToArray());
+        lr.positionCount = points.Length;
+        lr.SetPositions(points);
+    }
+    [Command]
+    public void CmdSetPoints(Vector3[] points)
+    {
+        RpcSetPoints(points);
     }
 
     public override void CmdSelect()
@@ -179,6 +184,11 @@ public class Doodle : Item {
     [Command]
     public void CmdUpdateLineRenderer(Vector3 pos)
     {
+        RpcUpdateLR(pos);
+    }
+    [ClientRpc]
+    public void RpcUpdateLR(Vector3 pos)
+    {
         if (lr == null) return;
         lr.positionCount = numClicks + 1;
         lr.SetPosition(numClicks, pos);
@@ -197,17 +207,24 @@ public class Doodle : Item {
     }
     public override void Push()
     {
+        base.Push();
         Debug.Log("Pushing Doodle Frame");
         GameObject frame = GameObject.Find("Frames");
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
     }
-    public void changeColor(int index)
+    [ClientRpc]
+    public void RpcChangeColor(int index)
     {
         lr.material = ItemBase.itemBase.materials[index];
         oldMat = ItemBase.itemBase.materials[index];
         Debug.Log("Changing to " + oldMat);
         colorIndex = index;
+    }
+    [Command]
+    public void CmdChangeColor(int index)
+    {
+        RpcChangeColor(index);
     }
     public override void changePosition(Vector3 start, Vector3 contr, Vector3 hold)
     {

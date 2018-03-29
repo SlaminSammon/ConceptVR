@@ -7,12 +7,12 @@ public class DoodleFrame : HUDFrame {
     public float width;
     // Use this for initialization
     void Start () {
-        widthSlider = this.gameObject.transform.Find("WidthSlider").GetComponent<HUDSlider>();
-        width = widthSlider.value;
+        //widthSlider = this.gameObject.transform.Find("WidthSlider").GetComponent<HUDSlider>();
+        //width = widthSlider.value;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        width = widthSlider.value;
+        //width = widthSlider.value;
 	}
 }

@@ -30,7 +30,7 @@ public class SmoothEdge : Edge {
 
     public override void Render()
     {
-        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
+         Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
     }
 
     public override List<DCGElement> Extrude()
@@ -58,8 +58,13 @@ public class SmoothEdge : Edge {
     static int curveRes = 20;
     static int roundRes = 10;
     static float roundRad = .005f;
+    static float defaultScale = .005f;
+
     public new void updateMesh()
     {
+        float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
+        roundRad = defaultScale * playerScale;
+
         smoothPoints = this.smoothVerts(curveRes);
 
         List<Vector3> verts = new List<Vector3>();

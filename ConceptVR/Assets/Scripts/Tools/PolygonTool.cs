@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PolygonTool : Tool {
     public GameObject linePrefab;
-    public DebugGrapher graph;
+    //public DebugGrapher graph;
 
     LineRenderer currentLine;
     List<Vector3> currentPositions;
@@ -45,10 +45,10 @@ public class PolygonTool : Tool {
 
         BuildCurrent();
 
-        currentLine.positionCount = currentPositions.Count;
+        Destroy(currentLine);
+        /*currentLine.positionCount = currentPositions.Count;
         currentLine.SetPositions(currentPositions.ToArray());
-        currentLine.loop = true;
-        //Generate the circle
+        currentLine.loop = true;*/
         return true;
     }
 
@@ -104,7 +104,7 @@ public class PolygonTool : Tool {
         int min = 0;
         float speed = 0;
 
-        graph.length = count;   //Debug
+        //graph.length = count;   //Debug
 
         for (int i = 0; i < count; ++i)
             speed += Vector3.Distance(pos[(i + count - 1) % count], pos[i]);
@@ -119,7 +119,7 @@ public class PolygonTool : Tool {
             if (sharpness[i] < sharpness[min])
                 min = i;
 
-            graph.AddValue("sharpness", sharpness[i], false);   //Debug
+            //graph.AddValue("sharpness", sharpness[i], false);   //Debug
         }
 
         List<TopoPoint> tPoints = new List<TopoPoint>();

@@ -23,7 +23,7 @@ public abstract class Item : NetworkBehaviour {
 
     }
     #region Override Functions
-    public virtual float Distance(Vector3 pos) { return -1f; }
+    public virtual float Distance(Vector3 pos) { return Mathf.Infinity; }
     public virtual void CmdSelect()
     {
         oldMat = this.gameObject.GetComponent<Renderer>().material;

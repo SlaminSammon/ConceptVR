@@ -9,7 +9,8 @@ public class SelectTool : Tool {
     protected List<Point> sPoints;
     ItemBase itemBase;
 
-    protected float selectDistance = .07f;
+    protected float defaultSelectDistance = .045f;
+    protected float selectDistance = 0.45f;
     public void Start()
     {
         sElements = new List<DCGElement>();
@@ -25,8 +26,11 @@ public class SelectTool : Tool {
 
     public override bool Tap(Vector3 position)
     {
+        float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
+        selectDistance = defaultSelectDistance * playerScale * 0.50f;
+
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
-        Item item = itemBase.findNearestItem(position);
+        Item item = ItemBase.itemBase.findNearestItem(position);
 
         return (item == null && nearestElement == null) ? false : 
             (item == null ? TapDCG(nearestElement) : 
@@ -79,12 +83,13 @@ public class SelectTool : Tool {
     }
     public void Deselect()
     {
+        Debug.Log(Item.popped);
         foreach (Item item in ItemBase.sItems)
         {
             item.CmdDeSelect();
         }
         ItemBase.sItems.Clear();
-        if (itemBase.isHUD)
+        if (!Item.popped)
         {
             Item.Pop();
             itemBase.firstType = "";
@@ -103,6 +108,8 @@ public class SelectTool : Tool {
     void OnDisable()
     {
         ClearSelection();
+        if (ItemBase.sItems.Count != 0)
+            Deselect();
     }
     public bool TapDCG(DCGElement nearestElement)
     {

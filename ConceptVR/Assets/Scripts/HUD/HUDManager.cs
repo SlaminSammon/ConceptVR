@@ -8,7 +8,8 @@ public class HUDManager : MonoBehaviour
     // active or inactive hud
     bool hudActive = false;
     // analog or digital clock
-    bool isAnalogClock = false;
+    bool isAnalogClock = true;
+    public GameObject clock;
 
     // current tool selected
     string toolSelected = "";
@@ -19,10 +20,6 @@ public class HUDManager : MonoBehaviour
     HandsUtil util;
     [HideInInspector] public GameObject frames;
     [HideInInspector] public HUDFrame mainFrame;
-
-    [HideInInspector]
-    public List<HUDFrame> framesList;   //TODO: Obsoletify
-
     Leap.Controller leapcontroller;
     Leap.Frame frame;
     Leap.Hand lHand;
@@ -36,6 +33,7 @@ public class HUDManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         leapcontroller = new Leap.Controller();
         frame = leapcontroller.Frame();
 
@@ -58,9 +56,6 @@ public class HUDManager : MonoBehaviour
 
         hudManager = this;
 
-        framesList.Add(frames.transform.Find("ToolsFrame").GetComponent<HUDFrame>());
-        framesList.Add(frames.transform.Find("PrefabsFrame").GetComponent<HUDFrame>());
-        framesList.Add(frames.transform.Find("SettingsFrame").GetComponent<HUDFrame>());
 
     }
 
@@ -77,7 +72,9 @@ public class HUDManager : MonoBehaviour
             if (util.IsFlatHand(lHand))
                 HUDObject.SetActive(true);
             else
+            {
                 HUDObject.SetActive(false);
+            }
             
         }
         else
@@ -89,9 +86,16 @@ public class HUDManager : MonoBehaviour
 
     public void Push(HUDFrame hudframe) {
 
+        if (this.frameStack.Count >= 4)
+        {
+            this.Pop();
+        }
         // deactivate current top level HUDframe
         if (!hudframe.isSubFrame)
+        {
             this.frameStack.Peek().transform.gameObject.SetActive(false);
+        }
+
         // activate new top level HUDframe
         hudframe.gameObject.SetActive(true);
         updateColor(hudframe);
@@ -99,11 +103,6 @@ public class HUDManager : MonoBehaviour
         this.frameStack.Push(hudframe);
     }
 
-    //Whateven is this function?  Who wrote this?
-    public void Push(HUDFrame hudframe1, HUDFrame hudframe2) {
-        this.frameStack.Push(hudframe2);
-        this.frameStack.Push(hudframe1);
-    }
 
     public void Pop() {
 
@@ -122,6 +121,14 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    public void popAll()
+    {
+        while (this.frameStack.Peek() != mainFrame)
+        {
+            this.Pop();
+        }
+    }
+
     void updateColor(HUDFrame topFrame) {
 
         foreach (Transform child in topFrame.GetComponentsInChildren<Transform>()) {
@@ -129,28 +136,6 @@ public class HUDManager : MonoBehaviour
             bool isButtonObj = false;
             bool isTextObj = false;
 
-            /*
-            // check for the child whose name is "BackButton"
-            if (child.gameObject.name == "BackButton")
-            {
-                isButtonObj = true;
-                // make BackButton orange
-                child.gameObject.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-            }
-            if (child.gameObject.name.Length > 4 && child.gameObject.name.Substring(child.gameObject.name.Length - 4) == "Text") {
-                isTextObj = true;
-                // make text objects white
-                child.gameObject.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            }
-            if (child.gameObject.name.Length > 5 && child.gameObject.name.Substring(child.gameObject.name.Length - 5) == "Frame") {
-                isFrameObj = true;
-            }
-            if (!isFrameObj && !isButtonObj && !isTextObj) {
-                // set the color of the child component to the HUDcolor if it is not a tool button
-                if (child.gameObject.name != "DrawButton" && child.gameObject.name != "DragButton" && child.gameObject.name != "BezierButton")
-                    child.gameObject.GetComponent<Renderer>().material.color = this.HUDColor;
-            }
-            */
         }
     }
 
@@ -163,21 +148,22 @@ public class HUDManager : MonoBehaviour
 
         updateColor(this.frameStack.Peek());
     }
-    /*
+    
     public void changeClock()
     {
         this.isAnalogClock = !this.isAnalogClock;
         if (this.isAnalogClock)
         {
-            analogClock.SetActive(true);
-            digitalClock.SetActive(false);
+            clock.transform.Find("AnalogClock").gameObject.SetActive(true);
+            clock.transform.Find("DigitalClock").gameObject.SetActive(false);
         }
         else
         {
-            analogClock.SetActive(false);
-            digitalClock.SetActive(true);
+            clock.transform.Find("AnalogClock").gameObject.SetActive(false);
+            clock.transform.Find("DigitalClock").gameObject.SetActive(true);
         }
-    }*/
+    }
+
     void Placement()
     {
         LeapTrackedController ltc = GameObject.Find("LoPoly_Rigged_Hand_Right").GetComponent<LeapTrackedController>();
@@ -193,6 +179,7 @@ public class HUDManager : MonoBehaviour
                 placed = false;
                 HUDObject.SetActive(false);
                 ltc.hudAnchor = true;
+                this.gameObject.GetComponent<SettingsManager>().anchored = true;
             }
             else
             {
@@ -204,6 +191,7 @@ public class HUDManager : MonoBehaviour
             placed = true;
             HUDObject.SetActive(true);
             ltc.hudAnchor = false;
+            this.gameObject.GetComponent<SettingsManager>().anchored = false;
         }
     }
 }

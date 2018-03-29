@@ -157,7 +157,7 @@ public class LeapTrackedController : MonoBehaviour
         if(hand == null){
             OnPinchGone();
         }
-        position = hand.PalmPosition.ToVector3();
+        position = util.getIndexPos(hand);
         #region  FreeForm Logic
         //I really hate this logic section.
         //end case

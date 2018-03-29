@@ -5,7 +5,7 @@ using UnityEngine;
 public class DestroyTool : Tool {
     public Material destMat;
 
-    float delDist = 0.07f;
+    float delDist = 0.05f;
 
 	// Use this for initialization
 	void Start () {
@@ -17,14 +17,22 @@ public class DestroyTool : Tool {
         if (triggerInput)
         {
             Point nPoint;
+            Item nItem;
             while (true)
             {
                 float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
                 nPoint = DCGBase.NearestPoint(controllerPosition, delDist*playerScale);
-                if (nPoint == null)
+                nItem = ItemBase.NearestItem(controllerPosition, delDist * playerScale);
+                if (nPoint == null && nItem == null)
                     break;
-                else
+                else if (nItem == null)
                     nPoint.Remove();
+                else if (nPoint == null)
+                    ItemBase.Remove(nItem);
+                else
+                    nPoint.Remove(); ItemBase.Remove(nItem);
+
+
             }
         }
     }

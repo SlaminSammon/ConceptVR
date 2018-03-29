@@ -51,4 +51,8 @@ public class LightItem : Item
     {
         this.gameObject.GetComponent<Light>().intensity = intensity * INTENSITY_SCALE;
     }
+    public override float Distance(Vector3 pos)
+    {
+        return Vector3.Distance(pos, this.gameObject.transform.position);
+    }
 }

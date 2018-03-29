@@ -43,6 +43,11 @@ public class ItemBase : NetworkBehaviour {
     {
         NetworkServer.Destroy(go);
     }
+    public static void Remove(Item item)
+    {
+        items.Remove(item);
+        DeSpawn(item.gameObject);
+    }
     public Item findNearestItem(Vector3 position)
     {
         Item nearestItem = null;
@@ -81,6 +86,23 @@ public class ItemBase : NetworkBehaviour {
     public static void changeIndex(int index)
     {
         ItemBase.defaultIndex = index;
+    }
+    public static Item NearestItem(Vector3 pos, float maxDist)
+    {
+        Item nItem = null;
+        foreach (Item item in ItemBase.items)
+        {
+            if (item.GetType() == typeof(Doodle))
+                continue;
+            float dist = item.Distance(pos);
+            if (dist < maxDist)
+            {
+                maxDist = dist;
+                nItem = item;
+            }
+        }
+
+        return nItem;
     }
 
 }

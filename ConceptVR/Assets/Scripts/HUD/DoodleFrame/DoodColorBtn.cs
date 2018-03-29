@@ -22,7 +22,7 @@ public class DoodColorBtn : HUDButton {
         ItemBase.changeIndex(index);
         if (ItemBase.sItems.Count != 0)
             foreach (Doodle d in ItemBase.sItems)
-                d.changeColor(index);
+                d.CmdChangeColor(index);
 
     }
 }
