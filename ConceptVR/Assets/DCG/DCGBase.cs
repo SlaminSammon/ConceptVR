@@ -195,7 +195,9 @@ public class DCGBase : MonoBehaviour {
     }
     public static void RemoveAll()
     {
-        foreach (KeyValuePair<int, DCGElement> elem in all)
-            elem.Value.Remove();
+        points.Clear();
+        edges.Clear();
+        faces.Clear();
+        all.Clear();
     }
 }
