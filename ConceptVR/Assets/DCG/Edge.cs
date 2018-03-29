@@ -182,7 +182,7 @@ public class Edge : DCGElement
         ee.Add(this);
         ee.Add(new Edge(points[ep.Count - 1], ep[0]));
         Face ef = new Face(ee);
-        eElem.Add(oppEdge); // newSelement is last element
+        eElem.Add(this); // newSelement is last element
         return eElem;
     }
     
