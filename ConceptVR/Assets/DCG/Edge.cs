@@ -167,13 +167,15 @@ public class Edge : DCGElement
     {
         List<Point> ep = new List<Point>();
         List<DCGElement> eElem = new List<DCGElement>();
+        eElem.Add(this);
         foreach (Point p in points)
         {
             ep.Add(new Point(p.position));
-            eElem.Add(p);
         }
 
         ep.Reverse();
+        foreach (Point p in ep)
+            eElem.Add(p);
 
         List<Edge> ee = new List<Edge>();
         Edge oppEdge = new Edge(ep, isLoop);

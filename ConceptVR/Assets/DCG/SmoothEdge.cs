@@ -102,4 +102,11 @@ public class SmoothEdge : Edge {
         mesh.SetTriangles(tris, 0);
         mesh.SetNormals(normals);
     }
+    public override DCGElement Copy()
+    {
+        List<Point> cPoints = new List<Point>();
+        foreach (Point p in points)
+            cPoints.Add((Point)p.Copy());
+        return new SmoothEdge(cPoints);
+    }
 }

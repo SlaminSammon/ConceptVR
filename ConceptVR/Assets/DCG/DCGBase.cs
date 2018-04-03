@@ -17,6 +17,8 @@ public class DCGBase : MonoBehaviour {
     public static List<Face> faces = new List<Face>();
     public static List<Solid> solids = new List<Solid>();
     public static List<DCGConstraint> constraints = new List<DCGConstraint>();
+    public static List<DCGElement> sElements = new List<DCGElement>();
+    public static List<Point> sPoints = new List<Point>();
 
     public static Dictionary<int, DCGElement> all = new Dictionary<int, DCGElement>();
     public static DCGSynchronizer synch;

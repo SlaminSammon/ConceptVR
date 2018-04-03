@@ -79,8 +79,8 @@ public class Face : DCGElement
             s.Remove();
         foreach (Edge e in edges)
             e.faces.Remove(this);
-        DCGBase.faces.Remove(this);
         mat.RemoveFace(this);
+        DCGBase.faces.Remove(this);
     }
 
     public override bool ChildrenSelected()
@@ -188,11 +188,11 @@ public class Face : DCGElement
         List<DCGElement> eElems = new List<DCGElement>();
 
         eFaces.Add(this);
+        eElems.Add(this);
 
         foreach (Edge e in edges)
         {
             corners.Add(e.points[0]);
-            eElems.Add(e.points[0]);
             eCorners.Add(new Point(e.points[0].position));
         }
 
@@ -217,6 +217,8 @@ public class Face : DCGElement
             }
 
             edgePoints.Reverse();
+            foreach (Point p in edgePoints)
+                eElems.Add(p);
             Edge eEdge = new Edge(edgePoints, e.isLoop);
             eEdges.Add(eEdge);
 
@@ -227,10 +229,13 @@ public class Face : DCGElement
             faceEdges.Add(new Edge(e.points[e.points.Count - 1], eEdge.points[0]));
             Face nFace = new Face(faceEdges);
             eFaces.Add(nFace);
+            
             ++i;
         }
 
         eEdges.Reverse();
+        foreach (Edge e in eEdges)
+            eElems.Add(e);
         Face gFace = new Face(eEdges);
         eFaces.Add(gFace);
         new Solid(eFaces);

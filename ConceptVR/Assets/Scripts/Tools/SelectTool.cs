@@ -5,16 +5,12 @@ using UnityEngine;
 public class SelectTool : Tool {
     public Material selMat;
 
-    protected List<DCGElement> sElements;
-    protected List<Point> sPoints;
     ItemBase itemBase;
 
     protected float defaultSelectDistance = .045f;
     protected float selectDistance = 0.45f;
     public void Start()
     {
-        sElements = new List<DCGElement>();
-        sPoints = new List<Point>();
         itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
     }
 
@@ -28,7 +24,7 @@ public class SelectTool : Tool {
     {
         float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
         selectDistance = defaultSelectDistance * playerScale * 0.50f;
-        Debug.Log(sElements.Count);
+        Debug.Log(DCGBase.sElements.Count);
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
         Item item = ItemBase.itemBase.findNearestItem(position);
         return (item == null && nearestElement == null) ? false : 
@@ -39,7 +35,7 @@ public class SelectTool : Tool {
     }
     public override bool Swipe()
     {
-        if (sElements.Count > 0)
+        if (DCGBase.sElements.Count > 0)
         {
             ClearSelection();
             return true;
@@ -49,10 +45,10 @@ public class SelectTool : Tool {
     }
     public override bool DualTriggerDown()
     {
-        if (sElements.Count == 0)
+        if (DCGBase.sElements.Count == 0)
             return true;
         List<DCGElement> copiedElements = new List<DCGElement>();
-        foreach(DCGElement d in sElements)
+        foreach(DCGElement d in DCGBase.sElements)
         {
             copiedElements.Add(d.Copy());
         }
@@ -72,19 +68,19 @@ public class SelectTool : Tool {
     {
         item.CmdSelect();
         ItemBase.sItems.Add(item);
-        if(sPoints.Count == 0)
+        if(DCGBase.sPoints.Count == 0)
             itemBase.itemHudManager(item);
     }
 
     public void ClearSelection()
     {
-        foreach(DCGElement e in sElements)
+        foreach(DCGElement e in DCGBase.sElements)
         {
             Deselect(e);
         }
 
-        sElements = new List<DCGElement>();
-        sPoints = new List<Point>();
+        DCGBase.sElements = new List<DCGElement>();
+        DCGBase.sPoints = new List<Point>();
     }
 
     public void Deselect(DCGElement e)
@@ -110,7 +106,7 @@ public class SelectTool : Tool {
     protected void OnRenderObject()
     {
         selMat.SetPass(0);
-        foreach (DCGElement e in sElements)
+        foreach (DCGElement e in DCGBase.sElements)
         {
             e.Render();
         }
@@ -127,12 +123,12 @@ public class SelectTool : Tool {
         if (nearestElement != null && !nearestElement.isLocked)
         {
             List<Point> newSel = Select(nearestElement);
-            sElements.Remove(nearestElement);
-            sElements.Add(nearestElement);
+            DCGBase.sElements.Remove(nearestElement);
+            DCGBase.sElements.Add(nearestElement);
             foreach (Point p in newSel)
             {
-                sPoints.Remove(p); //If the point exists in the point list, remove the copy before adding it in
-                sPoints.Add(p);
+                DCGBase.sPoints.Remove(p); //If the point exists in the point list, remove the copy before adding it in
+                DCGBase.sPoints.Add(p);
             }
             return true;
         }

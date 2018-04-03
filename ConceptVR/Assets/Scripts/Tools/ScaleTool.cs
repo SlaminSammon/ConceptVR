@@ -16,25 +16,25 @@ public class ScaleTool : SelectTool {
         {
             float scaleFactor = (controllerPosition - startCenter).magnitude / (grabPosition - startCenter).magnitude;
 
-            for (int i = 0; i < sPoints.Count; ++i)
-                sPoints[i].setPosition(startCenter + (startPositions[i] - startCenter) * scaleFactor);
+            for (int i = 0; i < DCGBase.sPoints.Count; ++i)
+                DCGBase.sPoints[i].setPosition(startCenter + (startPositions[i] - startCenter) * scaleFactor);
         }
     }
 
     public override bool TriggerDown()
     {
-        if (sPoints.Count == 0)
+        if (DCGBase.sPoints.Count == 0)
             return false;
 
-        startPositions = new List<Vector3>(sPoints.Count);
+        startPositions = new List<Vector3>(DCGBase.sPoints.Count);
         startCenter = Vector3.zero;
 
-        foreach (Point p in sPoints)
+        foreach (Point p in DCGBase.sPoints)
         {
             startPositions.Add(p.position);
             startCenter += p.position;
         }
-        startCenter /= sPoints.Count;
+        startCenter /= DCGBase.sPoints.Count;
 
         grabPosition = controllerPosition;
         return true;

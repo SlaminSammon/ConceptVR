@@ -112,7 +112,7 @@ public class RectangleTool : Tool {
         faces.Add(new Face(edges));
         edges.Clear();
 
-        Solid rectangle = new Solid(faces);
+        //Solid rectangle = new Solid(faces);
     }
 
     private void UpdateVerts()

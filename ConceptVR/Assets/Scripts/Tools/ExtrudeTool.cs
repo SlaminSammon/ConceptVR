@@ -13,23 +13,15 @@ public class ExtrudeTool : MoveTool {
     }
     public override bool TriggerDown()
     {
-        if (sElements == null || sElements.Count == 0)
+        if (DCGBase.sElements == null || DCGBase.sElements.Count == 0)
             return false;
         //This is the undo section and it is disgusting. Please ask me to die later. k thx
-        List<DCGElement> eElements = new List<DCGElement>();
         List<DCGElement> newSElement = new List<DCGElement>();
-        foreach(DCGElement e in sElements){
+        foreach(DCGElement e in DCGBase.sElements){
             List<DCGElement> temp = e.Extrude();
             newSElement.Add(temp[temp.Count-1]);
-            temp.RemoveAt(temp.Count-1);
-            eElements.AddRange(temp);
+            extrudedUndo.Add(temp);
         }
-        Debug.Log(eElements.Count);
-        if(extrudedUndo.Count == 4)
-        {
-            extrudedUndo.RemoveAt(0);
-        }
-        extrudedUndo.Add(eElements);
         Debug.Log(extrudedUndo.Count);
         ClearSelection();
         foreach (DCGElement elem in newSElement)
@@ -39,7 +31,7 @@ public class ExtrudeTool : MoveTool {
     }
     public override bool TriggerUp()
     {
-        if(sElements.Count != 0)
+        if(DCGBase.sElements.Count != 0)
             ClearSelection();
         return true;
     }
@@ -48,9 +40,16 @@ public class ExtrudeTool : MoveTool {
         base.Swipe();
         if (extrudedUndo.Count == 0)
             return true;
-        foreach (DCGElement d in extrudedUndo[extrudedUndo.Count-1])
-            d.Remove();
-        extrudedUndo.RemoveAt(extrudedUndo.Count - 1);
+        for(int i =0; i< extrudedUndo.Count; ++i)
+        {
+            Debug.Log(extrudedUndo[i].Count);
+            extrudedUndo[i][0].Copy();
+            for(int j = 0; j < extrudedUndo[i].Count; ++j)
+            {
+                extrudedUndo[i][j].Remove();
+            }
+        }
+        extrudedUndo.Clear();
         return true;
     }
 }

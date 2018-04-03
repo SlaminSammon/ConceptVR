@@ -12,11 +12,11 @@ public class MoveTool : SelectTool {
     new void Update () {
         base.Update();
 
-        if (triggerInput && sPoints != null)
+        if (triggerInput && DCGBase.sPoints != null)
         {
-            for (int i = 0; i < sPoints.Count; ++i)
+            for (int i = 0; i < DCGBase.sPoints.Count; ++i)
             {
-                sPoints[i].setPosition(startPositions[i] + controllerPosition - grabPosition);
+                DCGBase.sPoints[i].setPosition(startPositions[i] + controllerPosition - grabPosition);
             }
         }
         if (triggerInput && ItemBase.sItems != null)
@@ -26,13 +26,13 @@ public class MoveTool : SelectTool {
 
     public override bool TriggerDown()
     {
-        if (sPoints.Count == 0 && ItemBase.sItems.Count == 0)
+        if (DCGBase.sPoints.Count == 0 && ItemBase.sItems.Count == 0)
             return false;
-        if (sPoints.Count > 0)
+        if (DCGBase.sPoints.Count > 0)
         {
-            startPositions = new List<Vector3>(sPoints.Count);
+            startPositions = new List<Vector3>(DCGBase.sPoints.Count);
             //Debug.Log(sPoints.Count);
-            foreach (Point p in sPoints)
+            foreach (Point p in DCGBase.sPoints)
                 startPositions.Add(p.position);
         }
         if(ItemBase.sItems.Count > 0)
