@@ -79,9 +79,11 @@ public class Face : DCGElement
             s.Remove();
         foreach (Edge e in edges)
             e.faces.Remove(this);
-        mat.RemoveFace(this);
+        if(mat != null)
+            mat.RemoveFace(this);
         DCGBase.faces.Remove(this);
     }
+
 
     public override bool ChildrenSelected()
     {
@@ -194,6 +196,8 @@ public class Face : DCGElement
         {
             corners.Add(e.points[0]);
             eCorners.Add(new Point(e.points[0].position));
+            eElems.Add(e);
+            eElems.Add(e.points[0]);
         }
 
         int i = 0;
@@ -238,7 +242,7 @@ public class Face : DCGElement
             eElems.Add(e);
         Face gFace = new Face(eEdges);
         eFaces.Add(gFace);
-        new Solid(eFaces);
+        eElems.Add(new Solid(eFaces));
         eElems.Add(gFace);
 
         return eElems;
@@ -427,5 +431,12 @@ public class Face : DCGElement
         foreach (Edge e in edges)
             cEdges.Add((Edge) e.Copy());
         return new Face(cEdges);
+    }
+    public override bool ParentSelected()
+    {
+        foreach (Solid s in solids)
+            if (DCGBase.sElements.Contains(s))
+                return false;
+        return true;
     }
 }
