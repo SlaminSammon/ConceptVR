@@ -114,6 +114,9 @@ public class SelectTool : Tool {
 
     void OnDisable()
     {
+        System.Type type = GameObject.Find("LoPoly_Rigged_Hand_Right").gameObject.GetComponent<handController>().currentTool.GetType();
+        if(type.IsSubclassOf(typeof(SelectTool)) || type == typeof(SelectTool))
+            return;
         ClearSelection();
         if (ItemBase.sItems.Count != 0)
             Deselect();
