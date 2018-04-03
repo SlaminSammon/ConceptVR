@@ -79,11 +79,9 @@ public class Face : DCGElement
             s.Remove();
         foreach (Edge e in edges)
             e.faces.Remove(this);
-        if(mat != null)
-            mat.RemoveFace(this);
+        mat.RemoveFace(this);
         DCGBase.faces.Remove(this);
     }
-
 
     public override bool ChildrenSelected()
     {
@@ -196,8 +194,6 @@ public class Face : DCGElement
         {
             corners.Add(e.points[0]);
             eCorners.Add(new Point(e.points[0].position));
-            eElems.Add(e);
-            eElems.Add(e.points[0]);
         }
 
         int i = 0;
@@ -242,7 +238,7 @@ public class Face : DCGElement
             eElems.Add(e);
         Face gFace = new Face(eEdges);
         eFaces.Add(gFace);
-        eElems.Add(new Solid(eFaces));
+        new Solid(eFaces);
         eElems.Add(gFace);
 
         return eElems;
@@ -432,10 +428,14 @@ public class Face : DCGElement
             cEdges.Add((Edge) e.Copy());
         return new Face(cEdges);
     }
-    public override bool ParentSelected()
+
+    private float _PlanarEpsilon = .001f;
+    public bool isPlanar()
     {
-        foreach (Solid s in solids)
-            if (DCGBase.sElements.Contains(s))
+        List<Point> points = GetPoints();
+        Vector3 testNormal = Vector3.Cross(points[2].position - points[0].position, points[1].position - points[0].position);
+
+        for (int i = 3; i < points.Count; ++i) if (Vector3.Dot(points[i].position - points[0].position, testNormal) > _PlanarEpsilon)
                 return false;
         return true;
     }
