@@ -428,4 +428,15 @@ public class Face : DCGElement
             cEdges.Add((Edge) e.Copy());
         return new Face(cEdges);
     }
+
+    private float _PlanarEpsilon = .001f;
+    public bool isPlanar()
+    {
+        List<Point> points = GetPoints();
+        Vector3 testNormal = Vector3.Cross(points[2].position - points[0].position, points[1].position - points[0].position);
+
+        for (int i = 3; i < points.Count; ++i) if (Vector3.Dot(points[i].position - points[0].position, testNormal) > _PlanarEpsilon)
+                return false;
+        return true;
+    }
 }
