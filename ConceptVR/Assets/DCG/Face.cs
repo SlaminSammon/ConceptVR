@@ -10,7 +10,6 @@ public class Face : DCGElement
     public List<Vector3> subTriangles;  //The triangles this face is made up of
     public Mesh mesh;
     public DCGMaterial mat;
-
     public bool isAwful;
     bool normalConfident;
 
@@ -64,11 +63,8 @@ public class Face : DCGElement
 
     public override void Render()
     {
-        if(mesh == null)
-        {
-            updateMesh();
-        }
         Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
+        //Graphics.DrawMesh(mesh, Matrix4x4.identity, DCGBase.instance.solidMat, 0);
     }
 
     public override void Update()
