@@ -64,7 +64,11 @@ public class Face : DCGElement
 
     public override void Render()
     {
-        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+        if(mesh == null)
+        {
+            updateMesh();
+        }
+        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
     }
 
     public override void Update()
@@ -348,7 +352,7 @@ public class Face : DCGElement
         mesh.SetNormals(normals);
         mesh.SetTriangles(tris, 0);
         mesh.SetUVs(0, uvs);
-        //mesh.RecalculateNormals();
+        mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
     }
@@ -441,8 +445,8 @@ public class Face : DCGElement
     {
         foreach (Solid s in solids)
             if (DCGBase.sElements.Contains(s))
-                return false;
-        return true;
+                return true;
+        return false;
     }
     private float _PlanarEpsilon = .001f;
     public bool isPlanar()
@@ -460,5 +464,15 @@ public class Face : DCGElement
         foreach (Solid s in solids)
             elems.Add(s);
         return elems;
+    }
+    public override List<DCGElement> GetChildren()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach(Edge e in edges)
+        {
+            elems.Add(e);
+            elems.AddRange(e.GetChildren());
+        }
+        return elems.Distinct().ToList();
     }
 }

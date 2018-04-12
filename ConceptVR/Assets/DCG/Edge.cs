@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Edge : DCGElement
@@ -87,13 +88,13 @@ public class Edge : DCGElement
         for (int i = 0; i < points.Count - 1; ++i)
         {
             edgeVec = points[i].position - points[i + 1].position;
-            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)));
+            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)),0);
             // Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
         if (isLoop)
         {
             edgeVec = points[points.Count - 1].position - points[0].position;
-            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)));
+            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)),0);
             // Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
     }
@@ -243,9 +244,13 @@ public class Edge : DCGElement
     public override bool ParentSelected()
     {
         foreach (Face f in faces)
+        {
             if (DCGBase.sElements.Contains(f))
-                return false;
-        return true;
+                return true;
+            if (f.ParentSelected())
+                return true;
+        }
+        return false;
     }
     public override List<DCGElement> GetParents()
     {
@@ -253,5 +258,14 @@ public class Edge : DCGElement
         foreach (Face f in faces)
             elems.Add(f);
         return elems;
+    }
+    public override List<DCGElement> GetChildren() { 
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach(Point p in points)
+        {
+            elems.Add(p);
+            elems.AddRange(p.GetChildren());
+        }
+        return elems.Distinct().ToList();
     }
 }

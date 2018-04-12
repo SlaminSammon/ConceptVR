@@ -41,7 +41,7 @@ public class Point : DCGElement
     public override void Render()
     {
         float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
-        Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, defaultScale*playerScale));
+        Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, defaultScale*playerScale),0);
         //Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, new Vector3(.007f, .007f, .007f)));
     }
 
@@ -180,9 +180,13 @@ public class Point : DCGElement
     public override bool ParentSelected()
     {
         foreach (Edge e in edges)
+        {
             if (DCGBase.sElements.Contains(e))
-                return false;
-        return true;
+                return true;
+            if (e.ParentSelected())
+                return true;
+        }
+        return false;
     }
     public override List<DCGElement> GetParents()
     {

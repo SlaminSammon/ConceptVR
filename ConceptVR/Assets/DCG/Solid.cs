@@ -252,4 +252,27 @@ public class Solid : DCGElement {
         //Debug.Log("Faces: " + faces.Count);
         return new Solid(faces);
     }
+    public override List<DCGElement> GetChildren()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach (Face f in faces){
+            elems.Add(f);
+            elems.AddRange(f.GetChildren());
+        }
+        return elems.Distinct().ToList();
+    }
+    public void addPointsToDCG()
+    {
+        List<Point> points = getPoints();
+        foreach (Point p in points)
+            if (!DCGBase.sPoints.Contains(p))
+                DCGBase.sPoints.Add(p);
+    }
+    public override DCGElement Copy()
+    {
+        List<Face> cFaces = new List<Face>();
+        foreach (Face f in faces)
+            cFaces.Add((Face)f.Copy());
+        return new Solid(cFaces);
+    }
 }

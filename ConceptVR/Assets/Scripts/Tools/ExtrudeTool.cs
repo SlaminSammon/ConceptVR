@@ -20,9 +20,8 @@ public class ExtrudeTool : MoveTool {
         //This is the undo section and it is disgusting. Please ask me to die later. k thx
         List<DCGElement> newSElement = new List<DCGElement>();
         foreach(DCGElement e in DCGBase.sElements){
-            Debug.Log("Butthole");
+            if (e.GetType() == typeof(Solid)) continue;
             List<DCGElement> temp = e.Extrude();
-            Debug.Log(temp.Count);
             newSElement.Add(temp[temp.Count-1]);
             extrudedUndo.Add(temp);
         }
@@ -68,10 +67,6 @@ public class ExtrudeTool : MoveTool {
     }
     public override bool TapDCG(DCGElement nearestElement)
     {
-        if (!nearestElement.ParentSelected())
-        {
-            return false;
-        }
         if (nearestElement != null && !nearestElement.isLocked)
         {
             List<Point> newSel = Select(nearestElement);
@@ -86,5 +81,15 @@ public class ExtrudeTool : MoveTool {
         }
         else
             return false;
+    }
+    public void OnDisable()
+    {
+        System.Type type = GameObject.Find("LoPoly_Rigged_Hand_Right").gameObject.GetComponent<handController>().currentTool.GetType();
+        if (type.IsSubclassOf(typeof(SelectTool)) || type == typeof(SelectTool))
+            return;
+        ClearSelection();
+        if (ItemBase.sItems.Count != 0)
+            Deselect();
+        extrudedUndo = new List<List<DCGElement>>();
     }
 }

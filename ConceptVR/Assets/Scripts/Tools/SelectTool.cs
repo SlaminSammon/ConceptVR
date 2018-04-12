@@ -81,6 +81,18 @@ public class SelectTool : Tool {
         DCGBase.sElements = new List<DCGElement>();
         DCGBase.sPoints = new List<Point>();
     }
+    public void DeselectChildren(DCGElement e)
+    {
+        List<DCGElement> elems = e.GetChildren();
+        foreach(DCGElement elem in elems)
+        {
+            if (elem.isSelected)
+            {
+                Deselect(elem);
+                DCGBase.sElements.Remove(elem);
+            }
+        }
+    }
 
     public void Deselect(DCGElement e)
     {
@@ -121,13 +133,14 @@ public class SelectTool : Tool {
     }
     public virtual bool TapDCG(DCGElement nearestElement)
     {
-        if (!nearestElement.ParentSelected())
+        if (nearestElement.ParentSelected())
         {
             return false;
         }
         if (nearestElement != null && !nearestElement.isLocked)
         {
             List<Point> newSel = Select(nearestElement);
+            DeselectChildren(nearestElement);
             DCGBase.sElements.Remove(nearestElement);
             DCGBase.sElements.Add(nearestElement);
             foreach (Point p in newSel)
@@ -142,6 +155,11 @@ public class SelectTool : Tool {
                 {
                     TapDCG(elem);
                 }
+            }
+            else
+            {
+                Solid s = (Solid)nearestElement;
+                s.addPointsToDCG();
             }
             return true;
         }

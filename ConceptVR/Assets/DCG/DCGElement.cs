@@ -26,6 +26,7 @@ public abstract class DCGElement
     public virtual bool ParentSelected() { return false; }
     public virtual void RemoveChildren() { }
     public virtual List<DCGElement> GetParents() { return new List<DCGElement>(); }
+    public virtual List<DCGElement> GetChildren() { return new List<DCGElement>(); }
 
     public int nextElementID()
     {
