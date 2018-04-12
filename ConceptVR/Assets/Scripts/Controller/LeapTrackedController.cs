@@ -72,7 +72,7 @@ public class LeapTrackedController : MonoBehaviour
     public bool hudAnchor = true;
     #endregion
     #region cooldowns
-    public static float cooldown = 1.25f;
+    public static float cooldown = 2f;
     public static float tapCooldown = .25f;
     public float swipeCooldownTime;
     public float tapCooldownTime;

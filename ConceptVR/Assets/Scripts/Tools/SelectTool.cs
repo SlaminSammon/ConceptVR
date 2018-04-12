@@ -24,7 +24,6 @@ public class SelectTool : Tool {
     {
         float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
         selectDistance = defaultSelectDistance * playerScale * 0.50f;
-        Debug.Log(DCGBase.sElements.Count);
         DCGElement nearestElement = DCGBase.NearestElement(position, selectDistance);
         Item item = ItemBase.itemBase.findNearestItem(position);
         return (item == null && nearestElement == null) ? false : 
@@ -90,7 +89,6 @@ public class SelectTool : Tool {
     }
     public void Deselect()
     {
-        Debug.Log(Item.popped);
         foreach (Item item in ItemBase.sItems)
         {
             item.CmdDeSelect();
@@ -121,8 +119,12 @@ public class SelectTool : Tool {
         if (ItemBase.sItems.Count != 0)
             Deselect();
     }
-    public bool TapDCG(DCGElement nearestElement)
+    public virtual bool TapDCG(DCGElement nearestElement)
     {
+        if (!nearestElement.ParentSelected())
+        {
+            return false;
+        }
         if (nearestElement != null && !nearestElement.isLocked)
         {
             List<Point> newSel = Select(nearestElement);
@@ -132,6 +134,14 @@ public class SelectTool : Tool {
             {
                 DCGBase.sPoints.Remove(p); //If the point exists in the point list, remove the copy before adding it in
                 DCGBase.sPoints.Add(p);
+            }
+            if(nearestElement.GetType() != typeof(Solid))
+            {
+                List<DCGElement> elems = nearestElement.GetParents();
+                foreach(DCGElement elem in elems)
+                {
+                    TapDCG(elem);
+                }
             }
             return true;
         }

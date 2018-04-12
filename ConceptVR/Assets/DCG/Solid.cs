@@ -154,7 +154,13 @@ public class Solid : DCGElement {
             f.solids.Remove(this);
         DCGBase.solids.Remove(this);
     }
-    
+    public override void RemoveChildren()
+    {
+        foreach (Face f in faces)
+            if (DCGBase.sElements.Contains(f))
+                DCGBase.sElements.Remove(f);
+    }
+
     public override bool ChildrenSelected()
     {
         foreach (Face e in faces)

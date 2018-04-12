@@ -106,6 +106,13 @@ public class Edge : DCGElement
             p.edges.Remove(this);
         DCGBase.edges.Remove(this);
     }
+    public override void RemoveChildren()
+    {
+        foreach (Point p in points)
+            if (DCGBase.sElements.Contains(p))
+                DCGBase.sElements.Remove(p);
+    }
+
 
     public override bool ChildrenSelected()
     {
@@ -171,6 +178,7 @@ public class Edge : DCGElement
         foreach (Point p in points)
         {
             ep.Add(new Point(p.position));
+            eElem.Add(p);
         }
 
         ep.Reverse();
@@ -231,5 +239,19 @@ public class Edge : DCGElement
         foreach (Point p in points)
             cPoints.Add((Point) p.Copy());
         return new Edge(cPoints, this.isLoop);
+    }
+    public override bool ParentSelected()
+    {
+        foreach (Face f in faces)
+            if (DCGBase.sElements.Contains(f))
+                return false;
+        return true;
+    }
+    public override List<DCGElement> GetParents()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach (Face f in faces)
+            elems.Add(f);
+        return elems;
     }
 }

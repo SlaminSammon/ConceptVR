@@ -177,4 +177,18 @@ public class Point : DCGElement
     {
         return new Point(this.position);
     }
+    public override bool ParentSelected()
+    {
+        foreach (Edge e in edges)
+            if (DCGBase.sElements.Contains(e))
+                return false;
+        return true;
+    }
+    public override List<DCGElement> GetParents()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach (Edge e in edges)
+            elems.Add(e);
+        return elems;
+    }
 }
