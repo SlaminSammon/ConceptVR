@@ -38,7 +38,6 @@ public class SwapToolButton : ToggleButton {
     }
     public override void OnPress()
     {
-        Debug.Log("Here.");
         GameObject go = GameObject.Find("Tools");
         if (go.transform.Find(tool).gameObject.activeSelf)
             return;
