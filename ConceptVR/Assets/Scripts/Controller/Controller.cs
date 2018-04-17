@@ -71,13 +71,16 @@ public abstract class Controller : MonoBehaviour {
     {
         Tool lastTool = currentTool;
         currentTool = tools.transform.Find(toolName).GetComponent<Tool>();
+        System.Type curType = currentTool.GetType();
+        System.Type lastType = lastTool.GetType();
         //Debug.Log(toolName);
         
-        if (currentTool.GetType() != lastTool.GetType())
+        if ((curType != lastType) || (curType == typeof(SpecificSelectTool) && lastType == typeof(SpecificSelectTool)))
         {
             deactivateLastTool(lastTool);
             activateNewTool(currentTool);
         }
+
         //Debug.Log(currentTool.GetType());
     }
     public Tool GetToolByName(String name)
