@@ -31,7 +31,7 @@ public class SwapToolButton : ToggleButton {
             foreach (SwapToolButton b in gameObject.GetComponentsInChildren<SwapToolButton>())
                 if (b.toggled && b != this)
                 {
-                    b.OnPress();
+                    b.BasePress();
                 }
         } 
             
@@ -41,6 +41,10 @@ public class SwapToolButton : ToggleButton {
         GameObject go = GameObject.Find("Tools");
         if (go.transform.Find(tool).gameObject.activeSelf)
             return;
+        base.OnPress();
+    }
+    public void BasePress()
+    {
         base.OnPress();
     }
 }

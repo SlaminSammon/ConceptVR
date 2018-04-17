@@ -93,7 +93,7 @@ public abstract class Controller : MonoBehaviour {
         return tools.transform.Find(name).GetComponent<Tool>();
     }
     
-    public void deactivateLastTool(Tool t) {
+    public static void deactivateLastTool(Tool t) {
         if (t)
             t.gameObject.SetActive(false);
     }
