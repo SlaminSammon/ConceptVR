@@ -67,7 +67,6 @@ public class HUDButton : MonoBehaviour {
 
     public void OnSubTriggerEnter(Collider other, string triggerName)
     {
-        if(this.GetType() == typeof(SwapToolButton))
             Debug.Log(other);
         if (triggerName == "PressCollider" && Time.time - lastPressTime > coolDown)
         {

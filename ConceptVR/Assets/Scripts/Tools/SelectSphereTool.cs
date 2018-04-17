@@ -14,12 +14,11 @@ public class SelectSphereTool : SelectTool
         base.Start();   
     }
 
-    new private void Update()
+    new void Update()
     {
         if (triggerInput)
         {
             DCGElement nElement;
-            Item nItem;
             while (true)
             {
                 float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
@@ -31,7 +30,6 @@ public class SelectSphereTool : SelectTool
                     TapDCG(nElement);
                     break;
                 }
-                base.Update();
             }
         }
 

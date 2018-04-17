@@ -111,7 +111,11 @@ public class HUDManager : MonoBehaviour
     public void Pop() {
 
         HUDFrame removedFrame = this.frameStack.Peek();
-
+        /*foreach (SwapToolButton b in removedFrame.gameObject.GetComponentsInChildren<SwapToolButton>())
+            if (b.toggled && b != this)
+            {
+                b.OnPress();
+            }*/
         // never pop the mainFrame
         if (removedFrame != mainFrame)
         {
