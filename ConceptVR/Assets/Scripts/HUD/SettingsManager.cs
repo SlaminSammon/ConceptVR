@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class SettingsManager : MonoBehaviour {
     public static SettingsManager sm;
@@ -11,8 +12,18 @@ public class SettingsManager : MonoBehaviour {
     public float rotationSnap = 15f;
     public bool snapEnabled = false;
     public GameObject scaleSlider;
+    [HideInInspector]
     public float playerScale = 1f;
     public bool anchored = true;
+
+    // analog or digital clock
+    bool isAnalogClock = true;
+    public GameObject clock;
+
+    // tutorial video player
+    [HideInInspector]
+    public bool tutorialMode = false;
+    public GameObject tutorialVideoPlayer;
 
     GameObject LMHeadMountedRig;
 
@@ -22,8 +33,11 @@ public class SettingsManager : MonoBehaviour {
 
         LMHeadMountedRig = GameObject.Find("LMHeadMountedRig");
         playerScale = 1f;
+        isAnalogClock = true;
+        tutorialMode = false;
+
     }
-    
+
     void Update () {
         if (anchored)
         {
@@ -37,5 +51,44 @@ public class SettingsManager : MonoBehaviour {
         return new Vector3(Mathf.Round(v.x / gridSnap) * gridSnap, 
             Mathf.Round(v.y / gridSnap) * gridSnap, 
             Mathf.Round(v.z / gridSnap) * gridSnap);
+    }
+
+    public void toggleTutorialMode()
+    {
+        tutorialMode = !tutorialMode;
+
+        if (tutorialMode)
+        {
+            this.tutorialVideoPlayer.gameObject.SetActive(true);
+            this.clock.gameObject.SetActive(false);
+        }
+        else
+        {
+            this.tutorialVideoPlayer.gameObject.SetActive(false);
+            this.clock.gameObject.SetActive(true);
+        }
+    }
+
+    public void changeClock()
+    {
+        if (!tutorialMode)
+        {
+            this.isAnalogClock = !this.isAnalogClock;
+            if (this.isAnalogClock)
+            {
+                clock.transform.Find("AnalogClock").gameObject.SetActive(true);
+                clock.transform.Find("DigitalClock").gameObject.SetActive(false);
+            }
+            else
+            {
+                clock.transform.Find("AnalogClock").gameObject.SetActive(false);
+                clock.transform.Find("DigitalClock").gameObject.SetActive(true);
+            }
+        }
+    }
+
+    public void updateTutorialVideoClip(VideoClip clip)
+    {
+        tutorialVideoPlayer.gameObject.GetComponent<VideoPlayer>().clip = clip;
     }
 }

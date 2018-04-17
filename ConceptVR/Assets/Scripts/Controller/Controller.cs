@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public abstract class Controller : MonoBehaviour {
     public bool hand;//Right is true, left is false;
@@ -77,6 +78,10 @@ public abstract class Controller : MonoBehaviour {
         {
             deactivateLastTool(lastTool);
             activateNewTool(currentTool);
+            if (currentTool.videoClip != null)
+            {
+                GameObject.Find("Managers").GetComponent<SettingsManager>().updateTutorialVideoClip(currentTool.videoClip);
+            }
         }
         //Debug.Log(currentTool.GetType());
     }

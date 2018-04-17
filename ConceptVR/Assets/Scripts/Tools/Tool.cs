@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public abstract class Tool : MonoBehaviour {
     public bool triggerInput;
@@ -9,6 +10,7 @@ public abstract class Tool : MonoBehaviour {
     public Vector3 controllerPosition;
     public Vector3 forward;
     public int playerID;
+    public VideoClip videoClip;
     public void setPos(Vector3 pos)
     {
         controllerPosition = pos;
