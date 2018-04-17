@@ -7,9 +7,7 @@ public class HUDManager : MonoBehaviour
 {
     // active or inactive hud
     bool hudActive = false;
-    // analog or digital clock
-    bool isAnalogClock = true;
-    public GameObject clock;
+
 
     // current tool selected
     string toolSelected = "";
@@ -47,7 +45,6 @@ public class HUDManager : MonoBehaviour
         frameStack.Push(mainFrame);
 
         hudActive = true;
-        isAnalogClock = true;
 
         // initialize HUDColor to gray
         HUDColor = new Color(0.345f, 0.3568f, 0.3804f, 1.0f);
@@ -156,20 +153,6 @@ public class HUDManager : MonoBehaviour
         updateColor(this.frameStack.Peek());
     }
     
-    public void changeClock()
-    {
-        this.isAnalogClock = !this.isAnalogClock;
-        if (this.isAnalogClock)
-        {
-            clock.transform.Find("AnalogClock").gameObject.SetActive(true);
-            clock.transform.Find("DigitalClock").gameObject.SetActive(false);
-        }
-        else
-        {
-            clock.transform.Find("AnalogClock").gameObject.SetActive(false);
-            clock.transform.Find("DigitalClock").gameObject.SetActive(true);
-        }
-    }
 
     void Placement()
     {
