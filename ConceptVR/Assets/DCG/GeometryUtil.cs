@@ -212,6 +212,10 @@ public static class GeometryUtil
     public static List<int> smartTriangulate(List<Vector3> points, Vector3 normal)
     {
         List<Vector2> p2 = planarize(points, normal, points[1] - points[0]);
+        bool flip = area(p2) < 0;   //Ensure clockwise
+        if (flip)
+            for (int t = 0; t < p2.Count; ++t)
+                p2[t] = new Vector2(p2[t].x, -p2[t].y);
 
         List<int> tri = new List<int>();
 
@@ -222,12 +226,15 @@ public static class GeometryUtil
 
         int i = 0;
         int j, k;
-        while (excCount < points.Count-3)
+        int runCount = 0;
+        int maxRun = p2.Count*p2.Count; //It shouldn't be able to crash, but just in case...
+        while (excCount < points.Count-3 && runCount < maxRun)
         {
+            ++runCount;
             j = next(i, exc);
             k = next(j, exc);
 
-            if (Cross2(p2[j] - p2[i], p2[k] - p2[i]) > 0)  //If this tri is widdershins
+            if (Cross2(p2[j] - p2[i], p2[k] - p2[i]) > 0)  //If this tri is clockwise
             {
                 foreach(Vector2 v in p2)    //Verify this tri contains no other points
                 {
@@ -285,6 +292,15 @@ public static class GeometryUtil
         }
 
         return planar;
+    }
+
+    public static float area(List<Vector2> points) {
+        float area = 0;
+        for (int i = 0; i < points.Count; ++i) {
+            int j = (i+1) % points.Count;
+            area += (points[i].x*points[j].y - points[j].x*points[i].y);
+        }
+        return area /= 2;
     }
 
     public enum MergeMode { add, subtract, intersect }

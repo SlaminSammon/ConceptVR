@@ -542,7 +542,7 @@ public class ClipUtil {
         float area = 0;
         for (int i = 0; i < P.Length; ++i) {
             int j = (i+1) % P.Length;
-            area += (P[j].x-P[i].x) * (P[j].z+P[i].z);
+            area += (P[i].x*P[j].z - P[j].x*P[i].z);
         }
         return area/2;
     }
