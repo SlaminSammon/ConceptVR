@@ -31,7 +31,7 @@ public class MoveTool : SelectTool {
         if (DCGBase.sPoints.Count > 0)
         {
             startPositions = new List<Vector3>(DCGBase.sPoints.Count);
-            //Debug.Log(sPoints.Count);
+            Debug.Log(DCGBase.sPoints.Count);
             foreach (Point p in DCGBase.sPoints)
                 startPositions.Add(p.position);
         }

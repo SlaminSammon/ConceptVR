@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public abstract class Controller : MonoBehaviour {
     public bool hand;//Right is true, left is false;
@@ -71,13 +72,20 @@ public abstract class Controller : MonoBehaviour {
     {
         Tool lastTool = currentTool;
         currentTool = tools.transform.Find(toolName).GetComponent<Tool>();
+        System.Type curType = currentTool.GetType();
+        System.Type lastType = lastTool.GetType();
         //Debug.Log(toolName);
         
-        if (currentTool.GetType() != lastTool.GetType())
+        if ((curType != lastType) || (curType == typeof(SpecificSelectTool) && lastType == typeof(SpecificSelectTool)))
         {
             deactivateLastTool(lastTool);
             activateNewTool(currentTool);
+            if (currentTool.videoClip != null)
+            {
+                GameObject.Find("Managers").GetComponent<SettingsManager>().updateTutorialVideoClip(currentTool.videoClip);
+            }
         }
+
         //Debug.Log(currentTool.GetType());
     }
     public Tool GetToolByName(String name)
@@ -85,7 +93,7 @@ public abstract class Controller : MonoBehaviour {
         return tools.transform.Find(name).GetComponent<Tool>();
     }
     
-    public void deactivateLastTool(Tool t) {
+    public static void deactivateLastTool(Tool t) {
         if (t)
             t.gameObject.SetActive(false);
     }

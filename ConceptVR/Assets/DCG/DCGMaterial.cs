@@ -11,13 +11,19 @@ public class DCGMaterial : ScriptableObject {
 
     public void AddFace(Face f)
     {
-        facesUsingMat.Add(f);
-        f.mat = this;
+        if (!facesUsingMat.Contains(f))
+        {
+            facesUsingMat.Add(f);
+            f.mat = this;
+        }
     }
 
     public void RemoveFace(Face f)
     {
-        facesUsingMat.Remove(f);
-        f.mat = null;
+        if (facesUsingMat.Contains(f))
+        {
+            facesUsingMat.Remove(f);
+            f.mat = null;
+        }
     }
 }

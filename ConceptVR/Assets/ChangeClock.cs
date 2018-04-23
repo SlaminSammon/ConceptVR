@@ -6,7 +6,7 @@ public class ChangeClock : HUDButton {
 
     public override void OnPress()
     {
-        HUD.changeClock();
+        GameObject.Find("Managers").GetComponent<SettingsManager>().changeClock();
     }
 }
 

@@ -43,7 +43,7 @@ public class FreeFormTool : Tool {
                 Destroy(rightFreeFormLine.gameObject);
                 leapControl.freeFormFailureHandler();
             }
-            if (frameCount >=10)
+            if (frameCount >=18)
             {
                 Debug.Log(frameCount);
                 //Add points to the line renderer and the point lists
@@ -248,7 +248,9 @@ public class FreeFormTool : Tool {
         Point cent = new Point(center);
         for (int p = 0; p <= points.Count - 2; ++p)
             genQuad(points[p], points[p + 1], cent,mid);
-        genQuad(points[points.Count - 1], points[0], cent,mid);
+        if (points[points.Count - 1] == null)
+            Debug.Log("WUT");
+        genQuad(points[points.Count - 2], points[0], cent,mid);
         //cent.Remove();
     }
     public void genQuad(Point p, Point pn, Point center, Vector3 mid)
@@ -266,7 +268,6 @@ public class FreeFormTool : Tool {
         Vector3 b = p.position - mid;
         Vector3 e = a/2;
         Vector3 f = b/2;
-        Debug.Log(e +" "+ f);
         Point ca = new Point(e + p.position);
         Point cb = new Point(f + cent.position);
         return new SmoothEdge(new List<Point> { p,ca,cb,cent});

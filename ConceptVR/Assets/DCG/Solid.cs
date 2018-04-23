@@ -154,7 +154,13 @@ public class Solid : DCGElement {
             f.solids.Remove(this);
         DCGBase.solids.Remove(this);
     }
-    
+    public override void RemoveChildren()
+    {
+        foreach (Face f in faces)
+            if (DCGBase.sElements.Contains(f))
+                DCGBase.sElements.Remove(f);
+    }
+
     public override bool ChildrenSelected()
     {
         foreach (Face e in faces)
@@ -245,5 +251,28 @@ public class Solid : DCGElement {
         List<Face> faces = start.edges[0].faces[0].GetConnectedFaces(-1);
         //Debug.Log("Faces: " + faces.Count);
         return new Solid(faces);
+    }
+    public override List<DCGElement> GetChildren()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach (Face f in faces){
+            elems.Add(f);
+            elems.AddRange(f.GetChildren());
+        }
+        return elems.Distinct().ToList();
+    }
+    public void addPointsToDCG()
+    {
+        List<Point> points = getPoints();
+        foreach (Point p in points)
+            if (!DCGBase.sPoints.Contains(p))
+                DCGBase.sPoints.Add(p);
+    }
+    public override DCGElement Copy()
+    {
+        List<Face> cFaces = new List<Face>();
+        foreach (Face f in faces)
+            cFaces.Add((Face)f.Copy());
+        return new Solid(cFaces);
     }
 }

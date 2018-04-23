@@ -10,7 +10,6 @@ public class Face : DCGElement
     public List<Vector3> subTriangles;  //The triangles this face is made up of
     public Mesh mesh;
     public DCGMaterial mat;
-
     public bool isAwful;
     bool normalConfident;
 
@@ -64,7 +63,8 @@ public class Face : DCGElement
 
     public override void Render()
     {
-        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity);
+        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
+        //Graphics.DrawMesh(mesh, Matrix4x4.identity, DCGBase.instance.solidMat, 0);
     }
 
     public override void Update()
@@ -79,8 +79,15 @@ public class Face : DCGElement
             s.Remove();
         foreach (Edge e in edges)
             e.faces.Remove(this);
-        mat.RemoveFace(this);
+        if(mat != null)
+            mat.RemoveFace(this);
         DCGBase.faces.Remove(this);
+    }
+    public override void RemoveChildren()
+    {
+        foreach (Edge e in edges)
+            if (DCGBase.sElements.Contains(e))
+                DCGBase.sElements.Remove(e);
     }
 
     public override bool ChildrenSelected()
@@ -194,6 +201,8 @@ public class Face : DCGElement
         {
             corners.Add(e.points[0]);
             eCorners.Add(new Point(e.points[0].position));
+            eElems.Add(e);
+            eElems.Add(e.points[0]);
         }
 
         int i = 0;
@@ -238,7 +247,7 @@ public class Face : DCGElement
             eElems.Add(e);
         Face gFace = new Face(eEdges);
         eFaces.Add(gFace);
-        new Solid(eFaces);
+        eElems.Add(new Solid(eFaces));
         eElems.Add(gFace);
 
         return eElems;
@@ -311,7 +320,7 @@ public class Face : DCGElement
             }
 
         List<int> tris;
-
+        if (verts.Count == 0) return;
         tris = GeometryUtil.mediocreTriangulate(verts);
 
         //mirror verts
@@ -339,7 +348,7 @@ public class Face : DCGElement
         mesh.SetNormals(normals);
         mesh.SetTriangles(tris, 0);
         mesh.SetUVs(0, uvs);
-        //mesh.RecalculateNormals();
+        mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
     }
@@ -428,7 +437,13 @@ public class Face : DCGElement
             cEdges.Add((Edge) e.Copy());
         return new Face(cEdges);
     }
-
+    public override bool ParentSelected()
+    {
+        foreach (Solid s in solids)
+            if (DCGBase.sElements.Contains(s))
+                return true;
+        return false;
+    }
     private float _PlanarEpsilon = .001f;
     public bool isPlanar()
     {
@@ -438,5 +453,22 @@ public class Face : DCGElement
         for (int i = 3; i < points.Count; ++i) if (Vector3.Dot(points[i].position - points[0].position, testNormal) > _PlanarEpsilon)
                 return false;
         return true;
+    }
+    public override List<DCGElement> GetParents()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach (Solid s in solids)
+            elems.Add(s);
+        return elems;
+    }
+    public override List<DCGElement> GetChildren()
+    {
+        List<DCGElement> elems = new List<DCGElement>();
+        foreach(Edge e in edges)
+        {
+            elems.Add(e);
+            elems.AddRange(e.GetChildren());
+        }
+        return elems.Distinct().ToList();
     }
 }

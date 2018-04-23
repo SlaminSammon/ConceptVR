@@ -52,7 +52,6 @@ public class ItemBase : NetworkBehaviour {
         Item nearestItem = null;
         float nearestDistance = 99999;
         float maxDistance = 0.1f;
-        Debug.Log(items.Count);
         foreach (Item item in items)
         {
             float distance = Vector3.Distance(position, item.Position(position));

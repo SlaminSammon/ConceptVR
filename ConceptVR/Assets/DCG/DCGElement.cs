@@ -23,6 +23,10 @@ public abstract class DCGElement
     public virtual void Lock() { } //Is used to lock all elements below this element in the hierarchy.
     public virtual void Unlock() { } //Is used to unlock all elements below this element in the hierarchy.
     public virtual DCGElement Copy() { return new Point(new Vector3(0, 0, 0));  }
+    public virtual bool ParentSelected() { return false; }
+    public virtual void RemoveChildren() { }
+    public virtual List<DCGElement> GetParents() { return new List<DCGElement>(); }
+    public virtual List<DCGElement> GetChildren() { return new List<DCGElement>(); }
 
     public int nextElementID()
     {
