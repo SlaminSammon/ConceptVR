@@ -41,16 +41,17 @@ public class ItemBase : NetworkBehaviour {
     [Command]
     public void CmdSpawn(GameObject go)
     {
-        RpcSpawn(go);
+        NetworkServer.Spawn(go);
     }
     [ClientRpc]
     public void RpcSpawn(GameObject go)
     {
         Instantiate(go);
     }
+    [Command]
     public void CmdDeSpawn(GameObject go)
     {
-        RpcDeSpawn(go);
+        NetworkServer.Destroy(go);
     }
     [ClientRpc]
     public void RpcDeSpawn(GameObject go)
