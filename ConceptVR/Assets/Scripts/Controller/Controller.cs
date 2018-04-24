@@ -8,12 +8,15 @@ public abstract class Controller : MonoBehaviour {
     public bool hand;//Right is true, left is false;
     public Controller other;    //controller attached to the other hand (it is assumed the user only has two hands)
     public GameObject tools;
-
+    public GameObject videos;
+    SettingsManager sm;
     public List<Tool> ToolQueue;
     public Tool currentTool;
+    public VideoClip currentVideo;
 
 	// Use this for initialization
 	protected void Start () {
+        sm = GameObject.Find("Managers").GetComponent<SettingsManager>();
         if (ToolQueue.Count == 0)
         {
             ToolQueue = new List<Tool>();
@@ -21,6 +24,7 @@ public abstract class Controller : MonoBehaviour {
             ToolQueue.Add(bt);
         }
         currentTool = ToolQueue[0];
+        currentVideo = null;
         tools = this.gameObject.transform.parent.gameObject.transform.Find("Tools").gameObject;
     }
 	
@@ -73,17 +77,18 @@ public abstract class Controller : MonoBehaviour {
         Tool lastTool = currentTool;
         currentTool = tools.transform.Find(toolName).GetComponent<Tool>();
         System.Type curType = currentTool.GetType();
-        System.Type lastType = lastTool.GetType();
+        System.Type lastType = null;
+        if (lastTool.GetType() != null)
+        {
+            lastType = lastTool.GetType();
+        }
+        lastType = lastTool.GetType();
         //Debug.Log(toolName);
         
         if ((curType != lastType) || (curType == typeof(SpecificSelectTool) && lastType == typeof(SpecificSelectTool)))
         {
             deactivateLastTool(lastTool);
             activateNewTool(currentTool);
-            if (currentTool.videoClip != null)
-            {
-                GameObject.Find("Managers").GetComponent<SettingsManager>().updateTutorialVideoClip(currentTool.videoClip);
-            }
         }
 
         //Debug.Log(currentTool.GetType());
@@ -99,6 +104,11 @@ public abstract class Controller : MonoBehaviour {
     }
     public void activateNewTool(Tool t)
     {
+        currentVideo = t.videoClip;
+        if (currentVideo != null && sm.tutorialMode)
+        {
+            sm.updateTutorialVideoClip(currentVideo);
+        }
         t.gameObject.SetActive(true);
     }
     public void OnEnable()

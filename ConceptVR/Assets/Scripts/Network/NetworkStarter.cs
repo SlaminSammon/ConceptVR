@@ -23,6 +23,7 @@ public class NetworkStarter : MonoBehaviour {
             //netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
             netManager.networkAddress = "localhost";
             netManager.networkPort = 53535;
+
             netManager.StartHost();
         }
     }

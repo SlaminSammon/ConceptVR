@@ -32,20 +32,29 @@ public class ItemBase : NetworkBehaviour {
         if (sItems.Count == 0 && firstType != "")
             firstType = "";
     }
-    
+    public void Add(Item item)
+    {
+        items.Add(item);
+        if(item.GetComponent<NetworkIdentity>() == null)
+        {
+            Debug.Log("Jew monger fag");
+        }
+        CmdSpawn(item.gameObject);
+    }
     //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
-    public static void Spawn(GameObject go)
+    [Command]
+    public void CmdSpawn(GameObject go)
     {
         NetworkServer.Spawn(go);
     }
-    public static void DeSpawn(GameObject go)
+    public void CmdDeSpawn(GameObject go)
     {
         NetworkServer.Destroy(go);
     }
-    public static void Remove(Item item)
+    public void Remove(Item item)
     {
         items.Remove(item);
-        DeSpawn(item.gameObject);
+        CmdDeSpawn(item.gameObject);
     }
     public Item findNearestItem(Vector3 position)
     {

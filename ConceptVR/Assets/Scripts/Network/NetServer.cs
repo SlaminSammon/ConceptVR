@@ -7,6 +7,7 @@ public class NetServer : NetworkManager {
     private NetworkStarter netStarter;
     public void Start() { 
         netStarter = GameObject.Find("NetworkStarter").GetComponent<NetworkStarter>();
+        this.playerPrefab.SetActive(true);
     }
     public override void OnStartHost()
     {

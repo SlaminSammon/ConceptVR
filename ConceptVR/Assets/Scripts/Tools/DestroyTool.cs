@@ -28,9 +28,9 @@ public class DestroyTool : Tool {
                 else if (nItem == null)
                     nPoint.Remove();
                 else if (nPoint == null)
-                    ItemBase.Remove(nItem);
+                    ItemBase.itemBase.Remove(nItem);
                 else
-                    nPoint.Remove(); ItemBase.Remove(nItem);
+                    nPoint.Remove(); ItemBase.itemBase.Remove(nItem);
 
 
             }

@@ -35,9 +35,9 @@ public class DoodleTool : Tool {
     {
         GameObject go = Instantiate(ItemBase.itemBase.DoodlePrefab,controllerPosition,new Quaternion(0,0,0,0));
         go.name = "Doodle " + doodleNum;
-        ItemBase.Spawn(go);
         doodleNum++;
         doodle = go.GetComponent<Doodle>();
+        ItemBase.itemBase.Add(doodle);
         currLineRend = go.GetComponent<LineRenderer>();
         return true;
     }

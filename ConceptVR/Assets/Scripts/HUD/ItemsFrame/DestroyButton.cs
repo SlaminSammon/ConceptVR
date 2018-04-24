@@ -21,7 +21,7 @@ public class DestroyButton : HUDButton {
         foreach (Item item in ItemBase.sItems)
         {
             item.destroyed = true;
-            ItemBase.DeSpawn(item.gameObject);
+            ItemBase.itemBase.Remove(item);
         }
         ItemBase.sItems.Clear();
         Item.Pop();

@@ -124,7 +124,7 @@ public class Doodle : Item {
                 Doodle dood = Instantiate(ItemBase.itemBase.DoodlePrefab).GetComponent<Doodle>();
                 dood.gameObject.SetActive(true);
                 dood.lr = dood.GetComponent<LineRenderer>();           
-                ItemBase.Spawn(dood.gameObject);
+                ItemBase.itemBase.Add(dood);
                 dood.CmdSetPoints(seg.ToArray());
                 doods.Add(dood);
                 //ItemBase.items.Add(dood);
@@ -132,7 +132,7 @@ public class Doodle : Item {
             initErase = !initErase;
         }
         destroyed = true;
-        ItemBase.DeSpawn(this.gameObject);
+        ItemBase.itemBase.Remove(this);
 
         return doods;
     }
