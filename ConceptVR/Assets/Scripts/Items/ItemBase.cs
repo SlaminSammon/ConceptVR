@@ -35,10 +35,6 @@ public class ItemBase : NetworkBehaviour {
     public void Add(Item item)
     {
         items.Add(item);
-        if(item.GetComponent<NetworkIdentity>() == null)
-        {
-            Debug.Log("Jew monger fag");
-        }
         CmdSpawn(item.gameObject);
     }
     //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
@@ -47,9 +43,19 @@ public class ItemBase : NetworkBehaviour {
     {
         NetworkServer.Spawn(go);
     }
+    [ClientRpc]
+    public void RpcSpawn(GameObject go)
+    {
+        Instantiate(go);
+    }
     public void CmdDeSpawn(GameObject go)
     {
         NetworkServer.Destroy(go);
+    }
+    [ClientRpc]
+    public void RpcDeSpawn(GameObject go)
+    {
+        Destroy(go);
     }
     public void Remove(Item item)
     {

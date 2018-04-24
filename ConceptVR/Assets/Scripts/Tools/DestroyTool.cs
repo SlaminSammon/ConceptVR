@@ -26,11 +26,11 @@ public class DestroyTool : Tool {
                 if (nPoint == null && nItem == null)
                     break;
                 else if (nItem == null)
-                    nPoint.Remove();
+                    Remove(nPoint);
                 else if (nPoint == null)
                     ItemBase.itemBase.Remove(nItem);
                 else
-                    nPoint.Remove(); ItemBase.itemBase.Remove(nItem);
+                    Remove(nPoint); ItemBase.itemBase.Remove(nItem);
 
 
             }
@@ -45,5 +45,11 @@ public class DestroyTool : Tool {
             destMat.SetPass(0);
             Graphics.DrawMeshNow(GeometryUtil.icoSphere4, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(delDist, delDist, delDist)*playerScale));
         }
+    }
+    public void Remove(Point p)
+    {
+        if (p.isSelected && p.isLocked)
+            return;
+        p.Remove();
     }
 }
