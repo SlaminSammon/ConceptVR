@@ -82,6 +82,7 @@ public class Face : DCGElement
         if(mat != null)
             mat.RemoveFace(this);
         DCGBase.faces.Remove(this);
+        DCGBase.synch.CmdRemoveElement(elementID, NetPlayer.local.playerID);
     }
     public override void RemoveChildren()
     {

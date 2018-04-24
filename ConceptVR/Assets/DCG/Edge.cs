@@ -106,6 +106,7 @@ public class Edge : DCGElement
         foreach (Point p in points)
             p.edges.Remove(this);
         DCGBase.edges.Remove(this);
+        DCGBase.synch.CmdRemoveElement(elementID, NetPlayer.local.playerID);
     }
     public override void RemoveChildren()
     {

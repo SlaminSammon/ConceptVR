@@ -153,6 +153,7 @@ public class Solid : DCGElement {
         foreach (Face f in faces)
             f.solids.Remove(this);
         DCGBase.solids.Remove(this);
+        DCGBase.synch.CmdRemoveElement(elementID, NetPlayer.local.playerID);
     }
     public override void RemoveChildren()
     {
