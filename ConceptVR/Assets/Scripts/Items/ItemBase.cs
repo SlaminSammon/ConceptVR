@@ -38,11 +38,9 @@ public class ItemBase : NetworkBehaviour {
         CmdSpawn(item.gameObject);
     }
     //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
-    [Command]
     public void CmdSpawn(GameObject go)
     {
         NetworkServer.Spawn(go);
-        RpcSpawn(go);
     }
     [ClientRpc]
     public void RpcSpawn(GameObject go)
