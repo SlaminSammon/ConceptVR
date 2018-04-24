@@ -26,6 +26,8 @@ public class SettingsManager : MonoBehaviour {
     public GameObject tutorialVideoPlayer;
 
     GameObject LMHeadMountedRig;
+    public GameObject hand;
+    handController controller;
 
     
     void Start () {
@@ -35,7 +37,7 @@ public class SettingsManager : MonoBehaviour {
         playerScale = 1f;
         isAnalogClock = true;
         tutorialMode = false;
-
+        controller = hand.GetComponent<handController>();
     }
 
     void Update () {
@@ -89,6 +91,8 @@ public class SettingsManager : MonoBehaviour {
 
     public void updateTutorialVideoClip(VideoClip clip)
     {
-        tutorialVideoPlayer.gameObject.GetComponent<VideoPlayer>().clip = clip;
+        VideoPlayer player = tutorialVideoPlayer.gameObject.GetComponent<VideoPlayer>();
+        player.clip = clip;
+
     }
 }
