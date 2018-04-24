@@ -91,8 +91,31 @@ public class SettingsManager : MonoBehaviour {
 
     public void updateTutorialVideoClip(VideoClip clip)
     {
-        VideoPlayer player = tutorialVideoPlayer.gameObject.GetComponent<VideoPlayer>();
-        player.clip = clip;
+        StartCoroutine(playVideo(clip));
 
+    }
+    public IEnumerator playVideo(VideoClip clip)
+    {
+        GameObject existing = tutorialVideoPlayer.gameObject;
+        GameObject Bob = new GameObject();
+        VideoPlayer vid = Bob.AddComponent<VideoPlayer>();
+        vid.playOnAwake = false;
+        vid.source = VideoSource.VideoClip;
+        vid.audioOutputMode = VideoAudioOutputMode.None;
+        vid.waitForFirstFrame = false;
+        vid.isLooping = true;
+        vid.playbackSpeed = 1;
+        vid.renderMode = VideoRenderMode.MaterialOverride;
+        vid.targetMaterialRenderer = existing.GetComponent<MeshRenderer>();
+        vid.targetMaterialProperty = "_MainTex";
+        vid.clip = clip;
+        vid.Prepare();
+        while (!vid.isPrepared)
+        {
+            yield return null;
+        }
+        vid.Play();
+        existing.GetComponent<VideoHolder>().newPlayer(vid);
+        yield break;
     }
 }
