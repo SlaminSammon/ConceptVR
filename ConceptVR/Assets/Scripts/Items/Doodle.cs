@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 public class Doodle : Item {
     public Bounds boundingBox;
+    [SyncVar]
     public LineRenderer lr;
     int numClicks = 0;
     //[SyncVar (hook = "Encapsulate")]
