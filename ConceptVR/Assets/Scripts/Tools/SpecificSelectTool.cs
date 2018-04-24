@@ -23,6 +23,7 @@ public class SpecificSelectTool : SelectSphereTool {
                     break;
                 else
                 {
+                    Select(nElement);
                     TapDCG(nElement);
                     break;
                 }
