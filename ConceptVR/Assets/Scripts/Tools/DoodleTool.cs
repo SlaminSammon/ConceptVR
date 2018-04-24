@@ -37,8 +37,8 @@ public class DoodleTool : Tool {
         go.name = "Doodle " + doodleNum;
         doodleNum++;
         doodle = go.GetComponent<Doodle>();
-        ItemBase.itemBase.Add(doodle);
         currLineRend = go.GetComponent<LineRenderer>();
+        ItemBase.itemBase.Add(doodle);
         return true;
     }
     public override bool TriggerUp()
