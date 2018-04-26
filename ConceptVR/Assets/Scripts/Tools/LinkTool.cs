@@ -60,7 +60,7 @@ public class LinkTool : SelectTool {
             for (int i = 0; i < DCGBase.sPoints.Count - 1; ++i)
             {
                 edgeVec = DCGBase.sPoints[i].position - DCGBase.sPoints[i + 1].position;
-                Graphics.DrawMesh(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[i].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)),linkMat,0);
+                Graphics.DrawMesh(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)),linkMat,0);
             }
         if (DCGBase.sPoints.Count > 1)
         {

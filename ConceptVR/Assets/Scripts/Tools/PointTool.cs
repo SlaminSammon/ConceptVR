@@ -6,7 +6,7 @@ public class PointTool : Tool {
     Vector3 grabPos;
     Vector3 startPos;
     Point grabbedPoint;
-    float maxDist = 0.07f;
+    float maxDist = 0.03f;
 
 	// Use this for initialization
 	void Start () {
@@ -46,7 +46,8 @@ public class PointTool : Tool {
     {
         Point p = new Point(position);
 
-        Edge nE = DCGBase.NearestEdge(position, maxDist);
+        //points on faces/ edges
+        /*Edge nE = DCGBase.NearestEdge(position, maxDist);
         Face nF = DCGBase.NearestFace(position, maxDist);
 
         if (nE != null && nF != null)
@@ -82,7 +83,7 @@ public class PointTool : Tool {
             cF.pointID = p.elementID;
             DCGBase.instance.AddConstraint(cF);
             p.position = nF.ConstraintPosition(cF.constraintData);
-        }
+        }*/
 
         return true;
     }
