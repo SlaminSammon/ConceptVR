@@ -114,7 +114,6 @@ public class SettingsManager : MonoBehaviour {
         {
             yield return null;
         }
-        vid.Play();
         existing.GetComponent<VideoHolder>().newPlayer(vid);
         yield break;
     }

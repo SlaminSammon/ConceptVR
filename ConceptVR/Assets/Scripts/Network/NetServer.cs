@@ -7,6 +7,10 @@ public class NetServer : NetworkManager {
     private NetworkStarter netStarter;
     public void Start() { 
         netStarter = GameObject.Find("NetworkStarter").GetComponent<NetworkStarter>();
+        if(playerPrefab == null)
+        {
+            playerPrefab = GameObject.Find("PlayerPrefab");
+        }
         this.playerPrefab.SetActive(true);
     }
     public override void OnStartHost()
@@ -16,6 +20,10 @@ public class NetServer : NetworkManager {
     }
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
+        if (playerPrefab == null)
+        {
+            playerPrefab = GameObject.Find("PlayerPrefab");
+        }
         Debug.Log("Player connected to server with id of: " + playerControllerId);
         base.OnServerAddPlayer(conn, playerControllerId);
     }
