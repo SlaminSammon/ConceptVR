@@ -9,7 +9,7 @@ using UnityEngine;
 public class ClipUtil {
 
     public enum ClipMode { Add, Subtract, Intersect };
-    private struct CPoint
+    public struct CPoint
     {
         public Vector3 position;
         public int id;
@@ -29,7 +29,7 @@ public class ClipUtil {
         public void SetId(int value) {this.id = value;}
     }
 
-    private struct CFace
+    public struct CFace
     {
         public int[] points;
         public CSolid solid;
@@ -41,9 +41,16 @@ public class ClipUtil {
             }
             return verts;
         }
+
+        public void debugDraw(Color c) {
+            for(int i = 0; i < points.Length; ++i) {
+                int j = (i+1)%points.Length;
+                Debug.DrawLine(solid.vertices[points[i]].position, solid.vertices[points[j]].position, c, 1000, true);
+            }
+        }
     }
 
-    private struct CSolid
+    public struct CSolid
     {
         public List<CFace> faces;
         public List<CPoint> vertices;
@@ -55,16 +62,26 @@ public class ClipUtil {
             foreach (CFace f in faces)
             {
                 int eCount = 0;
-                foreach(int i in f.points)
+                for(int i = 0; i < f.points.Length; ++i)
                 {
                     Vector3 a = vertices[f.points[i]].position;
                     Vector3 b = vertices[f.points[(i+1) % f.points.Length]].position;
-                    if (b.y != a.y  &&  b.z != a.z  && a.y < v.y && v.y < b.y && v.x <= a.x + (v.y - a.y) * (b.x - a.x) / (b.y - a.y))
+                    if (a.y != b.y &&   //ab Not parallel to detector
+                        (a.y <= v.y && v.y < b.y || b.y <= v.y && v.y < a.y) && //v in between a and b on y axis
+                        v.x <= a.x + (v.y - a.y) * (b.x - a.x) / (b.y - a.y))   //v left of a on x axis
                         ++eCount;
                 }
 
-                if (eCount % 2 == 1)
-                    ++fCount;
+                if (eCount % 2 == 1) {
+                    Vector3 a = vertices[f.points[f.points.Length - 1]].position - vertices[f.points[0]].position;
+                    Vector3 b = vertices[f.points[1]].position - vertices[f.points[0]].position;
+                    Vector3 c = Vector3.Cross(a, b);
+                    if (Vector3.Dot(c, Vector3.forward) < 0)
+                        c = -c;
+                    Vector3 u = v - vertices[f.points[0]].position;
+                    if (c.z != 0 && Vector3.Dot(u, c) >= 0)
+                        ++fCount;
+                }
             }
 
             return fCount % 2 == 1;
@@ -96,29 +113,50 @@ public class ClipUtil {
         List<CFace> Ai, Ax, Ao, Bi, Bx, Bo;
         CSolid Ac = ReduceSolid(A);
         CSolid Bc = ReduceSolid(B);
-        Divvy(Ac, Bc, out Ai, out Ax, out Ao);
-        Divvy(Bc, Ac, out Bi, out Bx, out Bo);
+        //Divvy(Ac, Bc, out Ai, out Ax, out Ao);
+        //Divvy(Bc, Ac, out Bi, out Bx, out Bo);
+        Ai = new List<CFace>();
+        Ao = new List<CFace>();
+        Bi = new List<CFace>();
+        Bo = new List<CFace>();
 
-        foreach (CFace a in Ax) {
+
+        foreach (CFace a in Ac.faces) {
             Vector3[] p = PolyTransform(a.GetVerts(), a);
-            Vector3[] q = CrossSection(Bc, a).ToArray();
-            List<Vector3[]> pi, po;
-            Clip2D(p, q, out pi, out po);
-            foreach (Vector3[] poly in pi)
-                Ai.Add(Ac.MapFace(DePolyTransform(poly, a)));
-            foreach (Vector3[] poly in po)
-                Ao.Add(Ac.MapFace(DePolyTransform(poly, a)));
+            List<List<Vector3>> cross = CrossSection(Bc, a);
+            foreach(List<Vector3> ql in cross) {
+                Vector3[] q = ql.ToArray();
+                List<Vector3[]> pi, po;
+                Clip2D(p, q, out pi, out po);
+                foreach (Vector3[] poly in pi)
+                    Ai.Add(Ac.MapFace(DePolyTransform(poly, a)));
+                foreach (Vector3[] poly in po)
+                    Ao.Add(Ac.MapFace(DePolyTransform(poly, a)));
+            }
+            if (cross.Count == 0) 
+                if (B.ContainsPoint(Ac.vertices[a.points[0]].position))
+                    Ai.Add(a);
+                else
+                    Ao.Add(a);
         }
-
-        foreach (CFace b in Bx) {
+        
+        foreach (CFace b in Bc.faces) {
             Vector3[] p = PolyTransform(b.GetVerts(), b);
-            Vector3[] q = CrossSection(Ac, b).ToArray();
-            List<Vector3[]> pi, po;
-            Clip2D(p, q, out pi, out po);
-            foreach (Vector3[] poly in pi)
-                Bi.Add(Bc.MapFace(DePolyTransform(poly, b)));
-            foreach (Vector3[] poly in po)
-                Bo.Add(Bc.MapFace(DePolyTransform(poly, b)));
+            List<List<Vector3>> cross = CrossSection(Ac, b);
+            foreach(List<Vector3> ql in cross) {
+                Vector3[] q = ql.ToArray();
+                List<Vector3[]> pi, po;
+                Clip2D(p, q, out pi, out po);
+                foreach (Vector3[] poly in pi)
+                    Bi.Add(Bc.MapFace(DePolyTransform(poly, b)));
+                foreach (Vector3[] poly in po)
+                    Bo.Add(Bc.MapFace(DePolyTransform(poly, b)));
+            }
+            if (cross.Count == 0) 
+                if (A.ContainsPoint(Bc.vertices[b.points[0]].position))
+                    Bi.Add(b);
+                else
+                    Bo.Add(b);
         }
 
 
@@ -147,7 +185,7 @@ public class ClipUtil {
         }
 
         //Add verts to merged CSolid
-        if (mode == ClipMode.Add) {
+        if (mode == ClipMode.Subtract) {
             foreach (CFace f in Ao) 
                 for (int i = 0; i < f.points.Length; ++i)
                     f.points[i] = map[f.points[i]];
@@ -156,22 +194,43 @@ public class ClipUtil {
                 for (int i = 0; i < f.points.Length; ++i)
                     f.points[i] = map[f.points[i] + ACount];
             Cc.faces.AddRange(Bi);
-        } else if (mode == ClipMode.Subtract) {
+        } else if (mode == ClipMode.Add) {
             //Merge A and B into C, using faces Ao, Bi, adding to point indices of Bi respectively (TODO)
         } else if (mode == ClipMode.Intersect) {
             //Merge A and B into C, using faces Ai, Bi, adding to point indices of Bi respectively (TODO)
         }
 
-        //Map/Create Points in DCG
+        //Find used vertices
+        bool[] used = new bool[Cc.vertices.Count];
+        foreach (CFace f in Cc.faces)
+            foreach (int i in f.points)
+                used[i] = true;
+
+        //Map duplicate points, create new points, delete unused points
         Point[] points = new Point[Cc.vertices.Count];  //Sparse Array
         Dictionary<int, Edge>[] edgeTo = new Dictionary<int, Edge>[Cc.vertices.Count];  //Sparse grid
         for (int i = 0; i < Cc.vertices.Count; ++i) {
-            if(map[i] == i) {
-                points[i] = Cc.vertices[i].id == -1 ? new Point(Cc.vertices[i].position) : DCGBase.all[Cc.vertices[i].id] as Point;
-                Cc.vertices[i].SetId(points[i].elementID);
-                edgeTo[i] = new Dictionary<int, Edge>();
+            if (used[i]) {
+                if(map[i] == i) {
+                    points[i] = Cc.vertices[i].id == -1 ? new Point(Cc.vertices[i].position) : DCGBase.all[Cc.vertices[i].id] as Point;
+                    Cc.vertices[i].SetId(points[i].elementID);
+                    edgeTo[i] = new Dictionary<int, Edge>();
+                }
+            } else {
+                if (Cc.vertices[i].id != -1) {
+                    DCGBase.all[Cc.vertices[i].id].Remove();
+                }
             }
         }
+
+        //Nuke A and B
+        foreach (Point p in A.getPoints())
+            for (int i = p.edges.Count-1; i >= 0; --i)
+                p.edges[i].Remove();
+                
+        foreach (Point p in B.getPoints())
+            for (int i = p.edges.Count-1; i >= 0; --i)
+                p.edges[i].Remove();
 
         //Create new edges/faces in DCG
         Face[] faces = new Face[Cc.faces.Count];
@@ -181,32 +240,36 @@ public class ClipUtil {
             
             for(int j = 0; j < f.points.Length; ++j) {
                 int k = (j + 1) % f.points.Length;
-                if (edgeTo[f.points[j]][f.points[k]] != null)
-                    edges[i] = edgeTo[f.points[j]][f.points[k]];
-                else if (edgeTo[f.points[k]][f.points[j]] != null)
-                    edges[i] = edgeTo[f.points[k]][f.points[j]];
-                else
-                    edges[i] = new Edge(points[f.points[j]], points[f.points[k]]);
+                if (edgeTo[f.points[j]].ContainsKey(f.points[k]))
+                    edges[j] = edgeTo[f.points[j]][f.points[k]];
+                else if (edgeTo[f.points[k]].ContainsKey(f.points[j]))
+                    edges[j] = edgeTo[f.points[k]][f.points[j]];
+                else{
+                    edges[j] = new Edge(points[f.points[j]], points[f.points[k]]);
+                    edgeTo[f.points[j]].Add(f.points[k], edges[j]);
+                    edgeTo[f.points[k]].Add(f.points[j], edges[j]);
+                }
+                //Debug.DrawLine(edges[j].points[0].position, edges[j].points[1].position, new Color(Random.value, Random.value, Random.value), 1000, false);
             }
-
+            //Debug.Log(edges.Length);
             faces[i] = new Face(new List<Edge>(edges));
         }
 
-        //TODO: Nuke A and B
         //Create new solid from C
         return new Solid(new List<Face>(faces));
+        //return new Solid();
 
         //TODO eventually, if we have time:
             //Relate generated Faces and Edges to existing Faces and Edges, in order to reduce new objects being created or to copy materials/etc.
     }
 
-    static Vector3[] PolyTransform(Vector3[] V, CFace poly) {
+    public static Vector3[] PolyTransform(Vector3[] V, CFace poly) {
         Vector3 a = poly.solid.vertices[poly.points[0]].position;
         Vector3 b = poly.solid.vertices[poly.points[1]].position;
         Vector3 c = poly.solid.vertices[poly.points[poly.points.Length-1]].position;
         Vector3 X = (b - a).normalized;
-        Vector3 Z = Vector3.Cross(X, c-a).normalized;
-        Vector3 Y = Vector3.Cross(Z, X);
+        Vector3 Y = Vector3.Cross(X, c-a).normalized;
+        Vector3 Z = Vector3.Cross(Y, X);
 
         Vector3[] U = new Vector3[V.Length];
 
@@ -218,23 +281,23 @@ public class ClipUtil {
         return U;
     }
 
-    static Vector3[] DePolyTransform(Vector3[] U, CFace poly) {
+    public static Vector3[] DePolyTransform(Vector3[] U, CFace poly) {
         Vector3 a = poly.solid.vertices[poly.points[0]].position;
         Vector3 b = poly.solid.vertices[poly.points[1]].position;
         Vector3 c = poly.solid.vertices[poly.points[poly.points.Length-1]].position;
         Vector3 X = (b - a).normalized;
-        Vector3 Z = Vector3.Cross(X, c-a).normalized;
-        Vector3 Y = Vector3.Cross(Z, X);
+        Vector3 Y = Vector3.Cross(X, c-a).normalized;
+        Vector3 Z = Vector3.Cross(Y, X);
 
         Vector3[] V = new Vector3[U.Length];
 
         for (int i = 0; i < U.Length; ++i)
-            V[i] = U[i].x * X + U[i].y * Y + U[i].z * Z;
+            V[i] = a + U[i].x * X + U[i].y * Y + U[i].z * Z;
         
-        return U;
+        return V;
     }
 
-    static List<Vector3> CrossSection(CSolid B, CFace a) {
+    public static List<List<Vector3>> CrossSection(CSolid B, CFace a) {
         Vector3[] bTrans = new Vector3[B.vertices.Count];
         Vector3[] aTrans = new Vector3[a.points.Length];
         
@@ -247,44 +310,84 @@ public class ClipUtil {
         bTrans = PolyTransform(bTrans, a);
 
         List<List<Vector3>> edges = new List<List<Vector3>>();
+
+        float epsilonSquared = 0.00001f;
         
         foreach (CFace b in B.faces) {
             List<Vector3> intersections = new List<Vector3>();
             for (int i = 0; i < b.points.Length; ++i) {
                 int j = (i + 1) % b.points.Length;
-                if (Mathf.Sign(bTrans[i].y) != Mathf.Sign(bTrans[j].y)) {
-                    float t = -bTrans[i].y / (bTrans[j].y - bTrans[i].y);
-                    intersections.Add(bTrans[i] + (bTrans[j] - bTrans[i]) * t);
+                int pi = b.points[i];
+                int pj = b.points[j];
+                if (Mathf.Sign(bTrans[pi].y) != Mathf.Sign(bTrans[pj].y)) {
+                    float t = -bTrans[pi].y / (bTrans[pj].y - bTrans[pi].y);
+                    intersections.Add(bTrans[pi] + (bTrans[pj] - bTrans[pi]) * t);
                 }
             }
-            Vector3 edgeDir = intersections[intersections.Count-1] - intersections[0];
-            intersections.Sort((x, y) => (int)Mathf.Sign(Vector3.Dot(y-x, edgeDir)));
-            for(int i = 0; i < intersections.Count/2; ++i){
+            if (intersections.Count > 1)
+                for (int i = intersections.Count-1; i >= 0; --i)
+                    for (int j = 0; j < i; ++j)
+                        if ((intersections[j] - intersections[i]).sqrMagnitude <= epsilonSquared)
+                            intersections.RemoveAt(i);
+
+            if (intersections.Count > 1) {
+                Vector3 edgeDir = intersections[intersections.Count-1] - intersections[0];
+                intersections.Sort((x, y) => (int)Mathf.Sign(Vector3.Dot(y-x, edgeDir)));
+                for(int i = 0; i < intersections.Count/2; ++i){
+                    List<Vector3> edge = new List<Vector3>();
+                    edge.Add(intersections[i*2]); edge.Add(intersections[i*2+1]);
+                    edges.Add(edge);
+                }
+            } else if (intersections.Count == 1) {
                 List<Vector3> edge = new List<Vector3>();
-                edge.Add(intersections[i*2]); edge.Add(intersections[i*2+1]);
+                edge.Add(intersections[0]);
                 edges.Add(edge);
             }
         }
 
-        float epsilonSquared = 0.00001f;
         for (int i = edges.Count-1; i >= 0; --i) {
             for (int j = 0; j < edges.Count; ++j) {
+                if (i == j) continue;
                 if ((edges[j][edges[j].Count-1] - edges[i][0]).sqrMagnitude <= epsilonSquared) {
-                    for (int k = 1; k < edges[i].Count; ++i)
+                    for (int k = 1; k < edges[i].Count; ++k)
                         edges[j].Add(edges[i][k]);
+                    edges[i].Clear();
                     edges.RemoveAt(i);
+                    break;
                 } else if ((edges[j][edges[j].Count-1] - edges[i][edges[i].Count-1]).sqrMagnitude <= epsilonSquared) {
                     for (int k = edges[i].Count-2; k >= 0; --k)
                         edges[j].Add(edges[i][k]);
+                    edges[i].Clear();
                     edges.RemoveAt(i);
+                    break;
+                } else if ((edges[j][0] - edges[i][edges[i].Count-1]).sqrMagnitude <= epsilonSquared) {
+                    for (int k = edges[i].Count-2; k >= 0 ; --k)
+                        edges[j].Insert(0, edges[i][k]);
+                    edges[i].Clear();
+                    edges.RemoveAt(i);
+                    break;
+                } else if ((edges[j][0] - edges[i][0]).sqrMagnitude <= epsilonSquared) {
+                    for (int k = 1; k < edges[i].Count-1; ++k)
+                        edges[j].Insert(0, edges[i][k]);
+                    edges[i].Clear();
+                    edges.RemoveAt(i);
+                    break;
                 }
             }
         }
 
-        return edges[0];
+        for (int i = edges.Count-1; i >= 0; --i) {
+            if (edges[i].Count < 3)
+                edges.RemoveAt(i);
+            else if ((edges[i][edges[i].Count-1] - edges[i][0]).sqrMagnitude <= epsilonSquared) {
+                edges[i].RemoveAt(edges[i].Count-1);
+            }
+        }
+
+        return edges;
     }
 
-    static CSolid ReduceSolid(Solid A)
+    public static CSolid ReduceSolid(Solid A)
     {
         CSolid s = new CSolid();
         s.faces = new List<CFace>();
@@ -339,11 +442,13 @@ public class ClipUtil {
     }
 
     
-    static void Divvy(CSolid A, CSolid B, out List<CFace> Ai, out List<CFace> Ax, out List<CFace> Ao)
+    /*static void Divvy(CSolid A, CSolid B, out List<CFace> Ai, out List<CFace> Ax, out List<CFace> Ao)
     {
         bool[] vIn = new bool[A.vertices.Count];
-        for (int i = 0; i < A.vertices.Count; ++i)
+        for (int i = 0; i < A.vertices.Count; ++i) {
             vIn[i] = B.Contains(A.vertices[i].position);
+            //Debug.DrawLine(A.vertices[i].position, A.vertices[i].position + Vector3.one/20f, vIn[i] ? Color.green : Color.red, 1000);
+        }
 
         Ai = new List<CFace>();
         Ax = new List<CFace>();
@@ -351,6 +456,7 @@ public class ClipUtil {
 
         foreach (CFace f in A.faces)
         {
+            
             bool allIn = true, noneIn = true;
             foreach (int n in f.points)
             {
@@ -358,16 +464,22 @@ public class ClipUtil {
                 noneIn = noneIn && !vIn[n];
             }
 
-            if (allIn)
+            if (allIn) {
                 Ai.Add(f);
-            else if (noneIn)
+                //f.debugDraw(Color.black);
+            }
+            else if (noneIn) {
                 Ao.Add(f);
-            else
+                //f.debugDraw(Color.white);
+            }
+            else {
                 Ax.Add(f);
+                //f.debugDraw(Color.green);
+            }
         }
 
         return;
-    }
+    }*/
 
     private struct Clip2DIntersection {
         public Vector3 position;
@@ -398,13 +510,12 @@ public class ClipUtil {
         }
     }
 
-    static void Clip2D(Vector3[] P, Vector3[] Q, out List<Vector3[]> Pi, out List<Vector3[]> Po) {
-        P = Widdershins(P);
-        Q = Widdershins(Q);
+    public static void Clip2D(Vector3[] P, Vector3[] Q, out List<Vector3[]> Pi, out List<Vector3[]> Po) {
+        P = Clockwise(P);
+        Q = Clockwise(Q);
         int i, j;
 
         bool[] pIn = new bool[P.Length];
-
 
         List<Clip2DIntersection> intersections = new List<Clip2DIntersection>();
 
@@ -415,11 +526,12 @@ public class ClipUtil {
                 float interA = IntersectionScalar(P[i], P[iN]-P[i], Q[j], Q[jN]-Q[j]);
                 float interB = IntersectionScalar(Q[j], Q[jN]-Q[j], P[i], P[iN]-P[i]);
                 if (0 <= interA && interA <= 1 && 0 <= interB && interB <= 1) {
-                    bool outIn = Cross2(Q[jN]-Q[j], P[i]-Q[j]) >= 0 && Cross2(Q[jN]-Q[j], P[iN]-P[j]) < 0;
+                    bool outIn = Cross2(Q[jN]-Q[j], P[i]-Q[j]) >= 0 && Cross2(Q[jN]-Q[j], P[iN]-P[i]) < 0;
                     intersections.Add(new Clip2DIntersection(P[i] + (P[iN]-P[i]) * interA, i, j, outIn));
                 }
             }
         }
+        
 
         List<PolyPoint> Pann = new List<PolyPoint>(), Qann = new List<PolyPoint>(), interPoints = new List<PolyPoint>(); //P and Q annotated with intersections
 
@@ -438,7 +550,7 @@ public class ClipUtil {
             Pann.Add(p);
 
             List<Clip2DIntersection> segInter = intersections.FindAll(x => x.ip == i);
-            segInter.Sort((x,y) => (int)Mathf.Sign(Vector3.Dot(P[iN] - P[i], x.position - P[i]) - Vector3.Dot(P[iN] - P[i], x.position - P[i])));
+            segInter.Sort((x,y) => (int)Mathf.Sign( Vector3.Dot(P[iN] - P[i], x.position - P[i]) - Vector3.Dot(P[iN] - P[i], y.position - P[i]) ));
 
             foreach (Clip2DIntersection inter in segInter) {
                 PolyPoint interP = interPoints.Find(x => x.position == inter.position);
@@ -456,11 +568,11 @@ public class ClipUtil {
             Qann.Add(q);
 
             List<Clip2DIntersection> segInter = intersections.FindAll(x => x.iq == i);
-            segInter.Sort((x,y) => (int)Mathf.Sign(Vector3.Dot(Q[iN] - Q[i], x.position - Q[i]) - Vector3.Dot(Q[iN] - Q[i], x.position - Q[i])));
+            segInter.Sort((x,y) => (int)Mathf.Sign( Vector3.Dot(Q[iN] - Q[i], x.position - Q[i]) - Vector3.Dot(Q[iN] - Q[i], y.position - Q[i]) ));
 
             foreach (Clip2DIntersection inter in segInter) {
                 PolyPoint interP = interPoints.Find(x => x.position == inter.position);
-                interP.iq = Pann.Count;
+                interP.iq = Qann.Count;
                 Qann.Add(interP);
             }
             ++i;
@@ -472,7 +584,7 @@ public class ClipUtil {
         foreach (PolyPoint p in interPoints)
             if (p.inbound && !p.visited) {
                 List<PolyPoint> res = BuildClipPoly(p, Pann, Qann, 'i');
-                Pi.Add(new Vector3[Pi.Count]);
+                Pi.Add(new Vector3[res.Count]);
                 for(i = 0; i < res.Count; ++i)
                     Pi[Pi.Count-1][i] = res[i].position;
             }
@@ -482,7 +594,7 @@ public class ClipUtil {
         foreach (PolyPoint p in interPoints)
             if (p.inbound && !p.visited) {
                 List<PolyPoint> res = BuildClipPoly(p, Pann, Qann, 'o');
-                Po.Add(new Vector3[Pi.Count]);
+                Po.Add(new Vector3[res.Count]);
                 for(i = 0; i < res.Count; ++i)
                     Po[Po.Count-1][i] = res[i].position;
             }
@@ -494,6 +606,8 @@ public class ClipUtil {
         int i = start.ip;
         PolyPoint curr = start;
         List<PolyPoint> currList = P;
+        int loopCount = 0;
+        int loopMax = P.Count + Q.Count + 2;
         do {
             curr.visited = true;
             poly.Add(curr);
@@ -512,7 +626,11 @@ public class ClipUtil {
                 i = (curr.ip + 1) % P.Count;
                 currList = P;
             }
-        } while (curr != start);
+
+            ++loopCount;
+
+            curr = currList[i];
+        } while (curr != start && loopCount < loopMax);
         
         return poly;
     }
@@ -529,6 +647,18 @@ public class ClipUtil {
     static Vector3[] Widdershins(Vector3[] P) {
         float area = Area(P);
         if (area < 0) {
+            for (int i = 0; i < P.Length/2; ++i){
+                Vector3 temp = P[i];
+                P[i] = P[P.Length-i-1];
+                P[P.Length-i-1] = temp;
+            }
+        }
+        return P;
+    }
+
+    static Vector3[] Clockwise(Vector3[] P) {
+        float area = Area(P);
+        if (area > 0) {
             for (int i = 0; i < P.Length/2; ++i){
                 Vector3 temp = P[i];
                 P[i] = P[P.Length-i-1];

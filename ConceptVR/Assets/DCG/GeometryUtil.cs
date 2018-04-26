@@ -211,7 +211,7 @@ public static class GeometryUtil
 
     public static List<int> smartTriangulate(List<Vector3> points, Vector3 normal)
     {
-        List<Vector2> p2 = planarize(points, normal, points[1] - points[0]);
+        List<Vector2> p2 = planarize(points, normal, points[1]-points[0]);
         bool flip = area(p2) < 0;   //Ensure clockwise
         if (flip)
             for (int t = 0; t < p2.Count; ++t)
@@ -236,13 +236,13 @@ public static class GeometryUtil
 
             if (Cross2(p2[j] - p2[i], p2[k] - p2[i]) > 0)  //If this tri is clockwise
             {
-                foreach(Vector2 v in p2)    //Verify this tri contains no other points
+                for (int v = 0; v < p2.Count; ++v)    //Verify this tri contains no other points
                 {
-                    float ci = Cross2(p2[j] - p2[i], v - p2[i]);
-                    float cj = Cross2(p2[k] - p2[j], v - p2[j]);
-                    float ck = Cross2(p2[i] - p2[k], v - p2[k]);
+                    float ci = Cross2(p2[j] - p2[i], p2[v] - p2[i]);
+                    float cj = Cross2(p2[k] - p2[j], p2[v] - p2[j]);
+                    float ck = Cross2(p2[i] - p2[k], p2[v] - p2[k]);
 
-                    if (ci > 0 && cj > 0 && ck > 0)
+                    if (i != v && j != v && k != v && ci > 0 && cj > 0 && ck >= 0)
                         goto STBreak;
                 }
 
@@ -253,6 +253,8 @@ public static class GeometryUtil
             STBreak:
             i = next(i, exc);
         }
+
+        //Debug.Log(runCount + " " + excCount);
 
         j = next(i, exc);
         k = next(j, exc);

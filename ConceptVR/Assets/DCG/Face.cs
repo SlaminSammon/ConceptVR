@@ -75,8 +75,8 @@ public class Face : DCGElement
 
     public override void Remove()
     {
-        foreach (Solid s in solids)
-            s.Remove();
+        for (int i = solids.Count-1; i >= 0; --i)
+            solids[i].Remove();
         foreach (Edge e in edges)
             e.faces.Remove(this);
         if(mat != null)

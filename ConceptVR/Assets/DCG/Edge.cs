@@ -101,19 +101,19 @@ public class Edge : DCGElement
 
     public override void Remove()
     {
-        foreach (Face f in faces)
-            f.Remove();
+        for (int i = faces.Count-1; i >= 0; --i)
+            faces[i].Remove();
         foreach (Point p in points)
             p.edges.Remove(this);
         DCGBase.edges.Remove(this);
     }
+
     public override void RemoveChildren()
     {
         foreach (Point p in points)
             if (DCGBase.sElements.Contains(p))
                 DCGBase.sElements.Remove(p);
     }
-
 
     public override bool ChildrenSelected()
     {

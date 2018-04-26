@@ -47,11 +47,13 @@ public class Point : DCGElement
 
     public override void Remove()
     {
-        foreach (Edge e in edges)
+        for(int i = edges.Count-1; i >= 0; --i){
+            Edge e = edges[i];
             if (e.points[0] == this || e.points[e.points.Count - 1] == this)
                 e.Remove();
             else
                 e.points.Remove(this);
+        }
         DCGBase.points.Remove(this);
     }
 
