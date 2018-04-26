@@ -33,7 +33,7 @@ public class SelectSphereTool : SelectTool
                 }
             }
         }
-
+        RenderObject();
     }
 
     private void OnRenderObject()
