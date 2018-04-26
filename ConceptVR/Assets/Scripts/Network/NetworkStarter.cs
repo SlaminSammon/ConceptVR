@@ -8,19 +8,22 @@ public class NetworkStarter : MonoBehaviour {
     private NetworkManager netManager;
     private string netAddress;
     private string netPort;
+    private bool restart = false;
 	// Use this for initialization
 	void Start () {
         netManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         netManager.StartHost();
-        //netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
+        restart = false;
+        netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
 
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (restart) return;
         if (!netManager.isNetworkActive)
         {
-            //netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
+            netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
             netManager.networkAddress = "localhost";
             netManager.networkPort = 53535;
 
@@ -35,7 +38,7 @@ public class NetworkStarter : MonoBehaviour {
         netManager.networkAddress = netAddress;
         netManager.networkPort = int.Parse(netPort);
         netManager.StartClient();
-        //netManager.GetComponent<NetworkManagerHUD>().showGUI = true;
+        netManager.GetComponent<NetworkManagerHUD>().showGUI = true;
         startHost = false;
         netAddress = null;
         netPort = null;
@@ -52,5 +55,10 @@ public class NetworkStarter : MonoBehaviour {
     {
         Debug.Log("Failed to connect to Host");
         startHost = true;
+    }
+    public void Restart()
+    {
+        restart = true;
+        netManager.StopHost();
     }
 }

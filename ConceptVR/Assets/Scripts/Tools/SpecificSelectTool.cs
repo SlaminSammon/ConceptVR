@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum types { Point, Edge, Face};
 public class SpecificSelectTool : SelectSphereTool {
-    public string type;
+    public types type;
 	// Use this for initialization
 	void Start () {
 		
@@ -23,8 +24,8 @@ public class SpecificSelectTool : SelectSphereTool {
                     break;
                 else
                 {
-                    Select(nElement);
                     TapDCG(nElement);
+                    Select(nElement);
                     break;
                 }
             }
@@ -39,18 +40,18 @@ public class SpecificSelectTool : SelectSphereTool {
     }
     DCGElement selectElement(Vector3 pos, float selectDist)
     {
-        if (type.Equals("Point"))
+        if (type.Equals(types.Point))
             return DCGBase.NearestPoint(pos, selectDist);
-        else if (type.Equals("Edge"))
+        else if (type.Equals(types.Edge))
             return DCGBase.NearestEdge(pos, selectDist);
-        else if (type.Equals("Face"))
+        else if (type.Equals(types.Face))
             return DCGBase.NearestFace(pos, selectDist);
         else
             return null;
     }
     public override bool TapDCG(DCGElement nearestElement)
     {
-        if (!nearestElement.ParentSelected())
+        if (nearestElement.ParentSelected())
         {
             return false;
         }
