@@ -42,7 +42,6 @@ public class ItemBase : NetworkBehaviour {
     public void CmdSpawn(GameObject go)
     {
         NetworkServer.Spawn(go);
-        RpcSpawn(go);
     }
     [ClientRpc]
     public void RpcSpawn(GameObject go)
