@@ -240,14 +240,22 @@ public class ClipUtil {
             
             for(int j = 0; j < f.points.Length; ++j) {
                 int k = (j + 1) % f.points.Length;
-                if (edgeTo[f.points[j]].ContainsKey(f.points[k]))
-                    edges[j] = edgeTo[f.points[j]][f.points[k]];
-                else if (edgeTo[f.points[k]].ContainsKey(f.points[j]))
-                    edges[j] = edgeTo[f.points[k]][f.points[j]];
-                else{
-                    edges[j] = new Edge(points[f.points[j]], points[f.points[k]]);
-                    edgeTo[f.points[j]].Add(f.points[k], edges[j]);
-                    edgeTo[f.points[k]].Add(f.points[j], edges[j]);
+                int pk = f.points[k];
+                int pj = f.points[j];
+                bool kcj = edgeTo[pk].ContainsKey(pj);
+                bool jck = edgeTo[pj].ContainsKey(pk);
+                if (jck)
+                    edges[j] = edgeTo[pj][pk];
+                    if (!kcj)
+                        edgeTo[pk].Add(pj, edges[j]);
+                else if (kcj)
+                    edges[j] = edgeTo[pk][pj];
+                    if (!jck)
+                        edgeTo[pj].Add(pk, edges[j]);
+                else {
+                    edges[j] = new Edge(points[pj], points[pk]);
+                    edgeTo[pj].Add(pk, edges[j]);
+                    edgeTo[pk].Add(pj, edges[j]);
                 }
                 //Debug.DrawLine(edges[j].points[0].position, edges[j].points[1].position, new Color(Random.value, Random.value, Random.value), 1000, false);
             }
