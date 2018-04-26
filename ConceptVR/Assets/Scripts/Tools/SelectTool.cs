@@ -5,12 +5,13 @@ using UnityEngine;
 public class SelectTool : Tool {
     public Material selMat;
 
-
+    ItemBase itemBase;
 
     protected float defaultSelectDistance = .045f;
     protected float selectDistance = 0.45f;
     public void Start()
     {
+        itemBase = GameObject.Find("ItemBase").GetComponent<ItemBase>();
     }
 
     public override void Update()
@@ -41,18 +42,6 @@ public class SelectTool : Tool {
         Deselect();
         return false;
     }
-    public override bool DualTriggerDown()
-    {
-        if (DCGBase.sElements.Count == 0)
-            return true;
-        List<DCGElement> copiedElements = new List<DCGElement>();
-        foreach(DCGElement d in DCGBase.sElements)
-        {
-            copiedElements.Add(d.Copy());
-        }
-
-        return true;
-    }
 
     public List<Point> Select(DCGElement elem)
     {
@@ -67,7 +56,7 @@ public class SelectTool : Tool {
         item.CmdSelect();
         ItemBase.sItems.Add(item);
         if(DCGBase.sPoints.Count == 0)
-            ItemBase.itemBase.itemHudManager(item);
+            itemBase.itemHudManager(item);
     }
 
     public void ClearSelection()
@@ -108,7 +97,7 @@ public class SelectTool : Tool {
         if (!Item.popped)
         {
             Item.Pop();
-            ItemBase.itemBase.firstType = "";
+            itemBase.firstType = "";
         }
     }
 

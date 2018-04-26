@@ -45,6 +45,18 @@ public class MoveTool : SelectTool {
         grabPosition = controllerPosition;
         return true;
     }
+    public override bool DualTriggerDown()
+    {
+        if (DCGBase.sElements.Count == 0)
+            return true;
+        List<DCGElement> copiedElements = new List<DCGElement>();
+        foreach (DCGElement d in DCGBase.sElements)
+        {
+            copiedElements.Add(d.Copy(DCGBase.nextMoveID()));
+        }
+
+        return true;
+    }
 
     public override bool TriggerUp()
     {

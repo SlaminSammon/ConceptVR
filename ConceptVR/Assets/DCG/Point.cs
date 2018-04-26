@@ -176,9 +176,16 @@ public class Point : DCGElement
 
         return faces.Distinct().ToList<Face>();
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        return new Point(this.position);
+        Point copy = (Point) lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            this.lastMoveID = moveId;
+            copy = new Point(this.position);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
     public override bool ParentSelected()
     {

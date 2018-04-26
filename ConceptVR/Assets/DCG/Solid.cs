@@ -269,11 +269,24 @@ public class Solid : DCGElement {
             if (!DCGBase.sPoints.Contains(p))
                 DCGBase.sPoints.Add(p);
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        List<Face> cFaces = new List<Face>();
-        foreach (Face f in faces)
-            cFaces.Add((Face)f.Copy());
-        return new Solid(cFaces);
+        Solid copy = (Solid)lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            List<Face> cFaces = new List<Face>();
+            foreach (Face f in faces)
+            {
+                Face edgeCopy = (Face)f.Copy(moveId);
+                if (edgeCopy != null && !cFaces.Contains(edgeCopy))
+                {
+                    cFaces.Add(edgeCopy);
+                }
+            }
+            cFaces = cFaces.Distinct().ToList();
+            copy = new Solid(cFaces);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
 }

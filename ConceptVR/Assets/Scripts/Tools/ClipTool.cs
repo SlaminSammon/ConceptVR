@@ -15,6 +15,7 @@ public class ClipTool : MoveTool {
             foreach (Solid target in DCGBase.solids)
                 if (!DCGBase.sElements.Contains(target))
                     ClipUtil.Clip(target, clipper, ClipUtil.ClipMode.Subtract);
+        Swipe();
         return true;
     }
 }

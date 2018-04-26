@@ -235,12 +235,25 @@ public class Edge : DCGElement
     {
         return (points[0] == p1 && points[points.Count-1] == p2 || points[0] == p2 && points[points.Count-1] == p1);
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        List<Point> cPoints = new List<Point>();
-        foreach (Point p in points)
-            cPoints.Add((Point) p.Copy());
-        return new Edge(cPoints, this.isLoop);
+        Edge copy = (Edge) lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            List<Point> cPoints = new List<Point>();
+            foreach (Point p in points)
+            {
+                Point pointCopy = (Point)p.Copy(moveId);
+                if(pointCopy != null && !cPoints.Contains(pointCopy))
+                {
+                    cPoints.Add(pointCopy);
+                }
+            }
+            cPoints = cPoints.Distinct().ToList();
+            copy = new Edge(cPoints, this.isLoop);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
     public override bool ParentSelected()
     {
