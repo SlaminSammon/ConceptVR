@@ -42,10 +42,10 @@ public class DCGBase : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+        RenderObject();
 	}
 
-    private void OnRenderObject()
+    private void RenderObject()
     {
         //Render top-level DCG Elements
         solidMat.SetPass(0);
@@ -58,11 +58,11 @@ public class DCGBase : MonoBehaviour {
 
         foreach (DCGMaterial DCGMat in matList) {
             // dip the brush
-            DCGMat.mat.SetPass(0);
+            
             foreach (Face f in DCGMat.facesUsingMat)
             {
                 //if (f.solids.Count == 0 && !f.isSelected)
-                    f.Render();
+                    f.Render(DCGMat.mat);
             }
             // clean the brush
             solidMat.SetPass(0);
@@ -80,17 +80,17 @@ public class DCGBase : MonoBehaviour {
         pointMat.SetPass(0);
         foreach (Point p in points)
             if (p.edges.Count > 0 && !p.isSelected)
-                p.Render();
+                p.Render(pointMat);
 
         edgeMat.SetPass(0);
         foreach (Edge e in edges)
             if (e.faces.Count > 0 && !e.isSelected)
-                e.Render();
+                e.Render(edgeMat);
         
         faceMat.SetPass(0);
         foreach (Face f in faces)
             if (f.solids.Count > 0 && !f.isSelected)
-                f.Render();
+                f.Render(faceMat);
     }
 
     public static int nextMoveID()

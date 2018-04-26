@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TapRenderer : MonoBehaviour {
     float size;
+    public Material mat;
 
 	// Use this for initialization
 	void Start () {
@@ -18,6 +19,7 @@ public class TapRenderer : MonoBehaviour {
 
     private void OnRenderObject()
     {
+        mat.SetPass(0);
         Graphics.DrawMeshNow(GeometryUtil.cylinder32, Matrix4x4.TRS(transform.position, Quaternion.identity, new Vector3(size, 0.001f, size)));
     }
 }

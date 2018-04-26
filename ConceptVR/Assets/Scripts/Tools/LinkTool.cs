@@ -12,7 +12,7 @@ public class LinkTool : SelectTool {
 	
 	// Update is called once per frame
 	new void Update () {
-		
+        RenderObject();
 	}
 
     public override bool TriggerDown()
@@ -49,23 +49,24 @@ public class LinkTool : SelectTool {
         return true;
     }
 
-    new void OnRenderObject()
+    new void RenderObject()
     {
-        base.OnRenderObject();
+        base.RenderObject();
 
-        linkMat.SetPass(0);
+        //linkMat.SetPass(0);
 
         Vector3 edgeVec;
         if (DCGBase.sPoints.Count > 2)
             for (int i = 0; i < DCGBase.sPoints.Count - 1; ++i)
             {
                 edgeVec = DCGBase.sPoints[i].position - DCGBase.sPoints[i + 1].position;
-                Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+                Graphics.DrawMesh(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[i].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)),linkMat,0);
             }
         if (DCGBase.sPoints.Count > 1)
         {
             edgeVec = DCGBase.sPoints[DCGBase.sPoints.Count - 1].position - DCGBase.sPoints[0].position;
-            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
+            Graphics.DrawMesh(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)), linkMat, 0);
+            //Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(DCGBase.sPoints[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
     }
 }

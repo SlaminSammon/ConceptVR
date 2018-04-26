@@ -29,7 +29,7 @@ public class SmoothEdge : Edge {
         updateMesh();
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
          Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
     }

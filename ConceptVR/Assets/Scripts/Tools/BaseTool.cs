@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BaseTool : Tool {
     Grabbable grabbed;
-
+    public Material tapMat;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +20,8 @@ public class BaseTool : Tool {
     {
         GameObject tapObject = new GameObject();
         tapObject.transform.position = position;
-        tapObject.AddComponent<TapRenderer>();
+        TapRenderer tap = tapObject.AddComponent<TapRenderer>();
+        tap.mat = tapMat;
         return true;
     }
 

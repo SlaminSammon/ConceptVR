@@ -61,10 +61,12 @@ public class Face : DCGElement
         updateMesh();
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
-        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
-        //Graphics.DrawMesh(mesh, Matrix4x4.identity, DCGBase.instance.solidMat, 0);
+        if (mat == null)
+            mat = DCGBase.instance.solidMat;
+        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
+        Graphics.DrawMesh(mesh, Matrix4x4.identity, mat, 0);
     }
 
     public override void Update()

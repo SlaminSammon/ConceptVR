@@ -44,6 +44,6 @@ public class SelectSphereTool : SelectTool
             selSphereMat.SetPass(0);
             Graphics.DrawMeshNow(GeometryUtil.icoSphere4, Matrix4x4.TRS(controllerPosition, Quaternion.identity, new Vector3(selDist, selDist, selDist) * playerScale));
         }
-        base.OnRenderObject();
+       
     }
 }

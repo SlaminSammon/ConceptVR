@@ -12,7 +12,7 @@ public abstract class DCGElement
     public int playerLocked;
     public DCGElement lastCopyMade;
 
-    public virtual void Render() { }    //Called from OnRenderObject in DCGBase
+    public virtual void Render(Material mat) { }    //Called from OnRenderObject in DCGBase
     public virtual void Update() { }    //Called when an element associated with this one is updated
     public virtual void Remove() { }    //Called when this element is removed, should remove other elements that rely on this one
     public virtual bool ChildrenSelected() { return false; }    //Returns true iff all children of this element are selected

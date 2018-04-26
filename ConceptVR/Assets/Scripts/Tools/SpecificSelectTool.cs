@@ -30,6 +30,7 @@ public class SpecificSelectTool : SelectSphereTool {
                 }
             }
         }
+        RenderObject();
     }
     public override bool Tap(Vector3 position)
     {

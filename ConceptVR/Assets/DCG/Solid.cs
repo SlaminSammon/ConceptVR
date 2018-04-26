@@ -137,7 +137,7 @@ public class Solid : DCGElement {
         return m;
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
         foreach (Face f in faces)
             f.Render();

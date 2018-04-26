@@ -18,6 +18,7 @@ public class SelectTool : Tool {
     {
         base.Update();
         selMat.SetFloat("_Offset", Time.time / 6f);
+        RenderObject();
     }
 
     public override bool Tap(Vector3 position)
@@ -101,12 +102,11 @@ public class SelectTool : Tool {
         }
     }
 
-    protected void OnRenderObject()
+    protected void RenderObject()
     {
-        selMat.SetPass(0);
         foreach (DCGElement e in DCGBase.sElements)
         {
-            e.Render();
+            e.Render(selMat);
         }
     }
 
