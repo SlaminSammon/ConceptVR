@@ -35,10 +35,10 @@ public class DoodleTool : Tool {
     {
         GameObject go = Instantiate(ItemBase.itemBase.DoodlePrefab,controllerPosition,new Quaternion(0,0,0,0));
         go.name = "Doodle " + doodleNum;
-        ItemBase.Spawn(go);
         doodleNum++;
         doodle = go.GetComponent<Doodle>();
         currLineRend = go.GetComponent<LineRenderer>();
+        ItemBase.itemBase.Add(doodle);
         return true;
     }
     public override bool TriggerUp()

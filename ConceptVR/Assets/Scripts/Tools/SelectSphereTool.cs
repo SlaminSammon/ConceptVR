@@ -27,6 +27,7 @@ public class SelectSphereTool : SelectTool
                     break;
                 else
                 {
+                    Select(nElement);
                     TapDCG(nElement);
                     break;
                 }

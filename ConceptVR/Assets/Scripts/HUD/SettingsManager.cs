@@ -26,6 +26,8 @@ public class SettingsManager : MonoBehaviour {
     public GameObject tutorialVideoPlayer;
 
     GameObject LMHeadMountedRig;
+    public GameObject hand;
+    handController controller;
 
     
     void Start () {
@@ -35,7 +37,7 @@ public class SettingsManager : MonoBehaviour {
         playerScale = 1f;
         isAnalogClock = true;
         tutorialMode = false;
-
+        controller = hand.GetComponent<handController>();
     }
 
     void Update () {
@@ -89,6 +91,31 @@ public class SettingsManager : MonoBehaviour {
 
     public void updateTutorialVideoClip(VideoClip clip)
     {
-        tutorialVideoPlayer.gameObject.GetComponent<VideoPlayer>().clip = clip;
+        StartCoroutine(playVideo(clip));
+
+    }
+    public IEnumerator playVideo(VideoClip clip)
+    {
+        GameObject existing = tutorialVideoPlayer.gameObject;
+        GameObject Bob = new GameObject();
+        VideoPlayer vid = Bob.AddComponent<VideoPlayer>();
+        vid.playOnAwake = false;
+        vid.source = VideoSource.VideoClip;
+        vid.audioOutputMode = VideoAudioOutputMode.None;
+        vid.waitForFirstFrame = false;
+        vid.isLooping = true;
+        vid.playbackSpeed = 1;
+        vid.renderMode = VideoRenderMode.MaterialOverride;
+        vid.targetMaterialRenderer = existing.GetComponent<MeshRenderer>();
+        vid.targetMaterialProperty = "_MainTex";
+        vid.clip = clip;
+        vid.Prepare();
+        while (!vid.isPrepared)
+        {
+            yield return null;
+        }
+        vid.Play();
+        existing.GetComponent<VideoHolder>().newPlayer(vid);
+        yield break;
     }
 }

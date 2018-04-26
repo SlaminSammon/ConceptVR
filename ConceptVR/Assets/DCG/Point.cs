@@ -55,6 +55,7 @@ public class Point : DCGElement
                 e.points.Remove(this);
         }
         DCGBase.points.Remove(this);
+        DCGBase.synch.CmdRemoveElement(elementID, NetPlayer.local.playerID);
     }
 
     public override bool ChildrenSelected()

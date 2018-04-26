@@ -58,7 +58,7 @@ public class SelectTool : Tool {
     public List<Point> Select(DCGElement elem)
     {
         elem.isSelected = true;
-        elem.isLocked = true;
+        elem.Lock();
         if (ItemBase.sItems.Count > 0)
             Item.Pop();
         return elem.GetPoints();
@@ -97,7 +97,7 @@ public class SelectTool : Tool {
     public void Deselect(DCGElement e)
     {
         e.isSelected = false;
-        e.isLocked = false;
+        e.Unlock();
     }
     public void Deselect()
     {

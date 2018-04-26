@@ -24,7 +24,7 @@ public class LightTool : Tool {
         GameObject obj = Instantiate(itemBase.LightPrefab, controllerPosition, new Quaternion(0, 0, 0, 0));
         float playerScale = Managers.GetComponent<SettingsManager>().playerScale;
         obj.transform.localScale = new Vector3(playerScale, playerScale, playerScale)/50;
-        ItemBase.Spawn(obj);
+        ItemBase.itemBase.Add(obj.GetComponent<LightItem>());
         return true;
     }
 }

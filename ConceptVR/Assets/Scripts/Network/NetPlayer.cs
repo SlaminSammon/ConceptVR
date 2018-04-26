@@ -16,12 +16,12 @@ public class NetPlayer : NetworkBehaviour {
             playerID = (int)GetComponent<NetworkIdentity>().netId.Value;
 
             DCGElement.currentID = playerID;
-            //Debug.Log("I'm the local player, and my number is " + playerID);
+            Debug.Log("I'm the local player, and my number is " + playerID);
         }
 	}
 	
 	void Update () {
-		
+        
 	}
 
     private void OnDestroy()
