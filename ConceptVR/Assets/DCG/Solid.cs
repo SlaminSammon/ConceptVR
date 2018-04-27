@@ -140,7 +140,7 @@ public class Solid : DCGElement {
     public override void Render(Material mat = null)
     {
         foreach (Face f in faces)
-            f.Render();
+            f.Render(mat);
     }
 
     public override void Update()
