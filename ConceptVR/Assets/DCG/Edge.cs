@@ -81,20 +81,24 @@ public class Edge : DCGElement
         return;
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
+        if (mat == null)
+            mat = DCGBase.instance.solidMat;
         float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
         Vector3 edgeVec;
         for (int i = 0; i < points.Count - 1; ++i)
         {
             edgeVec = points[i].position - points[i + 1].position;
-            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)),0);
+            Graphics.DrawMesh(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)), mat, 0);
+            //Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)),0);
             // Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[i].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
         if (isLoop)
         {
             edgeVec = points[points.Count - 1].position - points[0].position;
-            Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)),0);
+            Graphics.DrawMesh(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position - edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)), mat, 0);
+            //Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f * playerScale, edgeVec.magnitude / 2, .005f * playerScale)),0);
             // Graphics.DrawMeshNow(GeometryUtil.cylinder8, Matrix4x4.TRS(points[0].position + edgeVec / 2, Quaternion.FromToRotation(Vector3.up, edgeVec), new Vector3(.005f, edgeVec.magnitude / 2, .005f)));
         }
     }
@@ -235,12 +239,25 @@ public class Edge : DCGElement
     {
         return (points[0] == p1 && points[points.Count-1] == p2 || points[0] == p2 && points[points.Count-1] == p1);
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        List<Point> cPoints = new List<Point>();
-        foreach (Point p in points)
-            cPoints.Add((Point) p.Copy());
-        return new Edge(cPoints, this.isLoop);
+        Edge copy = (Edge) lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            List<Point> cPoints = new List<Point>();
+            foreach (Point p in points)
+            {
+                Point pointCopy = (Point)p.Copy(moveId);
+                if(pointCopy != null && !cPoints.Contains(pointCopy))
+                {
+                    cPoints.Add(pointCopy);
+                }
+            }
+            cPoints = cPoints.Distinct().ToList();
+            copy = new Edge(cPoints, this.isLoop);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
     public override bool ParentSelected()
     {

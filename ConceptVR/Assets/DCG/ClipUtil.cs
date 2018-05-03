@@ -237,7 +237,8 @@ public class ClipUtil {
         for (int i = 0; i < Cc.faces.Count; ++i) {
             CFace f = Cc.faces[i];
             Edge[] edges = new Edge[f.points.Length];
-            
+
+            Debug.Log(f.points.Length);
             for(int j = 0; j < f.points.Length; ++j) {
                 int k = (j + 1) % f.points.Length;
                 int pk = f.points[k];
@@ -245,16 +246,23 @@ public class ClipUtil {
                 bool kcj = edgeTo[pk].ContainsKey(pj);
                 bool jck = edgeTo[pj].ContainsKey(pk);
                 if (jck)
+                {
                     edges[j] = edgeTo[pj][pk];
                     if (!kcj)
                         edgeTo[pk].Add(pj, edges[j]);
+                }
                 else if (kcj)
+                {
                     edges[j] = edgeTo[pk][pj];
                     if (!jck)
                         edgeTo[pj].Add(pk, edges[j]);
-                else {
+                }
+                else
+                {
                     edges[j] = new Edge(points[pj], points[pk]);
+                    //if (!jck)
                     edgeTo[pj].Add(pk, edges[j]);
+                    //if (!kcj)
                     edgeTo[pk].Add(pj, edges[j]);
                 }
                 //Debug.DrawLine(edges[j].points[0].position, edges[j].points[1].position, new Color(Random.value, Random.value, Random.value), 1000, false);
@@ -336,7 +344,10 @@ public class ClipUtil {
                 for (int i = intersections.Count-1; i >= 0; --i)
                     for (int j = 0; j < i; ++j)
                         if ((intersections[j] - intersections[i]).sqrMagnitude <= epsilonSquared)
+                        {
                             intersections.RemoveAt(i);
+                            i = Mathf.Min(i, intersections.Count-1);
+                        }
 
             if (intersections.Count > 1) {
                 Vector3 edgeDir = intersections[intersections.Count-1] - intersections[0];

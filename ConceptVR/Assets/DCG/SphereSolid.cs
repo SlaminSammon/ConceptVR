@@ -18,7 +18,7 @@ public class SphereSolid : Solid
         radius = (center.position - shell.position).magnitude;
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
         Graphics.DrawMeshNow(GeometryUtil.icoSphere3, Matrix4x4.TRS(center.position, Quaternion.identity, new Vector3(radius, radius, radius)));
     }

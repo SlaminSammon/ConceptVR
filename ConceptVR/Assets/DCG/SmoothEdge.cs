@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class SmoothEdge : Edge {
     public Vector3[] smoothPoints;
@@ -28,9 +29,12 @@ public class SmoothEdge : Edge {
         updateMesh();
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
-         Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity, 0);
+        if (mat == null)
+            mat = DCGBase.instance.solidMat;
+        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
+        Graphics.DrawMesh(mesh, Matrix4x4.identity, mat, 0);
     }
 
     public override List<DCGElement> Extrude()
@@ -102,11 +106,24 @@ public class SmoothEdge : Edge {
         mesh.SetTriangles(tris, 0);
         mesh.SetNormals(normals);
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        List<Point> cPoints = new List<Point>();
-        foreach (Point p in points)
-            cPoints.Add((Point)p.Copy());
-        return new SmoothEdge(cPoints);
+        Edge copy = (Edge)lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            List<Point> cPoints = new List<Point>();
+            foreach (Point p in points)
+            {
+                Point pointCopy = (Point)p.Copy(moveId);
+                if (pointCopy != null && !cPoints.Contains(pointCopy))
+                {
+                    cPoints.Add(pointCopy);
+                }
+            }
+            cPoints = cPoints.Distinct().ToList();
+            copy = new Edge(cPoints, this.isLoop);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
 }

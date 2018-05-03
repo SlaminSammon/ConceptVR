@@ -38,10 +38,13 @@ public class Point : DCGElement
         DCGBase.all.Add(elementID, this as DCGElement);
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
+        if (mat == null)
+            mat = DCGBase.instance.solidMat;
         float playerScale = GameObject.Find("Managers").GetComponent<SettingsManager>().playerScale;
-        Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, defaultScale*playerScale),0);
+        //Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, defaultScale*playerScale),0);
+        Graphics.DrawMesh(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, defaultScale * playerScale), mat, 0);
         //Graphics.DrawMeshNow(GeometryUtil.icoSphere2, Matrix4x4.TRS(this.position, Quaternion.identity, new Vector3(.007f, .007f, .007f)));
     }
 
@@ -176,9 +179,16 @@ public class Point : DCGElement
 
         return faces.Distinct().ToList<Face>();
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        return new Point(this.position);
+        Point copy = (Point) lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            this.lastMoveID = moveId;
+            copy = new Point(this.position);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
     public override bool ParentSelected()
     {

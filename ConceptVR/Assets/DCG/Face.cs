@@ -61,10 +61,12 @@ public class Face : DCGElement
         updateMesh();
     }
 
-    public override void Render()
+    public override void Render(Material mat = null)
     {
-        Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
-        //Graphics.DrawMesh(mesh, Matrix4x4.identity, DCGBase.instance.solidMat, 0);
+        if (mat == null)
+            mat = DCGBase.instance.solidMat;
+        //Graphics.DrawMeshNow(mesh, Vector3.zero, Quaternion.identity,0);
+        Graphics.DrawMesh(mesh, Matrix4x4.identity, mat, 0);
     }
 
     public override void Update()
@@ -322,7 +324,7 @@ public class Face : DCGElement
 
         List<int> tris;
         if (verts.Count == 0) return;
-        tris = GeometryUtil.mediocreTriangulate(verts);
+        tris = GeometryUtil.smartTriangulate(verts, avgNormal);
 
         //mirror verts
         int vertCount = verts.Count;
@@ -431,12 +433,25 @@ public class Face : DCGElement
         }
         isLocked = false;
     }
-    public override DCGElement Copy()
+    public override DCGElement Copy(int moveId = -1)
     {
-        List<Edge> cEdges = new List<Edge>();
-        foreach (Edge e in edges)
-            cEdges.Add((Edge) e.Copy());
-        return new Face(cEdges);
+        Face copy = (Face)lastCopyMade;
+        if (this.lastMoveID != moveId)
+        {
+            List<Edge> cEdges = new List<Edge>();
+            foreach (Edge e in edges)
+            {
+                Edge edgeCopy = (Edge)e.Copy(moveId);
+                if (edgeCopy != null && !cEdges.Contains(edgeCopy))
+                {
+                    cEdges.Add(edgeCopy);
+                }
+            }
+            cEdges = cEdges.Distinct().ToList();          
+            copy = new Face(cEdges);
+        }
+        lastCopyMade = copy;
+        return copy;
     }
     public override bool ParentSelected()
     {

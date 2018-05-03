@@ -43,7 +43,7 @@ public class ExtrudeTool : MoveTool {
         if (extrudedUndo.Count == 0)
             return true;
         List<DCGElement> lister = extrudedUndo[extrudedUndo.Count - 1];
-        lister[0].Copy();
+        lister[0].Copy(DCGBase.nextMoveID());
         removeElems(lister);
         extrudedUndo.RemoveAt(extrudedUndo.Count - 1);
         return true;
