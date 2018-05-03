@@ -8,6 +8,7 @@ public class Exporter : HUDButton {
     public Material exportMaterial;
     int exportNumber;
     int initialExportNumber;
+    public GameObject exportedText;
 
 	void Start () {
         // Grab the export number by counting the number of .objs in the export directory 
@@ -15,6 +16,7 @@ public class Exporter : HUDButton {
         FileInfo[] info = dir.GetFiles("*.obj");
         exportNumber = info.Length+1;
         initialExportNumber = exportNumber;
+        exportedText.SetActive(false);
     }
 
     // Update is called once per frame
@@ -45,6 +47,14 @@ public class Exporter : HUDButton {
 
             exportNumber++;
         }
+        StartCoroutine(displayExportedText());
         base.OnPress();
+    }
+
+    private IEnumerator displayExportedText()
+    {
+        exportedText.SetActive(true);
+        yield return new WaitForSeconds(2);
+        exportedText.SetActive(false);
     }
 }
