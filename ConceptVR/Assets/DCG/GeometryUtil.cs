@@ -212,6 +212,7 @@ public static class GeometryUtil
     public static List<int> smartTriangulate(List<Vector3> points, Vector3 normal)
     {
         List<Vector2> p2 = planarize(points, normal, points[1]-points[0]);
+
         bool flip = area(p2) < 0;   //Ensure clockwise
         if (flip)
             for (int t = 0; t < p2.Count; ++t)
@@ -290,7 +291,10 @@ public static class GeometryUtil
         foreach(Vector3 v in points)
         {
             Vector3 proj = Vector3.ProjectOnPlane(v, normal);
-            planar.Add(new Vector2(Vector3.Project(proj, pUp).magnitude, Vector3.Project(proj, pRight).magnitude));
+            planar.Add(new Vector2(
+                Vector3.Project(proj, pUp).magnitude * Mathf.Sign(Vector3.Dot(proj, pUp)), 
+                Vector3.Project(proj, pRight).magnitude * Mathf.Sign(Vector3.Dot(proj, pRight))
+            ));
         }
 
         return planar;
