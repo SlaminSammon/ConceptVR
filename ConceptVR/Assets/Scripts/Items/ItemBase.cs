@@ -84,6 +84,7 @@ public class ItemBase : NetworkBehaviour {
     //Not gonna lie this is pretty ghetto. It works though so i dunno
     public void itemHudManager(Item item)
     {
+        //Could use a a stack to define the items on then stack, however may be more intrusive.
         if(firstType == "")
         {
             firstType = item.GetType().ToString();
@@ -101,6 +102,7 @@ public class ItemBase : NetworkBehaviour {
     {
         ItemBase.defaultIndex = index;
     }
+    //Return the nearest item to a position.
     public static Item NearestItem(Vector3 pos, float maxDist)
     {
         Item nItem = null;
