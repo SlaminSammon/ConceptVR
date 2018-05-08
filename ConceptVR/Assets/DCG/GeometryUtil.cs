@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class GeometryUtil
 {
+    //To anyone reading this Im sorry you have to read this -L
     public static Mesh icoSphere2 = GenerateSphereMesh(2);
     public static Mesh icoSphere3 = GenerateSphereMesh(3);
     public static Mesh icoSphere4 = GenerateSphereMesh(4);

@@ -43,10 +43,6 @@ public class DoodleTool : Tool {
     }
     public override bool TriggerUp()
     {
-        if(doodle == false)
-        {
-            Debug.Log("Wut");
-        }
         doodle.isFinished = true;
         return true;
     }

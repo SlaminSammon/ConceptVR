@@ -121,6 +121,10 @@ public class SelectTool : Tool {
     }
     public virtual bool TapDCG(DCGElement nearestElement)
     {
+        if(nearestElement == null)
+        {
+            return false;
+        }
         if (nearestElement.ParentSelected())
         {
             return false;

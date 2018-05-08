@@ -11,9 +11,11 @@ public class NetworkStarter : MonoBehaviour {
     private bool restart = false;
 	// Use this for initialization
 	void Start () {
+        //Game needs to start off as networked for items to work and cannot be offline
         netManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         netManager.StartHost();
         restart = false;
+        //For testing comment this out. Allows for faster testing of networking
         netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
 
     }
@@ -21,6 +23,7 @@ public class NetworkStarter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (restart) return;
+        //If anything happens to cause no network, restart the local host connection
         if (!netManager.isNetworkActive)
         {
             netManager.GetComponent<NetworkManagerHUD>().showGUI = false;
@@ -32,6 +35,7 @@ public class NetworkStarter : MonoBehaviour {
     }
     public void connectToHost()
     {
+        //Allows connectivity to remote server.
         if (netAddress == null || netPort == null)
             return;
         netManager.StopHost();
@@ -56,6 +60,7 @@ public class NetworkStarter : MonoBehaviour {
         Debug.Log("Failed to connect to Host");
         startHost = true;
     }
+    //this is for a restart of the scene, scene will auto restart the network
     public void Restart()
     {
         restart = true;

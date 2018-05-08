@@ -32,7 +32,8 @@ public abstract class Controller : MonoBehaviour {
 	void Update () {
 
     }
-    
+    //Event handlers for activiating tools
+    //Pinch down
     protected void TriggerDown(object sender, ClickedEventArgs e)
     {
         if (currentTool.TriggerDown())
@@ -41,7 +42,7 @@ public abstract class Controller : MonoBehaviour {
             if (tool.TriggerDown())
                 return;
     }
-
+    //Pinch up
     protected void TriggerUp(object sender, ClickedEventArgs e)
     {
         currentTool.triggerInput = false;
@@ -55,6 +56,7 @@ public abstract class Controller : MonoBehaviour {
     {
 
     }
+    //Deprecated, grab down
     protected void GripDown(object sender, ClickedEventArgs e)
     {
         if (currentTool.GripDown())
@@ -63,6 +65,7 @@ public abstract class Controller : MonoBehaviour {
             if (tool.GripDown())
                 return;
     }
+    //Deprecated, grab up
     protected void GripUp(object sender, ClickedEventArgs e)
     {
         if (currentTool.GripUp())
@@ -71,7 +74,11 @@ public abstract class Controller : MonoBehaviour {
             if (tool.GripUp())
                 return;
     }
-
+    /*
+     * changeTool
+     * Input - String: name of the tool
+     * Output: None- current tool gets changed into the input tool
+     * */
     public void changeTool(string toolName)
     {
         Tool lastTool = currentTool;
@@ -93,11 +100,16 @@ public abstract class Controller : MonoBehaviour {
 
         //Debug.Log(currentTool.GetType());
     }
+    /*
+     * GetToolByName
+     * Input - String:name of tool
+     * Output: Tool: Tghe tool class of the chosen tool.
+     */
     public Tool GetToolByName(String name)
     {
         return tools.transform.Find(name).GetComponent<Tool>();
     }
-    
+    //Tool activation, activates game objects of the tool
     public static void deactivateLastTool(Tool t) {
         if (t)
             t.gameObject.SetActive(false);

@@ -100,6 +100,7 @@ public class LeapTrackedController : MonoBehaviour
     public bool leftStart = false;
     public int rFrameCount = 0;
     public int lFrameCount = 0;
+    public bool formingEnabled = false;     //IMPORTANT THING THAT I ADDED EXPLICITLY TO MAKE THIS NOT WORK RIGHT NOW - CHRIS
     #endregion
     public int heldFrames = 75;
     public int playerID;
@@ -161,33 +162,37 @@ public class LeapTrackedController : MonoBehaviour
         #region  FreeForm Logic
         //I really hate this logic section.
         //end case
-        if(pinchWait){
-            pinchCounter--;
-            if(pinchCounter <= 0)
-                OnPinchGone();
-        }
-        if (!hudAnchor)
+        if (formingEnabled)
         {
-            if (!leftStart && !rightStart && forming && util.checkHandsDist() < .1f)
+            if (pinchWait)
             {
-                Debug.Log("Ending");
-                forming = false;
-                freeFormEnd();
-                rFrameCount = 0;
-                lFrameCount = 0;
+                pinchCounter--;
+                if (pinchCounter <= 0)
+                    OnPinchGone();
             }
-            //continue
-            if (forming)
+            if (!hudAnchor)
             {
-                return;
-            }
-            //start
-            if (rightStart && leftStart && util.checkHandsDist() < .2f)
-            {
-                forming = true;
-                freeForm();
-                rFrameCount = 0;
-                lFrameCount = 0;
+                if (!leftStart && !rightStart && forming && util.checkHandsDist() < .1f)
+                {
+                    Debug.Log("Ending");
+                    forming = false;
+                    freeFormEnd();
+                    rFrameCount = 0;
+                    lFrameCount = 0;
+                }
+                //continue
+                if (forming)
+                {
+                    return;
+                }
+                //start
+                if (rightStart && leftStart && util.checkHandsDist() < .2f)
+                {
+                    forming = true;
+                    freeForm();
+                    rFrameCount = 0;
+                    lFrameCount = 0;
+                }
             }
         }
         #endregion
@@ -300,7 +305,6 @@ public class LeapTrackedController : MonoBehaviour
     }
     public void OnDualPinch()
     {
-        Debug.Log("POOOOO");
         dualPinchMade();
     }
     public void OffDualPinch()

@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/* Networking for doodles only works from server to client
+ * not in reverse. To fix this issue the doodle updating code needs to be moved into 
+ * a class or object with local authority. An example would be NetPlayer.
+ * Currently exists in Item base. Move code and it should work.
+ */ 
 public class Doodle : Item {
     public Bounds boundingBox;
     public LineRenderer lr;
     int numClicks = 0;
     //[SyncVar (hook = "Encapsulate")]
     //public Vector3 latestPoint;
+    //Sync var to syncronize doodle variables. 
     [SyncVar(hook = "finalBounds")]
     public bool isFinished;
     [SyncVar(hook = "changeWidth")]
@@ -28,7 +34,8 @@ public class Doodle : Item {
 	// Update is called once per frame
 	void Update () {
 	}
-
+    //Retrieves the closest vector3, to a defined position(controller pos)
+    //Line renderer's contain n vector 3's.
     public override Vector3 Position(Vector3 contPos)
     {
         int lowestPos = 0;
@@ -44,7 +51,7 @@ public class Doodle : Item {
         }
         return lr.GetPosition(lowestPos);
     }
-
+    //deprecated
     public void erasePoint(Vector3 p)
     {
         Vector3[] verts = new Vector3[lr.positionCount];
@@ -84,7 +91,9 @@ public class Doodle : Item {
             newDood.CmdSetPoints(newDoodPositions.ToArray());
         }
     }
-
+    //See Destroy tool for simpler destroy understanding.
+    //Doodles when destroyed spolit into multiples, thus new doodles must be 
+    //recreated dynamically.
     public List<Doodle> eraseSphere(Vector3 center, float radius)
     {
         List<List<Vector3>> segs = new List<List<Vector3>>();
@@ -95,7 +104,7 @@ public class Doodle : Item {
         bool initErase = pErase;
         segs.Add(new List<Vector3>());
         segs[segs.Count - 1].Add(positions[0]);
-
+        //Find points in the doodle to be erased.
         for (int i = 1; i < positions.Length; ++i)
         {
             bool iErase = Vector3.Distance(positions[i], center) < radius;
@@ -117,6 +126,7 @@ public class Doodle : Item {
         if (segs.Count == 1) return new List<Doodle>();
         List<Doodle> doods = new List<Doodle>();
         ItemBase.changeIndex(this.colorIndex);
+        //Create new doodles from where the doodle was split.
         foreach (List<Vector3> seg in segs)
         {
             if (!initErase)
@@ -136,12 +146,14 @@ public class Doodle : Item {
 
         return doods;
     }
+    //Set points on the client
     [ClientRpc]
     public void RpcSetPoints(Vector3[] points)
     {
         lr.positionCount = points.Length;
         lr.SetPositions(points);
     }
+    //Set points on the server
     [Command]
     public void CmdSetPoints(Vector3[] points)
     {
@@ -170,6 +182,7 @@ public class Doodle : Item {
     {
         boundingBox.SetMinMax(boundingBox.min - new Vector3(.1f, .1f, .1f), boundingBox.max + new Vector3(.1f, .1f, .1f));
     }
+    //Checks to see if a positrion is within the bounding box of the doodle.
     public override float Distance(Vector3 pos)
     {
         if (boundingBox.Contains(pos))
@@ -195,6 +208,7 @@ public class Doodle : Item {
         Encapsulate(pos);
         numClicks++;
     }
+    //Deprecated. Used for testing
     public override void SelectUtil()
     {
         /*if (!isSelected)
@@ -205,6 +219,7 @@ public class Doodle : Item {
         else
             lr.material.color = oldColor;*/
     }
+    //Pushes doodle frame when only doodles are selected
     public override void Push()
     {
         base.Push();
@@ -213,6 +228,7 @@ public class Doodle : Item {
         if (HUD != null && frame != null)
             HUD.Push(frame.transform.Find("DoodleFrame").gameObject.GetComponent<HUDFrame>());
     }
+    //Changes colors on the client
     [ClientRpc]
     public void RpcChangeColor(int index)
     {
@@ -226,6 +242,7 @@ public class Doodle : Item {
     {
         RpcChangeColor(index);
     }
+    //changes the positions of all vector 3's of a doodle. Used when moving doodles
     public override void changePosition(Vector3 start, Vector3 contr, Vector3 hold)
     {
         Debug.Log("boos");

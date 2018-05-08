@@ -54,6 +54,8 @@ public class handController: Controller {
         }
 
     }
+
+    //Pinch down
     protected void TriggerDown()
     {
         if (currentTool != null && currentTool.TriggerDown())
@@ -62,7 +64,7 @@ public class handController: Controller {
             if (tool.TriggerDown())
                 return;
     }
-
+    //pinch up
     protected void TriggerUp()
     {
         if (currentTool != null && currentTool.TriggerUp())
@@ -72,6 +74,7 @@ public class handController: Controller {
             if (tool.TriggerUp())
                 return;
     }
+    //left pinch down
     protected void DualTriggerDown()
     {
         if (currentTool != null && currentTool.DualTriggerDown())
@@ -80,7 +83,7 @@ public class handController: Controller {
             if (tool.DualTriggerDown())
                 return;
     }
-
+    //left [pinch up
     protected void DualTriggerUp()
     {
         if (currentTool != null && currentTool.DualTriggerUp())
@@ -90,6 +93,7 @@ public class handController: Controller {
                 if (tool.DualTriggerUp())
                     return;
     }
+    //Deprecated
     protected void GripUp()
     {
         if (currentTool.GripUp())
@@ -98,6 +102,7 @@ public class handController: Controller {
             if (tool.GripUp())
                 return;
     }
+    //Deprecated
     protected void GripDown()
     {
         if (currentTool.GripDown())
@@ -106,6 +111,7 @@ public class handController: Controller {
             if (tool.GripDown())
                 return;
     }
+    //Tap event handler
     protected void Tap(Vector3 position)
     {
         if (currentTool.Tap(position))
@@ -114,6 +120,7 @@ public class handController: Controller {
             if (tool.Tap(position))
                 return;
     }
+    //swipe event handler
     protected void Swipe()
     {
         if (currentTool.Swipe())
@@ -122,6 +129,7 @@ public class handController: Controller {
             if (tool.Swipe())
                 return;
     }
+    //freeform start event handler
     protected void freeForm()
     {
         lastTool = currentTool;
@@ -129,16 +137,19 @@ public class handController: Controller {
         changeTool("FreeFormTool");
         currentTool.FreeForm(leapControl);
     }
+    //free form event stop
     protected void freeFormEnd()
     {
         currentTool.FreeFormEnd();
         changeTool(lastTool.GetType().ToString());
     }
+    //free form failure event handler
     protected void freeFormFailure()
     {
         currentTool.formInput = false;
         changeTool(lastTool.GetType().ToString());
     }
+    //gun fire event handler
     protected void fireGun()
     {
         if (currentTool.Fire())

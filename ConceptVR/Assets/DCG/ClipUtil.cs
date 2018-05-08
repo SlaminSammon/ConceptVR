@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class ClipUtil {
 
+    //To whomever needs to read this code....i am so sorry. 
+    //This does CSG, Unity might have their built in CSG done, go use it if you want instead.
     public enum ClipMode { Add, Subtract, Intersect };
     public struct CPoint
     {
