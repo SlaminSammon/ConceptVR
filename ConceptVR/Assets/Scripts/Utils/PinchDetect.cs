@@ -9,6 +9,9 @@ using Leap;
 /// A basic utility class to aid in creating pinch based actions.  Once linked with a HandModelBase, it can
 /// be used to detect pinch gestures that the hand makes.
 /// </summary>
+/// 
+/// 
+/// This is a modified version of LM's own pinch detector, modified for our purposes
 public class PinchDetect : AbstractHoldDetector
 {
     protected const float MM_TO_M = 0.001f;

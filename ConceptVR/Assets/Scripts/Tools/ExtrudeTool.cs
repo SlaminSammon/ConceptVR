@@ -52,6 +52,7 @@ public class ExtrudeTool : MoveTool {
     {
         foreach (DCGElement elem in lister)
         {
+            //If anyone reads this.... I am sorry, this was the only way to fix this, blame C#'s memory clean up.
             try
             {
                 elem.Remove();
