@@ -29,4 +29,9 @@ public class NetPlayer : NetworkBehaviour {
         if (this == local)
             local = null;
     }
+    [Command]
+    public void CmdSpawn(GameObject go)
+    {
+        NetworkServer.Spawn(go);
+    }
 }

@@ -35,7 +35,9 @@ public class ItemBase : NetworkBehaviour {
     public void Add(Item item)
     {
         items.Add(item);
-        CmdSpawn(item.gameObject);
+        GameObject go = item.gameObject;
+        NetPlayer.local.CmdSpawn(go);
+        
     }
     //Spawns the object on the Server. This may be a bad function and can be handled in the specific tools.
     [Command]
